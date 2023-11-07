@@ -1,4 +1,4 @@
-import type {ClassNumber} from "./primitives/classNumber";
+import type {ClassNumber} from "./primitives/class-number";
 import type {Section} from "./primitives/section";
 import type {Track} from "./primitives/track";
 
