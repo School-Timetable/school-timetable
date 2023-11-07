@@ -36,6 +36,11 @@ test('Name throws on invalid characters', () => {
     new Name("scienze motorie")
 });
 
+test('Name toString', () => {
+    const name = new Name("matematica");
+    expect(name.toString()).toBe("matematica");
+});
+
 
 
 test('Abbreviation is created', () => {
@@ -61,6 +66,11 @@ test('Abbreviation throws on invalid characters', () => {
     expect(() => new Abbreviation("sd1a")).toThrowError();
 });
 
+test('Abbreviation toString', () => {
+    const abbreviation = new Abbreviation("mat");
+    expect(abbreviation.toString()).toBe("MAT");
+});
+
 
 
 test('Weight is created', () => {
@@ -79,6 +89,11 @@ test('Weight is in range', () => {
     new Weight(10);
 });
 
+test('Weight toString', () => {
+    const weight = new Weight(5);
+    expect(weight.toString()).toBe("5");
+});
+
 
 
 test('HoursPerWeek is created', () => {
@@ -93,5 +108,10 @@ test('HoursPerWeek valid range', () => {
 
     new HoursPerWeek(1);
     new HoursPerWeek(30);
+});
+
+test('HoursPerWeek toString', () => {
+    const hoursPerWeek = new HoursPerWeek(10);
+    expect(hoursPerWeek.toString()).toBe("10");
 });
 

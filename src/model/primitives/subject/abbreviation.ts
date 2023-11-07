@@ -17,4 +17,8 @@ export class Abbreviation {
         valueSchema.parse(value);
         this.value = value.toUpperCase();
     }
+
+    public toString(): string {
+        return this.value;
+    }
 }

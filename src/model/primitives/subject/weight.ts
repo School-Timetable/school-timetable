@@ -16,4 +16,9 @@ export class Weight {
         valueSchema.parse(value);
         this.value = value;
     }
+
+
+    public toString(): string {
+        return this.value.toString();
+    }
 }
