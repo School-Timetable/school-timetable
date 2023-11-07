@@ -2,10 +2,10 @@
 // Materia(Classe*, Prof*, Nome, Abbreviazione, Peso, Ore_Sett)
 
 import { z } from 'zod';
-import { type Name, nameSchema } from './primitives/subject/name';
-import { abbreviationSchema, type Abbreviation } from './primitives/subject/abbreviation';
-import { weightSchema, type Weight } from './primitives/subject/weight';
-import { hoursPerWeekSchema, type HoursPerWeek } from './primitives/subject/hours-per-week';
+import { Name, nameSchema } from './primitives/subject/name';
+import { abbreviationSchema, Abbreviation } from './primitives/subject/abbreviation';
+import { weightSchema, Weight } from './primitives/subject/weight';
+import { hoursPerWeekSchema, HoursPerWeek } from './primitives/subject/hours-per-week';
 
 const SubjectSchema = z.object({
     // schoolClass: z.string(),
@@ -30,5 +30,14 @@ export class Subject {
         this.weight = weight;
         this.hoursPerWeek = hoursPerWeek;
         SubjectSchema.parse(this);
+    }
+
+    static of(name: string, abbreviation: string, weight: number, hoursPerWeek: number): Subject {
+        return new Subject(
+            new Name(name),
+            new Abbreviation(abbreviation),
+            new Weight(weight),
+            new HoursPerWeek(hoursPerWeek)
+        );
     }
 }
