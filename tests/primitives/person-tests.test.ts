@@ -1,12 +1,12 @@
-import { Name } from '../../src/model/primitives/person-name';
-import { Surname } from '../../src/model/primitives/person-surname';
-import { Cellphone } from '../../src/model/primitives/person-cellphone';
-import { Mail } from '../../src/model/primitives/person-mail';
+import { Name } from '../../src/model/primitives/professor/professor-name';
+import { Surname } from '../../src/model/primitives/professor/professor-surname';
+import { Cellphone } from '../../src/model/primitives/professor/professor-cellphone';
+import { Mail } from '../../src/model/primitives/professor/professor-mail';
 import { test, expect } from '@jest/globals';
 
 test('test_name_validation', () => {
     const name = new Name("John claire");
-    expect(name.name).toBe("JOHN CLAIRE");
+    expect(name.value).toBe("JOHN CLAIRE");
 });
 
 test('test_name_validation_undefined', () => {
@@ -35,7 +35,7 @@ test('test_name_validation_invalid', () => {
 
 test('test_surname_validation', () => {
     const surname = new Surname("John claire");
-    expect(surname.name).toBe("JOHN CLAIRE");
+    expect(surname.value).toBe("JOHN CLAIRE");
 });
 
 test('test_surname_validation_too_short', () => {
@@ -58,7 +58,7 @@ test('test_surname_validation_invalid', () => {
 
 test('test_cellphone_validation', () => {
     const cellphone = new Cellphone("123456789");
-    expect(cellphone.cellphone()).toBe("123456789");
+    expect(cellphone.value).toBe("123456789");
 }
 );
 
@@ -83,7 +83,7 @@ test('test_cellphone_validation_invalid', () => {
 
 test('test_mail_validation', () => {
     const mail = new Mail("scrumdamn@gmail.it");
-    expect(mail.mail()).toBe("scrumdamn@gmail.it");
+    expect(mail.value).toBe("scrumdamn@gmail.it");
 });
 
 test('test_mail_validation_invalid', () => {
