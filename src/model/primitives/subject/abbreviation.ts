@@ -1,16 +1,20 @@
 import { z } from 'zod';
 
-const abbreviationSchema = z.string()
-    .min(1, { message: "The abbreviation is too short (min 1 characters)" })
-    .max(5, { message: "The abbreviation is too long (max 5 characters)" })
-    .regex(/^[a-z]+( [a-z]+)*$/i, { message: "The abbreviation contains invalid characters" })
+const MAX_LENGTH = 5;
+const valueSchema = z.string()
+    .min(1, "abbreviation must be at least 1 character")
+    .max(MAX_LENGTH, `abbreviation must be at most ${MAX_LENGTH} characters`)
+    .regex(/^[a-z]+( [a-z]+)*$/i, "abbreviation contains invalid characters");
 
+export const abbreviationSchema = z.object({
+    value: valueSchema
+}).strict();
 
 export class Abbreviation {
     public readonly value: string;
 
     constructor(value: string) {
-        abbreviationSchema.parse(value);
+        valueSchema.parse(value);
         this.value = value.toUpperCase();
     }
 }

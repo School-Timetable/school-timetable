@@ -2,15 +2,19 @@ import { z } from 'zod';
 
 
 const MAX_HOURS_PER_WEEK = 40;
-const hoursPerWeekSchema = z.number()
-    .gte(1, { message: "hours per week must be at least 1" })
-    .lte(MAX_HOURS_PER_WEEK, { message: `hours per week must be at most ${MAX_HOURS_PER_WEEK}` });
+const valueSchema = z.number()
+    .gte(1, "hours per week must be at least 1")
+    .lte(MAX_HOURS_PER_WEEK, `hours per week must be at most ${MAX_HOURS_PER_WEEK}`);
 
-export class hoursPerWeek {
+export const hoursPerWeekSchema = z.object({
+    value: valueSchema,
+}).strict();
+
+export class HoursPerWeek {
     public readonly value: number;
 
     constructor(value: number) {
-        hoursPerWeekSchema.parse(value);
+        valueSchema.parse(value);
         this.value = value;
     }
 }

@@ -1,15 +1,20 @@
 import { z } from 'zod';
 
-const nameSchema = z.string()
-    .min(2, { message: "The name is too short (min 2 characters)" })
-    .max(20, { message: "The name is too long (max 20 characters)" })
-    .regex(/^[a-z]+( [a-z]+)*$/i, { message: "The name is not valid" });
+const MAX_LENGTH = 20;
+const valueSchema = z.string()
+    .min(2, "name must be at least 2 characters")
+    .max(MAX_LENGTH, `name must be at most ${MAX_LENGTH} characters`)
+    .regex(/^[a-z]+( [a-z]+)*$/i, "name contains invalid characters");
+
+export const nameSchema = z.object({
+    value: valueSchema,
+}).strict();
 
 export class Name {
     public readonly value: string;
 
     constructor(value: string) {
-        nameSchema.parse(value);
+        valueSchema.parse(value);
         this.value = value.toUpperCase();
     }
 }
