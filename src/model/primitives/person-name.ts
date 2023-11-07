@@ -12,7 +12,8 @@ export class Name {
 
     private _name: string;
 
-    name(): string {
+    public get name(): string {
         return this._name;
     }
+
 }

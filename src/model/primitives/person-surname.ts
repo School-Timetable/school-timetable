@@ -12,7 +12,7 @@ export class Surname {
 
     private _name: string;
 
-    name(): string {
+    public get name(): string {
         return this._name;
     }
 }
