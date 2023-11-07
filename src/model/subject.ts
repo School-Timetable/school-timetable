@@ -8,8 +8,8 @@ import { weightSchema, Weight } from './primitives/subject/weight';
 import { hoursPerWeekSchema, HoursPerWeek } from './primitives/subject/hours-per-week';
 
 const SubjectSchema = z.object({
-    // schoolClass: z.string(),
-    // teacher: z.string(),
+    schoolClass: z.any(),
+    teacher: z.any(),
     name: nameSchema,
     abbreviation: abbreviationSchema,
     weight: weightSchema,
@@ -17,14 +17,17 @@ const SubjectSchema = z.object({
 }).strict();
 
 export class Subject {
-    // readonly schoolClass: SchoolClass;
-    // readonly teacher: Teacher;
+    readonly schoolClass: any;
+    readonly teacher: any;
     readonly name: Name;
     readonly abbreviation: Abbreviation;
     readonly weight: Weight;
     readonly hoursPerWeek: HoursPerWeek;
 
-    constructor(name: Name, abbreviation: Abbreviation, weight: Weight, hoursPerWeek: HoursPerWeek) {
+    constructor(schoolClass: any, teacher: any, name: Name, abbreviation: Abbreviation,
+        weight: Weight, hoursPerWeek: HoursPerWeek) {
+        this.schoolClass = schoolClass;
+        this.teacher = teacher;
         this.name = name;
         this.abbreviation = abbreviation;
         this.weight = weight;
@@ -34,6 +37,8 @@ export class Subject {
 
     static of(name: string, abbreviation: string, weight: number, hoursPerWeek: number): Subject {
         return new Subject(
+            undefined,
+            undefined,
             new Name(name),
             new Abbreviation(abbreviation),
             new Weight(weight),

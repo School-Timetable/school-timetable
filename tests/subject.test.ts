@@ -11,10 +11,10 @@ test('Subject is created', () => {
     const weight = new Weight(5);
     const hoursPerWeek = new HoursPerWeek(6);
 
-    const subject = new Subject(name, abbreviation, weight, hoursPerWeek);
+    const subject = new Subject(null, null, name, abbreviation, weight, hoursPerWeek);
 
-    // expect(subject.schoolClass).toBe(undefined);
-    // expect(subject.teacher).toBe(undefined);
+    expect(subject.schoolClass).toBe(null);
+    expect(subject.teacher).toBe(null);
     expect(subject.name).toBe(name);
     expect(subject.abbreviation).toBe(abbreviation);
     expect(subject.weight).toBe(weight);
@@ -25,8 +25,11 @@ test('Subject is created', () => {
 test('Subject is created with of', () => {
     const subject = Subject.of("Matematica", "MAT", 5, 6);
 
+    expect(subject.schoolClass).toBe(undefined);
+    expect(subject.teacher).toBe(undefined);
     expect(subject.name).toStrictEqual(new Name("Matematica"));
     expect(subject.abbreviation).toStrictEqual(new Abbreviation("MAT"));
     expect(subject.weight).toStrictEqual(new Weight(5));
     expect(subject.hoursPerWeek).toStrictEqual(new HoursPerWeek(6));
 });
+
