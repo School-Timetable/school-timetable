@@ -1,4 +1,4 @@
-import { Subject } from '../model/subject';
+import { Subject } from '../src/model/subject';
 import { test, expect } from '@jest/globals';
 
 test('Subjects is created', () => {
