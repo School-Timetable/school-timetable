@@ -6,7 +6,7 @@ const abbreviationSchema = z.string()
     .regex(/^[a-z]+( [a-z]+)*$/i, { message: "The abbreviation contains invalid characters" })
 
 
-export class abbreviation {
+export class Abbreviation {
     public readonly value: string;
 
     constructor(value: string) {
