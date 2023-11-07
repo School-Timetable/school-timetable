@@ -39,7 +39,7 @@ jobs:
           with:
             node-version: '14'
         - run: npm install
-        - run: npx svelte-kit build 
+        - run: $ svelte-kit build
         - run: mkdir -p build-output
         - run: cp -r build/* build-output/
         - uses: actions/upload-artifact@v3
