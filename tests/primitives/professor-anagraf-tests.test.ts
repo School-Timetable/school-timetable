@@ -2,6 +2,7 @@ import { Name } from '../../src/model/primitives/professor/professor-name';
 import { Surname } from '../../src/model/primitives/professor/professor-surname';
 import { Cellphone } from '../../src/model/primitives/professor/professor-cellphone';
 import { Mail } from '../../src/model/primitives/professor/professor-mail';
+import { Professor } from '../../src/model/professor';
 import { test, expect } from '@jest/globals';
 
 test('test_name_validation', () => {
@@ -122,4 +123,14 @@ test('test_mail_validation_too_long', () => {
     }).toThrowError("The mail is too long (max 30 characters)");
 });
 
-
+test('professor_entity_test', () => {
+    const name = new Name("John");
+    const surname = new Surname("Claire");
+    const cellphone = new Cellphone("123456789");
+    const mail = new Mail("abcd13@gmail.com");
+    const professor = new Professor(name, surname, mail, cellphone);
+    expect(professor.name.value).toBe(name.value);
+    expect(professor.surname.value).toBe(surname.value);
+    expect(professor.cellPhone.value).toBe(cellphone.value);
+    expect(professor.email.value).toBe(mail.value);
+});
