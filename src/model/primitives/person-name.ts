@@ -4,10 +4,10 @@ export class Name {
 
     constructor(name: string) {
         z.string().min(2, {message : "The name is too short (min 2 characters)"})
-            .max(20, {message : "The name is too long (max 20 characters)"})
-            .regex(/^[A-Z][a-z]+( [A-Z][a-z]+)*/, {message : "The name is not valid"})
+            .max(20,      {message : "The name is too long (max 20 characters)"})
+            .regex(/^[a-z]+( [a-z]+)*$/i, {message : "The name is not valid"})
             .parse(name);
-        this._name = name;
+        this._name = name.toUpperCase();
     }
 
     private _name: string;

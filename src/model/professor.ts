@@ -1,14 +1,16 @@
+import type { Name } from './primitives/person-name';
+
 export class Professor {
     
-    constructor(name: string, surname: string, email: string, subjects: []) {
+    constructor(name: Name, surname: string, email: string, subjects: []) {
         this.name = name;
         this.surname = surname;
         this.email = email;
         this.subjects = subjects;
     }
 
-    id: number = 0;
-    name: string;
+    private readonly id: number = 0;
+    name: Name;
     surname: string;
     email: string;
     subjects: [];
