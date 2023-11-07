@@ -1,7 +1,4 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
-name: Node.js CI
+name: G2-pipeline
 
 on:
   push:
@@ -17,7 +14,6 @@ jobs:
     strategy:
       matrix:
         node-version: [14.x, 16.x, 18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
     - uses: actions/checkout@v3
@@ -29,37 +25,38 @@ jobs:
     - run: npm install
     - run: npm test
 
-  build-and-upload:
-      runs-on: ubuntu-latest
-      needs: [initial-test]
+  build:
+    runs-on: ubuntu-latest
 
-      steps:
-        - uses: actions/checkout@v4
-        - uses: actions/setup-node@v3
-          with:
-            node-version: '14'
-        - run: npm install
-        - run: npm run build
-        - run: mkdir -p build-output
-        - run: cp -r build/* build-output/
-        - uses: actions/upload-artifact@v3
-          with:
-            name: build
-            path: g2/build
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
-  testing-the-build:
-      runs-on: ubuntu-latest
-      needs: [build-and-upload]
-      steps:
-        - uses: actions/checkout@v4
-        - uses: actions/setup-node@v3
-          with:
-            node-version: '14'
-        - uses: actions/download-artifact@v3
-          with:
-            name: build
-        - name: Display structure of downloaded files
-          run: ls -R
-        - run: npm install
-        - run: npm test
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14'
 
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Svelte Project
+        run: npm run build
+
+      - name: Archive Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: svelte-artifacts
+          path: build
+
+  download:
+    runs-on: ubuntu-latest
+
+    needs: build
+
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: svelte-artifacts
+          path: build
