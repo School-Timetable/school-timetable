@@ -40,6 +40,9 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Create tsconfig.js file
+        run: npx tsc --init
+
       - name: Build Svelte Project
         run: npm run build
 
