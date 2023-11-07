@@ -1,17 +1,18 @@
 import type { Name } from './primitives/person-name';
+import type { Surname } from './primitives/person-surname';
 
 export class Professor {
     
-    constructor(name: Name, surname: string, email: string, subjects: []) {
+    constructor(name: Name, surname: Surname, email: string, cellPhone: string) {
         this.name = name;
         this.surname = surname;
         this.email = email;
-        this.subjects = subjects;
+        this.cellPhone = cellPhone;
     }
 
     private readonly id: number = 0;
     name: Name;
-    surname: string;
+    surname: Surname;
     email: string;
-    subjects: [];
+    cellPhone: string;
 }

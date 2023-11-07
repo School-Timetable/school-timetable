@@ -13,6 +13,12 @@ test('test_name_validation_undefined', () => {
     }).toThrowError("Required");
 });
 
+test('test_name_validation_null', () => {
+    expect(() => {
+        new Name(null!);
+    }).toThrowError("Expected string, received null");
+});
+
 test('test_name_validation_too_short', () => {
     expect(() => {
         new Name("J");
@@ -52,4 +58,16 @@ test('test_surname_validation_invalid', () => {
     expect(() => {
         new Surname("John 123");
     }).toThrowError("The surname is not valid");
+});
+
+test('test_surname_validation_undefined', () => {
+    expect(() => {
+        new Surname(undefined!);
+    }).toThrowError("Required");
+});
+
+test('test_surname_validation_null', () => {
+    expect(() => {
+        new Surname(null!);
+    }).toThrowError("Expected string, received null");
 });
