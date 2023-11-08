@@ -1,15 +1,21 @@
+import { z } from 'zod';
 import {ClassNumber, classNumberSchema} from "./class-number";
 import {Section, sectionSchema} from "./section";
 import {Track, trackSchema} from "./track";
 
-export const schoolClassSchema = {
+export const schoolClassSchema = z.object({
     classNumber: classNumberSchema,
     section: sectionSchema,
     track: trackSchema.optional()
-}
+})
 
+// TODO: id check
 export class SchoolClass {
     private constructor(id: number, classNumber: ClassNumber, section: Section) {
+        schoolClassSchema.parse({
+            classNumber: classNumber,
+            section: section
+        })
         this._id = id;
         this._classNumber = classNumber;
         this._section = section;
