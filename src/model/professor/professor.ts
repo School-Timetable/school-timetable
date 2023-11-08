@@ -1,7 +1,7 @@
-import  { Name, nameSchema } from '$model/professor/name';
-import  { Surname, surnameSchema } from '$model/professor/surname';
-import  { Cellphone, cellphoneSchema } from '$model/professor/cellphone';
-import  { Mail, mailSchema } from '$model/professor/mail';
+import  { Name, nameSchema } from './name';
+import  { Surname, surnameSchema } from './surname';
+import  { Cellphone, cellphoneSchema } from './cellphone';
+import  { Mail, mailSchema } from './mail';
 import { z } from 'zod';
 
 const ProfessorSchema = z.object({

@@ -1,16 +1,8 @@
-<<<<<<< Updated upstream:tests/model/professor/professor-primitives.test.ts
 import { Name } from '../../../src/model/professor/name';
 import { Surname } from '../../../src/model/professor/surname';
 import { Cellphone } from '../../../src/model/professor/cellphone';
 import { Mail } from '../../../src/model/professor/mail';
 import { Professor } from '../../../src/model/professor/professor';
-=======
-import { Name } from '$model/primitives/professor/Name';
-import { Surname } from '$model/primitives/professor/Surname';
-import { Cellphone } from '$model/primitives/professor/CellPhone';
-import { Mail } from '$model/primitives/professor/Mail';
-import { Professor } from '$model/professor';
->>>>>>> Stashed changes:tests/primitives/professor-anagraf-tests.test.ts
 import { test, expect } from '@jest/globals';
 
 test('test_name_validation', () => {
@@ -137,8 +129,8 @@ test('professor_entity_test', () => {
     const cellphone = new Cellphone("123456789");
     const mail = new Mail("abcd13@gmail.com");
     const professor = new Professor(name, surname, mail, cellphone);
-    expect(professor.name.value).toBe(name.value);
-    expect(professor.surname.value).toBe(surname.value);
-    expect(professor.cellPhone.value).toBe(cellphone.value);
-    expect(professor.email.value).toBe(mail.value);
+    expect(professor.Name.value).toBe(name.value);
+    expect(professor.Surname.value).toBe(surname.value);
+    expect(professor.CellPhone.value).toBe(cellphone.value);
+    expect(professor.Email.value).toBe(mail.value);
 });
