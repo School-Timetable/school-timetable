@@ -14,10 +14,10 @@ const ProfessorSchema = z.object({
 export class Professor {
     
     //public readonly id: number = 0;
-    private name: Name;
-    private surname: Surname;
-    private email: Mail;
-    private cellPhone: Cellphone;
+    private _name: Name;
+    private _surname: Surname;
+    private _email: Mail;
+    private _cellPhone: Cellphone;
 
     constructor(name: Name, surname: Surname, email: Mail, cellPhone: Cellphone) {
         
@@ -28,50 +28,50 @@ export class Professor {
             cellphone: cellPhone,
         });
         
-        this.name = name;
-        this.surname = surname;
-        this.email = email;
-        this.cellPhone = cellPhone;
+        this._name = name;
+        this._surname = surname;
+        this._email = email;
+        this._cellPhone = cellPhone;
     }
 
-    get Name(): Name {
-        return this.name;
+    get name(): Name {
+        return this._name;
     }
 
-    get Surname(): Surname {
-        return this.surname;
+    get surname(): Surname {
+        return this._surname;
     }
 
-    get Email(): Mail {
-        return this.email;
+    get email(): Mail {
+        return this._email;
     }
 
-    get CellPhone(): Cellphone {
-        return this.cellPhone;
+    get cellPhone(): Cellphone {
+        return this._cellPhone;
     }
 
-    set Name(name: Name) {
+    set name(name: Name) {
         nameSchema.parse(name);
-        this.name = name;
+        this._name = name;
     }
 
-    set Surname(surname: Surname) {
+    set surname(surname: Surname) {
         surnameSchema.parse(surname);
-        this.surname = surname;
+        this._surname = surname;
     }
 
-    set Email(email: Mail) {
+    set email(email: Mail) {
         mailSchema.parse(email);
-        this.email = email;
+        this._email = email;
     }
 
-    set CellPhone(cellPhone: Cellphone) {
+    set cellPhone(cellPhone: Cellphone) {
         cellphoneSchema.parse(cellPhone);
-        this.cellPhone = cellPhone;
+        this._cellPhone = cellPhone;
     }
 
     public toString(): string {
-        return this.name.toString() + " " + this.surname.toString() + " " + this.email.toString() + " " + this.cellPhone.toString();
+        return this._name.toString() + " " + this._surname.toString() + " " + this._email.toString() + " " + this._cellPhone.toString();
     }
 
 }

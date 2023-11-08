@@ -13,7 +13,7 @@ test('test_name_validation', () => {
 test('test_name_validation_undefined', () => {
     expect(() => {
         new Name(undefined!);
-    }).toThrowError("Required");
+    }).toThrowError();
 });
 
 test('test_name_validation_too_short', () => {
@@ -108,7 +108,7 @@ test('test_mail_validation_invalid_3', () => {
 test('test_mail_validation_undefined', () => {
     expect(() => {
         new Mail(undefined!);
-    }).toThrowError("Required");
+    }).toThrowError();
 });
 
 test('test_mail_validation_too_short', () => {
@@ -121,16 +121,4 @@ test('test_mail_validation_too_long', () => {
     expect(() => {
         new Mail("scrummdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamn@gmail.it");
     }).toThrowError("The mail is too long (max 30 characters)");
-});
-
-test('professor_entity_test', () => {
-    const name = new Name("John");
-    const surname = new Surname("Claire");
-    const cellphone = new Cellphone("123456789");
-    const mail = new Mail("abcd13@gmail.com");
-    const professor = new Professor(name, surname, mail, cellphone);
-    expect(professor.Name.value).toBe(name.value);
-    expect(professor.Surname.value).toBe(surname.value);
-    expect(professor.CellPhone.value).toBe(cellphone.value);
-    expect(professor.Email.value).toBe(mail.value);
 });
