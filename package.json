@@ -24,6 +24,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"sveltestrap": "^5.11.2",
 		"zod": "^3.22.4"
 	}
 }
