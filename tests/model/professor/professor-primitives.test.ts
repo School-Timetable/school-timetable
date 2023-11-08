@@ -1,7 +1,7 @@
-import { Name } from '../../../src/model/professor/name';
-import { Surname } from '../../../src/model/professor/surname';
-import { Cellphone } from '../../../src/model/professor/cellphone';
-import { Mail } from '../../../src/model/professor/mail';
+import { Name } from '$model/professor/name';
+import { Surname } from '$model/professor/surname';
+import { Cellphone } from '$model/professor/cellphone';
+import { Mail } from '$model/professor/mail';
 import { test, expect } from '@jest/globals';
 
 test('test_name_validation', () => {
