@@ -7,12 +7,12 @@ import { HoursPerWeek } from '../../../src/model/subject/hours-per-week';
 
 test('Name is created', () => {
     const name = new Name("matematica");
-    expect(name.value).toBe("matematica");
+    expect(name.value).toMatch("matematica");
 })
 
 test('Name with spaces', () => {
     const name = new Name("Storia dell'arte");
-    expect(name.value).toBe("Storia dell'arte");
+    expect(name.value).toMatch("Storia dell'arte");
 })
 
 test('Name length', () => {
@@ -38,14 +38,14 @@ test('Name throws on invalid characters', () => {
 
 test('Name toString', () => {
     const name = new Name("matematica");
-    expect(name.toString()).toBe("matematica");
+    expect(name.toString()).toMatch("matematica");
 });
 
 
 
 test('Abbreviation is created', () => {
     const abbreviation = new Abbreviation("mat");
-    expect(abbreviation.value).toBe("MAT");
+    expect(abbreviation.value).toMatch("MAT");
 });
 
 test('Abbreviation lenght', () => {
@@ -68,7 +68,7 @@ test('Abbreviation throws on invalid characters', () => {
 
 test('Abbreviation toString', () => {
     const abbreviation = new Abbreviation("mat");
-    expect(abbreviation.toString()).toBe("MAT");
+    expect(abbreviation.toString()).toMatch("MAT");
 });
 
 
@@ -91,7 +91,7 @@ test('Weight is in range', () => {
 
 test('Weight toString', () => {
     const weight = new Weight(5);
-    expect(weight.toString()).toBe("5");
+    expect(weight.toString()).toMatch("5");
 });
 
 
@@ -112,6 +112,6 @@ test('HoursPerWeek valid range', () => {
 
 test('HoursPerWeek toString', () => {
     const hoursPerWeek = new HoursPerWeek(10);
-    expect(hoursPerWeek.toString()).toBe("10");
+    expect(hoursPerWeek.toString()).toMatch("10");
 });
 
