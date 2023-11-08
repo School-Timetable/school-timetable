@@ -8,30 +8,30 @@ import { weightSchema, Weight } from './weight';
 import { hoursPerWeekSchema, HoursPerWeek } from './hours-per-week';
 
 const SubjectSchema = z.object({
-    schoolClass: z.any(),
-    teacher: z.any(),
-    name: nameSchema,
-    abbreviation: abbreviationSchema,
-    weight: weightSchema,
-    hoursPerWeek: hoursPerWeekSchema,
+    _schoolClass: z.any(),
+    _teacher: z.any(),
+    _name: nameSchema,
+    _abbreviation: abbreviationSchema,
+    _weight: weightSchema,
+    _hoursPerWeek: hoursPerWeekSchema,
 }).strict();
 
 export class Subject {
-    readonly schoolClass: any;
-    readonly teacher: any;
-    readonly name: Name;
-    readonly abbreviation: Abbreviation;
-    readonly weight: Weight;
-    readonly hoursPerWeek: HoursPerWeek;
+    private _schoolClass: any;
+    private _teacher: any;
+    private _name: Name;
+    private _abbreviation: Abbreviation;
+    private _weight: Weight;
+    private _hoursPerWeek: HoursPerWeek;
 
     constructor(schoolClass: any, teacher: any, name: Name, abbreviation: Abbreviation,
         weight: Weight, hoursPerWeek: HoursPerWeek) {
-        this.schoolClass = schoolClass;
-        this.teacher = teacher;
-        this.name = name;
-        this.abbreviation = abbreviation;
-        this.weight = weight;
-        this.hoursPerWeek = hoursPerWeek;
+        this._schoolClass = schoolClass;
+        this._teacher = teacher;
+        this._name = name;
+        this._abbreviation = abbreviation;
+        this._weight = weight;
+        this._hoursPerWeek = hoursPerWeek;
         SubjectSchema.parse(this);
     }
 
@@ -45,4 +45,19 @@ export class Subject {
             new HoursPerWeek(hoursPerWeek)
         );
     }
+
+    get schoolClass() { return this._schoolClass; }
+    get teacher() { return this._teacher; }
+    get name() { return this._name; }
+    get abbreviation() { return this._abbreviation; }
+    get weight() { return this._weight; }
+    get hoursPerWeek() { return this._hoursPerWeek; }
+
+    set schoolClass(value) { this._schoolClass = value; }
+    set teacher(value) { this._teacher = value; }
+    set name(value) { this._name = value; }
+    set abbreviation(value) { this._abbreviation = value; }
+    set weight(value) { this._weight = value; }
+    set hoursPerWeek(value) { this._hoursPerWeek = value; }
+
 }
