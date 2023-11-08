@@ -23,8 +23,8 @@ test('professor_entity_test_name_change', () => {
     const cellphone = new Cellphone("123456789");
     const mail = new Mail("abcd12@gmail.com");
     const professor = new Professor(name, surname, mail, cellphone);
-    professor.name = new Name("John2");
-    expect(professor.name.value).toBe("JOHN2");
+    professor.name = new Name("Johnny");
+    expect(professor.name.value).toBe("JOHNNY");
 });
 
 test('professor_entity_test_surname_change', () => {
@@ -33,6 +33,6 @@ test('professor_entity_test_surname_change', () => {
     const cellphone = new Cellphone("123456789");
     const mail = new Mail("abcd12@gmail.com");
     const professor = new Professor(name, surname, mail, cellphone);
-    professor.surname = new Surname("Claire2");
-    expect(professor.surname.value).toBe("CLAIRE2");
+    professor.surname = new Surname("Hill");
+    expect(professor.surname.value).toBe("HILL");
 });
