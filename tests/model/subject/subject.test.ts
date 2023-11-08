@@ -1,8 +1,8 @@
-import { Abbreviation } from '../src/model/primitives/subject/abbreviation';
-import { HoursPerWeek } from '../src/model/primitives/subject/hours-per-week';
-import { Name } from '../src/model/primitives/subject/name';
-import { Weight } from '../src/model/primitives/subject/weight';
-import { Subject } from '../src/model/subject';
+import { Abbreviation } from '../../../src/model/subject/abbreviation';
+import { HoursPerWeek } from '../../../src/model/subject/hours-per-week';
+import { Name } from '../../../src/model/subject/name';
+import { Weight } from '../../../src/model/subject/weight';
+import { Subject } from '../../../src/model/subject/subject';
 import { test, expect } from '@jest/globals';
 
 test('Subject is created', () => {

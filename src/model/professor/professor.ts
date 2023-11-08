@@ -1,7 +1,7 @@
-import  { Name, nameSchema } from './primitives/professor/professor-name';
-import  { Surname, surnameSchema } from './primitives/professor/professor-surname';
-import  { Cellphone, cellphoneSchema } from './primitives/professor/professor-cellphone';
-import  { Mail, mailSchema } from './primitives/professor/professor-mail';
+import  { Name, nameSchema } from './name';
+import  { Surname, surnameSchema } from './surname';
+import  { Cellphone, cellphoneSchema } from './cellphone';
+import  { Mail, mailSchema } from './mail';
 import { z } from 'zod';
 
 const ProfessorSchema = z.object({

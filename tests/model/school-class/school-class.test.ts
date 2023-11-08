@@ -1,5 +1,5 @@
 import { test, expect } from '@jest/globals';
-import { ClassNumber } from '../../src/model/primitives/class-number';
+import { ClassNumber } from '../../../src/model/school-class/class-number';
 
 test('test_class_number_validation_in_range', () => {
     const classNumber = new ClassNumber(1)

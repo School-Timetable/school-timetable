@@ -2,10 +2,10 @@
 // Materia(Classe*, Prof*, Nome, Abbreviazione, Peso, Ore_Sett)
 
 import { z } from 'zod';
-import { Name, nameSchema } from './primitives/subject/name';
-import { abbreviationSchema, Abbreviation } from './primitives/subject/abbreviation';
-import { weightSchema, Weight } from './primitives/subject/weight';
-import { hoursPerWeekSchema, HoursPerWeek } from './primitives/subject/hours-per-week';
+import { Name, nameSchema } from './name';
+import { abbreviationSchema, Abbreviation } from './abbreviation';
+import { weightSchema, Weight } from './weight';
+import { hoursPerWeekSchema, HoursPerWeek } from './hours-per-week';
 
 const SubjectSchema = z.object({
     schoolClass: z.any(),

@@ -1,8 +1,8 @@
-import { Name } from '../../src/model/primitives/subject/name';
-import { Abbreviation } from '../../src/model/primitives/subject/abbreviation';
+import { Name } from '../../../src/model/subject/name';
+import { Abbreviation } from '../../../src/model/subject/abbreviation';
 import { test, expect } from '@jest/globals';
-import { Weight } from '../../src/model/primitives/subject/weight';
-import { HoursPerWeek } from '../../src/model/primitives/subject/hours-per-week';
+import { Weight } from '../../../src/model/subject/weight';
+import { HoursPerWeek } from '../../../src/model/subject/hours-per-week';
 
 
 test('Name is created', () => {
@@ -15,7 +15,7 @@ test('Name with spaces', () => {
     expect(name.value).toBe("Storia dell'arte");
 })
 
-test('Name lenght', () => {
+test('Name length', () => {
     expect(() => new Name("")).toThrowError();
     expect(() => new Name("a")).toThrowError();
     expect(() => new Name("a".repeat(21))).toThrowError();

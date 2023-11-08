@@ -1,6 +1,6 @@
-import type {ClassNumber} from "./primitives/class-number";
-import type {Section} from "./primitives/section";
-import type {Track} from "./primitives/track";
+import type {ClassNumber} from "./class-number";
+import type {Section} from "./section";
+import type {Track} from "./track";
 
 export class SchoolClass {
     constructor(id: number, classNumber: ClassNumber, section: Section) {

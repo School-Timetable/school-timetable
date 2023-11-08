@@ -7,9 +7,9 @@ export class Track {
         z.string()
             .min(3, {message: "The track is too short (min 3 char)"})
             .max(50, {message: "The track is too long (max 50 char)"})
-            .regex(/[A-Za-z]+\.?/)
+            .regex(/[a-z]+\.?/i)
 
-        this._track = track
+        this._track = track.toUpperCase()
     }
 
     track(): string {

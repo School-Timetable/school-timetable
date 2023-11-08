@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { hoursPerWeekSchema } from "../../model/primitives/subject/hours-per-week";
-	import { Subject } from "../../model/subject";
+	import { hoursPerWeekSchema } from "../../model/subject/hours-per-week";
+	import { Subject } from "../../model/subject/subject";
 
 	let subjects: Subject[] = [
 		Subject.of("Math", "Math", 7, 10),
