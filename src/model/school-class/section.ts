@@ -1,20 +1,22 @@
 import { z } from 'zod';
 
+export const valueSchema = z.string()
+    .length(1, {message : "The section must be a single char (A-Z)"})
+    .regex(/[A-Z]/)
+
+export const sectionSchema = z.object({
+    value: valueSchema
+}).strict()
+
 export class Section {
-    private readonly _section: string;
+    public readonly value: string;
 
-    constructor(section: string) {
-        z.string()
-            .min(1, {message : "The section must be a single char (A-Z)"})
-            .max(1, {message : "The section must be a single char (A-Z)"})
-            .regex(/[A-Z]/)
-            .parse(section);
-        this._section = section;
+    constructor(value: string) {
+        valueSchema.parse(value);
+        this.value = value;
     }
 
-    section(): string {
-        return this._section;
+    public toString(): string {
+        return this.value;
     }
-
-    // TODO: edit?
 }
