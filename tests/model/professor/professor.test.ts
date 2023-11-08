@@ -1,4 +1,4 @@
-import { Professor } from "../../../src/model/professor/professor";
+import { Professor } from "$model/professor/professor";
 import { Name } from "../../../src/model/professor/name";
 import { Surname } from "../../../src/model/professor/surname";
 import { Cellphone } from "../../../src/model/professor/cellphone";

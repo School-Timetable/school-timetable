@@ -2,7 +2,6 @@ import { Name } from '../../../src/model/professor/name';
 import { Surname } from '../../../src/model/professor/surname';
 import { Cellphone } from '../../../src/model/professor/cellphone';
 import { Mail } from '../../../src/model/professor/mail';
-import { Professor } from '../../../src/model/professor/professor';
 import { test, expect } from '@jest/globals';
 
 test('test_name_validation', () => {
