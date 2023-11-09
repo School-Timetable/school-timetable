@@ -1,35 +1,68 @@
-import type {ClassNumber} from "./class-number";
-import type {Section} from "./section";
-import type {Track} from "./track";
+import { z } from 'zod';
+import {ClassNumber, classNumberSchema} from "./class-number";
+import {Section, sectionSchema} from "./section";
+import {Track, trackSchema} from "./track";
 
+export const schoolClassSchema = z.object({
+    classNumber: classNumberSchema,
+    section: sectionSchema,
+    track: trackSchema.optional()
+})
+
+// TODO: id check
 export class SchoolClass {
-    constructor(id: number, classNumber: ClassNumber, section: Section) {
+    private constructor(id: number, classNumber: ClassNumber, section: Section) {
+        schoolClassSchema.parse({
+            classNumber: classNumber,
+            section: section
+        })
         this._id = id;
         this._classNumber = classNumber;
         this._section = section;
     }
 
-    private _id: number;
+    private readonly _id: number;
     private _classNumber: ClassNumber;
     private _section: Section;
     private _track?: Track;
 
-    id(): number {
+    get id(): number {
         return this._id;
     }
 
-    classNumber(): number {
-        return this._classNumber.classNumber()
+    get classNumber(): ClassNumber {
+        return this._classNumber
     }
 
-    section(): string {
-        return this._section.section()
+    set classNumber(classNumber: ClassNumber) {
+        classNumberSchema.parse(classNumber)
+        this._classNumber = classNumber
     }
 
-    track(): string | undefined {
-        return this._track?.track()
+    set section(section: Section) {
+        sectionSchema.parse(section)
+        this._section = section
     }
 
+    set track(track: Track) {
+        trackSchema.parse(track)
+        this._track = track
+    }
+
+    get section(): Section {
+        return this._section
+    }
+
+    get track(): Track | undefined {
+        return this._track
+    }
+
+    public toString(): string {
+        let res = `${this._classNumber.value}${this._section.value}`
+        if (this._track)
+            res += ` ${this._track.value}`
+        return res
+    }
     // SchoolClass builder
     static builder = class {
         private schoolClass?: SchoolClass
