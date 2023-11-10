@@ -26,7 +26,7 @@
 		editingSubjectID = subjects.indexOf(subject);
 		editingSubject = new Subject(
 			subject.schoolClass,
-			subject.teacher,
+			subject.professor,
 			subject.name,
 			subject.abbreviation,
 			subject.hoursPerWeek,
@@ -54,7 +54,7 @@
 			{#if editingSubjectID !== index}
 				<tr>
 					<td>{subject.schoolClass}</td>
-					<td>{subject.teacher}</td>
+					<td>{subject.professor}</td>
 					<td>{subject.abbreviation}</td>
 					<td>{subject.name}</td>
 					<td>{subject.hoursPerWeek}</td>
@@ -90,7 +90,7 @@
 							label="teacher"
 							name="teacher"
 							id="teacher"
-							bind:value={editingSubject.teacher}
+							bind:value={editingSubject.professor}
 						/>
 					</td>
 					<td>

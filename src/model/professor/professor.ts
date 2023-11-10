@@ -1,18 +1,18 @@
-import  { Name, nameSchema } from '$model/professor/name';
-import  { Surname, surnameSchema } from '$model/professor/surname';
-import  { Cellphone, cellphoneSchema } from '$model/professor/cellphone';
-import  { Mail, mailSchema } from '$model/professor/mail';
+import { Name, nameSchema } from '$model/professor/name';
+import { Surname, surnameSchema } from '$model/professor/surname';
+import { Cellphone, cellphoneSchema } from '$model/professor/cellphone';
+import { Mail, mailSchema } from '$model/professor/mail';
 import { z } from 'zod';
 
-const ProfessorSchema = z.object({
-    name: nameSchema,
-    surname: surnameSchema,
-    email: mailSchema,
-    cellphone: cellphoneSchema,
+export const professorSchema = z.object({
+    _name: nameSchema,
+    _surname: surnameSchema,
+    _email: mailSchema,
+    _cellPhone: cellphoneSchema,
 }).strict();
 
 export class Professor {
-    
+
     //public readonly id: number = 0;
     private _name: Name;
     private _surname: Surname;
@@ -20,14 +20,14 @@ export class Professor {
     private _cellPhone: Cellphone;
 
     constructor(name: Name, surname: Surname, email: Mail, cellPhone: Cellphone) {
-        
-        ProfessorSchema.parse({
-            name: name,
-            surname: surname,
-            email: email,
-            cellphone: cellPhone,
+
+        professorSchema.parse({
+            _name: name,
+            _surname: surname,
+            _email: email,
+            _cellPhone: cellPhone,
         });
-        
+
         this._name = name;
         this._surname = surname;
         this._email = email;

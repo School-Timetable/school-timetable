@@ -6,10 +6,12 @@ import { Name, nameSchema } from './name';
 import { abbreviationSchema, Abbreviation } from './abbreviation';
 import { weightSchema, Weight } from './weight';
 import { hoursPerWeekSchema, HoursPerWeek } from './hours-per-week';
+import { SchoolClass, schoolClassSchema } from '$model/school-class/school-class';
+import { Professor, professorSchema } from '$model/professor/professor';
 
 const SubjectSchema = z.object({
-    _schoolClass: z.any(),
-    _teacher: z.any(),
+    _schoolClass: schoolClassSchema,
+    _professor: professorSchema,
     _name: nameSchema,
     _abbreviation: abbreviationSchema,
     _weight: weightSchema,
@@ -17,28 +19,38 @@ const SubjectSchema = z.object({
 }).strict();
 
 export class Subject {
-    private _schoolClass: any;
-    private _teacher: any;
+    public static Schema = professorSchema;
+
+    private _schoolClass: SchoolClass;
+    private _professor: Professor;
     private _name: Name;
     private _abbreviation: Abbreviation;
     private _weight: Weight;
     private _hoursPerWeek: HoursPerWeek;
 
-    constructor(schoolClass: any, teacher: any, name: Name, abbreviation: Abbreviation,
+    constructor(schoolClass: SchoolClass, professor: Professor, name: Name, abbreviation: Abbreviation,
         weight: Weight, hoursPerWeek: HoursPerWeek) {
+        SubjectSchema.parse({
+            _schoolClass: schoolClass,
+            _professor: professor,
+            _name: name,
+            _abbreviation: abbreviation,
+            _weight: weight,
+            _hoursPerWeek: hoursPerWeek,
+        });
+
         this._schoolClass = schoolClass;
-        this._teacher = teacher;
+        this._professor = professor;
         this._name = name;
         this._abbreviation = abbreviation;
         this._weight = weight;
         this._hoursPerWeek = hoursPerWeek;
-        SubjectSchema.parse(this);
     }
 
-    static of(name: string, abbreviation: string, weight: number, hoursPerWeek: number): Subject {
+    static of(schoolClass: SchoolClass, professor: Professor, name: string, abbreviation: string, weight: number, hoursPerWeek: number): Subject {
         return new Subject(
-            undefined,
-            undefined,
+            schoolClass,
+            professor,
             new Name(name),
             new Abbreviation(abbreviation),
             new Weight(weight),
@@ -47,14 +59,14 @@ export class Subject {
     }
 
     get schoolClass() { return this._schoolClass; }
-    get teacher() { return this._teacher; }
+    get professor() { return this._professor; }
     get name() { return this._name; }
     get abbreviation() { return this._abbreviation; }
     get weight() { return this._weight; }
     get hoursPerWeek() { return this._hoursPerWeek; }
 
     set schoolClass(value) { this._schoolClass = value; }
-    set teacher(value) { this._teacher = value; }
+    set professor(value) { this._professor = value; }
     set name(value) { this._name = value; }
     set abbreviation(value) { this._abbreviation = value; }
     set weight(value) { this._weight = value; }
