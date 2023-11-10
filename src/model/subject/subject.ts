@@ -6,43 +6,70 @@ import { Name, nameSchema } from './name';
 import { abbreviationSchema, Abbreviation } from './abbreviation';
 import { weightSchema, Weight } from './weight';
 import { hoursPerWeekSchema, HoursPerWeek } from './hours-per-week';
+import { SchoolClass, schoolClassSchema } from '$model/school-class/school-class';
+import { Professor, professorSchema } from '$model/professor/professor';
 
 const SubjectSchema = z.object({
-    schoolClass: z.any(),
-    teacher: z.any(),
-    name: nameSchema,
-    abbreviation: abbreviationSchema,
-    weight: weightSchema,
-    hoursPerWeek: hoursPerWeekSchema,
+    _schoolClass: schoolClassSchema,
+    _professor: professorSchema,
+    _name: nameSchema,
+    _abbreviation: abbreviationSchema,
+    _weight: weightSchema,
+    _hoursPerWeek: hoursPerWeekSchema,
 }).strict();
 
 export class Subject {
-    readonly schoolClass: any;
-    readonly teacher: any;
-    readonly name: Name;
-    readonly abbreviation: Abbreviation;
-    readonly weight: Weight;
-    readonly hoursPerWeek: HoursPerWeek;
+    public static Schema = professorSchema;
 
-    constructor(schoolClass: any, teacher: any, name: Name, abbreviation: Abbreviation,
+    private _schoolClass: SchoolClass;
+    private _professor: Professor;
+    private _name: Name;
+    private _abbreviation: Abbreviation;
+    private _weight: Weight;
+    private _hoursPerWeek: HoursPerWeek;
+
+    constructor(schoolClass: SchoolClass, professor: Professor, name: Name, abbreviation: Abbreviation,
         weight: Weight, hoursPerWeek: HoursPerWeek) {
-        this.schoolClass = schoolClass;
-        this.teacher = teacher;
-        this.name = name;
-        this.abbreviation = abbreviation;
-        this.weight = weight;
-        this.hoursPerWeek = hoursPerWeek;
-        SubjectSchema.parse(this);
+        SubjectSchema.parse({
+            _schoolClass: schoolClass,
+            _professor: professor,
+            _name: name,
+            _abbreviation: abbreviation,
+            _weight: weight,
+            _hoursPerWeek: hoursPerWeek,
+        });
+
+        this._schoolClass = schoolClass;
+        this._professor = professor;
+        this._name = name;
+        this._abbreviation = abbreviation;
+        this._weight = weight;
+        this._hoursPerWeek = hoursPerWeek;
     }
 
-    static of(name: string, abbreviation: string, weight: number, hoursPerWeek: number): Subject {
+    static of(schoolClass: SchoolClass, professor: Professor, name: string, abbreviation: string, weight: number, hoursPerWeek: number): Subject {
         return new Subject(
-            undefined,
-            undefined,
+            schoolClass,
+            professor,
             new Name(name),
             new Abbreviation(abbreviation),
             new Weight(weight),
             new HoursPerWeek(hoursPerWeek)
         );
     }
+
+    get schoolClass() { return this._schoolClass; }
+    get professor() { return this._professor; }
+    get name() { return this._name; }
+    get abbreviation() { return this._abbreviation; }
+    get weight() { return this._weight; }
+    get hoursPerWeek() { return this._hoursPerWeek; }
+
+    set schoolClass(value) { this._schoolClass = value; }
+    set professor(value) { this._professor = value; }
+    set name(value) { this._name = value; }
+    set abbreviation(value) { this._abbreviation = value; }
+    set weight(value) { this._weight = value; }
+    set hoursPerWeek(value) { this._hoursPerWeek = value; }
+
 }

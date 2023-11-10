@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import {ClassNumber, classNumberSchema} from "./class-number";
-import {Section, sectionSchema} from "./section";
-import {Track, trackSchema} from "./track";
+import { ClassNumber, classNumberSchema } from "./class-number";
+import { Section, sectionSchema } from "./section";
+import { Track, trackSchema } from "./track";
 
 export const schoolClassSchema = z.object({
     classNumber: classNumberSchema,
@@ -71,7 +71,7 @@ export class SchoolClass {
             this.schoolClass = new SchoolClass(id, classNumber, section)
         }
 
-        withTrack(track: Track){
+        withTrack(track: Track) {
             this.schoolClass!._track = track
             return this
         }
