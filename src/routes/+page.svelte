@@ -5,4 +5,5 @@
 
 <ul>
 	<li><a href="/subjects">subjects</a></li>
+	<li><a href="/data-input-form">forms</a></li>
 </ul>
