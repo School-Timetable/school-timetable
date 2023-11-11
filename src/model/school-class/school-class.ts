@@ -26,10 +26,11 @@ export class SchoolClass {
         this._section = section
     }
 
-    static of(id: number, classNumber: number, section: string, track?: string){
+    static of(id: number, year: number, section: string, track?: string){
+        console.log("this ", year, section, track)
         const instance = new SchoolClass(
             id,
-            new Year(classNumber),
+            new Year(year),
             new Section(section)
         )
         if (track)
@@ -45,9 +46,9 @@ export class SchoolClass {
         return this._year
     }
 
-    set year(classNumber: Year) {
-        yearSchema.parse(classNumber)
-        this._year = classNumber
+    set year(year: Year) {
+        yearSchema.parse(year)
+        this._year = year
     }
 
     get section(): Section {
