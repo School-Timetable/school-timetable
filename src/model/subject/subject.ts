@@ -65,11 +65,29 @@ export class Subject {
     get weight() { return this._weight; }
     get hoursPerWeek() { return this._hoursPerWeek; }
 
-    set schoolClass(value) { this._schoolClass = value; }
-    set professor(value) { this._professor = value; }
-    set name(value) { this._name = value; }
-    set abbreviation(value) { this._abbreviation = value; }
-    set weight(value) { this._weight = value; }
-    set hoursPerWeek(value) { this._hoursPerWeek = value; }
+    set schoolClass(value) {
+        schoolClassSchema.parse(value);
+        this._schoolClass = value;
+    }
+    set professor(value) {
+        professorSchema.parse(value);
+        this._professor = value;
+    }
+    set name(value) {
+        nameSchema.parse(value);
+        this._name = value;
+    }
+    set abbreviation(value) {
+        abbreviationSchema.parse(value);
+        this._abbreviation = value;
+    }
+    set weight(value) {
+        weightSchema.parse(value);
+        this._weight = value;
+    }
+    set hoursPerWeek(value) {
+        hoursPerWeekSchema.parse(value);
+        this._hoursPerWeek = value;
+    }
 
 }

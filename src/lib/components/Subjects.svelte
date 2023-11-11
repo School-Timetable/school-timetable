@@ -59,27 +59,46 @@
 		subjects = subjects;
 	}
 
+	function createNewSubject() {
+		if (editingSubjectIndex !== null) {
+			cancelEditSubject();
+		}
+		editingSubject = {
+			_schoolClass: schoolClass,
+			_professor: professor,
+			_name: { value: "" },
+			_abbreviation: { value: "" },
+			_weight: { value: 1 },
+			_hoursPerWeek: { value: 0 },
+		};
+		subjects = subjects;
+	}
+
 	function saveSubject() {
-		if (editingSubjectIndex !== null && editingSubject) {
-			try {
-				const savedSubject = Subject.of(
-					editingSubject._schoolClass,
-					editingSubject._professor,
-					editingSubject._name.value,
-					editingSubject._abbreviation.value,
-					editingSubject._weight.value,
-					editingSubject._hoursPerWeek.value
-				);
+		if (!editingSubject) return;
+
+		try {
+			const savedSubject = Subject.of(
+				editingSubject._schoolClass,
+				editingSubject._professor,
+				editingSubject._name.value,
+				editingSubject._abbreviation.value,
+				editingSubject._weight.value,
+				editingSubject._hoursPerWeek.value
+			);
+			if (editingSubjectIndex == null) {
+				subjects.push(savedSubject);
+			} else {
 				subjects[editingSubjectIndex] = savedSubject;
-				editingSubjectIndex = null;
-				editingSubject = null;
-				subjects = subjects;
-			} catch (e) {
-				if (e instanceof ZodError) {
-					alert(e.issues.map((issue) => issue.message).join("\n"));
-				}
-				return;
 			}
+			editingSubjectIndex = null;
+			editingSubject = null;
+			subjects = subjects;
+		} catch (e) {
+			if (e instanceof ZodError) {
+				alert(e.issues.map((issue) => issue.message).join("\n"));
+			}
+			return;
 		}
 	}
 
@@ -118,7 +137,7 @@
 		</thead>
 		<tbody>
 			{#each subjects as subject, index}
-				{#if editingSubjectIndex !== index}
+				{#if editingSubjectIndex != index}
 					<tr>
 						<td>{subject.schoolClass}</td>
 						<td>{subject.professor}</td>
@@ -198,7 +217,7 @@
 								name="weight"
 								id="weight"
 								bind:value={editingSubject._weight.value}
-								min="0"
+								min="1"
 								max="10"
 							/>
 						</td>
@@ -227,25 +246,94 @@
 					</tr>
 				{/if}
 			{/each}
+
+			{#if editingSubject && editingSubjectIndex == null}
+				<tr>
+					<td>
+						<Label for="schoolClass">Class</Label>
+						<Input
+							type="select"
+							label="schoolClass"
+							name="schoolClass"
+							id="schoolClass"
+							bind:value={editingSubject._schoolClass}
+						>
+							<option value={schoolClass}>{schoolClass}</option>
+						</Input>
+					</td>
+					<td>
+						<Label for="professor">Professor</Label>
+						<Input
+							type="select"
+							label="professor"
+							name="professor"
+							id="professor"
+							bind:value={editingSubject._professor}
+						>
+							<option value={professor}>{professor}</option>
+						</Input>
+					</td>
+					<td>
+						<Label for="abbreviation">Abbreviation</Label>
+						<Input
+							type="text"
+							label="abbreviation"
+							name="abbreviation"
+							id="abbreviation"
+							bind:value={editingSubject._abbreviation.value}
+						/>
+					</td>
+					<td>
+						<Label for="name">Name</Label>
+						<Input
+							type="text"
+							label="name"
+							name="name"
+							id="name"
+							bind:value={editingSubject._name.value}
+						/>
+					</td>
+					<td>
+						<Label for="weight">Weight</Label>
+						<Input
+							type="number"
+							label="weight"
+							name="weight"
+							id="weight"
+							bind:value={editingSubject._weight.value}
+							min="1"
+							max="10"
+						/>
+					</td>
+					<td>
+						<Label for="hoursPerWeek">Hours per week</Label>
+						<Input
+							type="number"
+							label="hoursPerWeek"
+							name="hoursPerWeek"
+							id="hoursPerWeek"
+							bind:value={editingSubject._hoursPerWeek.value}
+							min="0"
+							max="30"
+						/>
+					</td>
+					<td>
+						<!-- save button -->
+						<Button color="primary" on:click={saveSubject}>
+							Save <Icon name="check" />
+						</Button>
+						<!-- cancel button -->
+						<Button color="danger" on:click={cancelEditSubject}>
+							Cancel <Icon name="x" />
+						</Button>
+					</td>
+				</tr>
+			{/if}
+
 			<tr>
 				<td colspan="7">
 					<ButtonGroup>
-						<Button
-							color="primary"
-							on:click={() => {
-								subjects.push(
-									Subject.of(
-										schoolClass,
-										professor,
-										"NA",
-										"NA",
-										5,
-										1
-									)
-								);
-								subjects = subjects;
-							}}
-						>
+						<Button color="primary" on:click={createNewSubject}>
 							Add <Icon name="plus" />
 						</Button>
 					</ButtonGroup>
