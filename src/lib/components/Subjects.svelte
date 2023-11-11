@@ -26,11 +26,7 @@
 		new Cellphone("3331234567")
 	);
 
-	let schoolClass = new SchoolClass.builder(
-		69,
-		new ClassNumber(5),
-		new Section("A")
-	).build();
+	let schoolClass = SchoolClass.of(69, new ClassNumber(5), new Section("A"));
 
 	let subjects: Subject[] = [
 		Subject.of(schoolClass, professor, "Math", "Math", 7, 13),
