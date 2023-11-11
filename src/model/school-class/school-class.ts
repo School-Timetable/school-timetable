@@ -11,20 +11,33 @@ export const schoolClassSchema = z.object({
 
 // TODO: id check
 export class SchoolClass {
+    private readonly _id: number
+    private _classNumber: ClassNumber
+    private _section: Section
+    private _track?: Track
+
     private constructor(id: number, classNumber: ClassNumber, section: Section) {
         schoolClassSchema.parse({
             classNumber: classNumber,
             section: section
         })
-        this._id = id;
-        this._classNumber = classNumber;
-        this._section = section;
+        this._id = id
+        this._classNumber = classNumber
+        this._section = section
     }
 
-    private readonly _id: number;
-    private _classNumber: ClassNumber;
-    private _section: Section;
-    private _track?: Track;
+    static of(id: number, classNumber: ClassNumber, section: Section){
+        return new SchoolClass(
+            id,
+            classNumber,
+            section
+        )
+    }
+
+    withTrack(track: Track) {
+        this.track = track
+        return this
+    }
 
     get id(): number {
         return this._id;
@@ -39,9 +52,17 @@ export class SchoolClass {
         this._classNumber = classNumber
     }
 
+    get section(): Section {
+        return this._section
+    }
+
     set section(section: Section) {
         sectionSchema.parse(section)
         this._section = section
+    }
+
+    get track(): Track | undefined {
+        return this._track
     }
 
     set track(track: Track) {
@@ -49,37 +70,10 @@ export class SchoolClass {
         this._track = track
     }
 
-    get section(): Section {
-        return this._section
-    }
-
-    get track(): Track | undefined {
-        return this._track
-    }
-
     public toString(): string {
         let res = `${this._classNumber.value}${this._section.value}`
         if (this._track)
             res += ` ${this._track.value}`
         return res
-    }
-    // SchoolClass builder
-    static builder = class {
-        private schoolClass?: SchoolClass
-
-        constructor(id: number, classNumber: ClassNumber, section: Section) {
-            this.schoolClass = new SchoolClass(id, classNumber, section)
-        }
-
-        withTrack(track: Track) {
-            this.schoolClass!._track = track
-            return this
-        }
-
-        build(): SchoolClass {
-            const res = this.schoolClass
-            this.schoolClass = undefined
-            return res!
-        }
     }
 }

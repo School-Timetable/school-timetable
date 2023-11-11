@@ -7,8 +7,8 @@ import { SchoolClass } from "$model/school-class/school-class";
 const classNumber = new ClassNumber(5)
 const section = new Section("A")
 const track = new Track("Informatica")
-const schoolClassWithTrack = new SchoolClass.builder(1, classNumber, section).withTrack(track).build()
-const schoolClassWithoutTrack = new SchoolClass.builder(1, classNumber, section).build()
+const schoolClassWithTrack = SchoolClass.of(1, classNumber, section).withTrack(track)
+const schoolClassWithoutTrack = SchoolClass.of(1, classNumber, section)
 
 test('test_school_class_fixture_test', () => {
     expect(schoolClassWithTrack.classNumber.value).toBe(classNumber.value)

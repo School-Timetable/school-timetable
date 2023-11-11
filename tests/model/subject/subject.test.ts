@@ -22,11 +22,11 @@ function getProfessor(): Professor {
 }
 
 function getSchoolClass(): SchoolClass {
-    return new SchoolClass.builder(
+    return SchoolClass.of(
         69,
         new ClassNumber(5),
         new Section("A")
-    ).build();
+    );
 }
 
 
