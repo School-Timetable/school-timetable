@@ -9,7 +9,7 @@ import { hoursPerWeekSchema, HoursPerWeek } from './hours-per-week';
 import { SchoolClass, schoolClassSchema } from '$model/school-class/school-class';
 import { Professor, professorSchema } from '$model/professor/professor';
 
-const SubjectSchema = z.object({
+const subjectSchema = z.object({
     _schoolClass: schoolClassSchema,
     _professor: professorSchema,
     _name: nameSchema,
@@ -19,7 +19,7 @@ const SubjectSchema = z.object({
 }).strict();
 
 export class Subject {
-    public static Schema = professorSchema;
+    public static schema = subjectSchema;
 
     private _schoolClass: SchoolClass;
     private _professor: Professor;
@@ -30,7 +30,7 @@ export class Subject {
 
     constructor(schoolClass: SchoolClass, professor: Professor, name: Name, abbreviation: Abbreviation,
         weight: Weight, hoursPerWeek: HoursPerWeek) {
-        SubjectSchema.parse({
+        subjectSchema.parse({
             _schoolClass: schoolClass,
             _professor: professor,
             _name: name,
