@@ -4,22 +4,22 @@ import { Section } from "$model/school-class/section";
 import { Track } from "$model/school-class/track";
 import { SchoolClass } from "$model/school-class/school-class";
 
-const classNumber = new ClassNumber(5)
-const section = new Section("A")
-const track = new Track("Informatica")
-const schoolClassWithTrack = SchoolClass.of(1, classNumber, section).withTrack(track)
+const classNumber = 5
+const section = "A"
+const track = "Informatica"
+const schoolClassWithTrack = SchoolClass.of(1, classNumber, section, track)
 const schoolClassWithoutTrack = SchoolClass.of(1, classNumber, section)
 
 test('test_school_class_fixture_test', () => {
-    expect(schoolClassWithTrack.classNumber.value).toBe(classNumber.value)
-    expect(schoolClassWithTrack.section.value).toBe(section.value)
-    expect(schoolClassWithTrack.track?.value).toBe(track.value)
+    expect(schoolClassWithTrack.classNumber.value).toStrictEqual(classNumber)
+    expect(schoolClassWithTrack.section.value).toStrictEqual(section)
+    expect(schoolClassWithTrack.track?.value).toStrictEqual(track.toUpperCase())
 })
 
 test('test_school_class_fixture_test_without_track', () => {
-    expect(schoolClassWithoutTrack.classNumber.value).toBe(classNumber.value)
-    expect(schoolClassWithoutTrack.section.value).toBe(section.value)
-    expect(schoolClassWithoutTrack.track?.value).toBe(undefined)
+    expect(schoolClassWithoutTrack.classNumber.value).toStrictEqual(classNumber)
+    expect(schoolClassWithoutTrack.section.value).toStrictEqual(section)
+    expect(schoolClassWithoutTrack.track?.value).toStrictEqual(undefined)
 })
 
 test('test_school_class_without_track_to_string', () => {

@@ -24,8 +24,8 @@ function getProfessor(): Professor {
 function getSchoolClass(): SchoolClass {
     return SchoolClass.of(
         69,
-        new ClassNumber(5),
-        new Section("A")
+        5,
+        "A"
     );
 }
 

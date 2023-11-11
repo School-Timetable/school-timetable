@@ -26,17 +26,15 @@ export class SchoolClass {
         this._section = section
     }
 
-    static of(id: number, classNumber: ClassNumber, section: Section){
-        return new SchoolClass(
+    static of(id: number, classNumber: number, section: string, track?: string){
+        const instance = new SchoolClass(
             id,
-            classNumber,
-            section
+            new ClassNumber(classNumber),
+            new Section(section)
         )
-    }
-
-    withTrack(track: Track) {
-        this.track = track
-        return this
+        if (track)
+            instance.track = new Track(track)
+        return instance
     }
 
     get id(): number {
