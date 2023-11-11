@@ -4,11 +4,11 @@ export const valueSchema = z.number()
     .min(1, {message : "The class number is too small (min 1)"})
     .max(5, {message : "The class number is too big (max 5)"})
 
-export const classNumberSchema = z.object({
+export const yearSchema = z.object({
     value: valueSchema
 }).strict()
 
-export class ClassNumber {
+export class Year {
     public readonly value: number;
 
     constructor(value : number) {

@@ -1,10 +1,10 @@
 import { z } from 'zod';
-import { ClassNumber, classNumberSchema } from "./class-number";
+import { Year, yearSchema } from "./year";
 import { Section, sectionSchema } from "./section";
 import { Track, trackSchema } from "./track";
 
 export const schoolClassSchema = z.object({
-    classNumber: classNumberSchema,
+    year: yearSchema,
     section: sectionSchema,
     track: trackSchema.optional()
 })
@@ -12,24 +12,24 @@ export const schoolClassSchema = z.object({
 // TODO: id check
 export class SchoolClass {
     private readonly _id: number
-    private _classNumber: ClassNumber
+    private _year: Year
     private _section: Section
     private _track?: Track
 
-    private constructor(id: number, classNumber: ClassNumber, section: Section) {
+    private constructor(id: number, year: Year, section: Section) {
         schoolClassSchema.parse({
-            classNumber: classNumber,
+            year: year,
             section: section
         })
         this._id = id
-        this._classNumber = classNumber
+        this._year = year
         this._section = section
     }
 
     static of(id: number, classNumber: number, section: string, track?: string){
         const instance = new SchoolClass(
             id,
-            new ClassNumber(classNumber),
+            new Year(classNumber),
             new Section(section)
         )
         if (track)
@@ -41,13 +41,13 @@ export class SchoolClass {
         return this._id;
     }
 
-    get classNumber(): ClassNumber {
-        return this._classNumber
+    get year(): Year {
+        return this._year
     }
 
-    set classNumber(classNumber: ClassNumber) {
-        classNumberSchema.parse(classNumber)
-        this._classNumber = classNumber
+    set year(classNumber: Year) {
+        yearSchema.parse(classNumber)
+        this._year = classNumber
     }
 
     get section(): Section {
@@ -69,7 +69,7 @@ export class SchoolClass {
     }
 
     public toString(): string {
-        let res = `${this._classNumber.value}${this._section.value}`
+        let res = `${this._year.value}${this._section.value}`
         if (this._track)
             res += ` ${this._track.value}`
         return res

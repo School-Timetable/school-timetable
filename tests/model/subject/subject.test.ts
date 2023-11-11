@@ -10,8 +10,6 @@ import { Mail } from '$model/professor/mail';
 import { Cellphone } from '$model/professor/cellphone';
 import { Name as ProfessorName } from '$model/professor/name';
 import { SchoolClass } from '$model/school-class/school-class';
-import { Section } from '$model/school-class/section';
-import { ClassNumber } from '$model/school-class/class-number';
 
 function getProfessor(): Professor {
     return new Professor(
