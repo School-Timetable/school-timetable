@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { Cellphone } from "$model/professor/cellphone";
 	import { Mail } from "$model/professor/mail";
-	import { Name as ProfessonName } from "$model/professor/name";
+	import { Name as ProfessorName } from "$model/professor/name";
 	import { Professor } from "$model/professor/professor";
 	import { Surname } from "$model/professor/surname";
-	import { ClassNumber } from "$model/school-class/class-number";
 	import { SchoolClass } from "$model/school-class/school-class";
 	import { Section } from "$model/school-class/section";
 	import { ZodError, z } from "zod";
@@ -20,7 +19,7 @@
 	} from "sveltestrap";
 
 	let professor = new Professor(
-		new ProfessonName("Mario"),
+		new ProfessorName("Mario"),
 		new Surname("Rossi"),
 		new Mail("mario.rossi@gmail.com"),
 		new Cellphone("3331234567")
