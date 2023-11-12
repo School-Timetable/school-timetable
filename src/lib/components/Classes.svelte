@@ -1,26 +1,9 @@
 <script lang="ts">
-	import { Cellphone } from "$model/professor/cellphone";
-	import { Mail } from "$model/professor/mail";
-	import { Name as ProfessonName } from "$model/professor/name";
-	import { Professor } from "$model/professor/professor";
-	import { Surname } from "$model/professor/surname";
-	import { SchoolClass } from "$model/school-class/school-class";
-	import { Section } from "$model/school-class/section";
-	import { ZodError, z } from "zod";
-	import { Subject } from "$model/subject/subject";
-	import {
-		Button,
-		ButtonGroup,
-		Form,
-		Icon,
-		Input,
-		Label,
-		Table,
-	} from "sveltestrap";
-    import { Year } from "$model/school-class/year";
-    import { Track } from "$model/school-class/track";
+    import {SchoolClass} from "$model/school-class/school-class";
+    import {Button, ButtonGroup, Form, Icon, Input, Label,} from "sveltestrap";
+    import {Track} from "$model/school-class/track";
 
-	let schoolClassTemplate = SchoolClass.of(100, 1, "A");
+    let schoolClassTemplate = SchoolClass.of(100, 1, "A");
     let schoolClass = SchoolClass.of(4, 2, "D");
 	let schoolClass2 = SchoolClass.of(3, 4, "C", "Scientifico");
 
@@ -64,8 +47,17 @@
 	}
 
 	function createNewSchoolClass() {
-        console.log("add button clicked")
-
+        if (tmpSchoolClassIndex !== null)
+            cancelEditSchoolClass()
+        const newId = getNextId(schoolClassesMap)
+        console.log("New id: ", newId)
+        tmpSchoolClass = {
+            _id: newId,
+            _year: {value: schoolClassTemplate.year.value},
+            _section: {value: schoolClassTemplate.section.value},
+            _track: {value: ""}
+        }
+        schoolClassesMap = schoolClassesMap
 	}
 
     function cancelEditSchoolClass() {
@@ -76,40 +68,80 @@
 	}
 
     function removeSchoolClass(schoolClass: SchoolClass) {
-		console.log("remove button clicked")
+        const toRemoveIndex = schoolClassesMap.get(schoolClass.year.value)!.indexOf(schoolClass)
+        schoolClassesMap.get(schoolClass.year.value)!.splice(toRemoveIndex, 1)
+        schoolClassesMap = schoolClassesMap
 	}
 
+    // TODO: This is just a temporary function whose content must be replaced with the actual ID assignment...
+    function getNextId(schoolClassesMap: Map<number, SchoolClass[]>): number {
+        let lastId = 0
+        for (const [year, schoolClassesList] of schoolClassesMap){
+            schoolClassesList.forEach(schoolClass => {
+                if(schoolClass.id > lastId)
+                    lastId = schoolClass.id
+            })
+        }
+        return lastId + 1
+    }
 
     function saveExistingSchoolClass() {
         // check if there's already a school class with the same year, section and track
-        if(schoolClassesMap.get(tmpSchoolClass!._year.value)?.find(
-            schoolClass => schoolClass.section.value == tmpSchoolClass!._section.value &&
-            schoolClass.track?.value == tmpSchoolClass!._track.value))
+        if(classAlreadyExists(tmpSchoolClass, schoolClassesMap)) {
             alert("School class already exists")
-        else {
-            let track = tmpSchoolClass!._track.value == "" ? undefined : new Track(tmpSchoolClass!._track.value)
-            let newSchoolClass = SchoolClass.of(
-                tmpSchoolClass!._id!,
-                tmpSchoolClass!._year.value,
-                tmpSchoolClass!._section.value,
-                track?.value
-            )
-            schoolClassesMap.get(tmpSchoolClass!._year.value)?.push(newSchoolClass)
-            // delete the old school class
-            schoolClassesMap.get(tmpSchoolClassYear!)!.splice(tmpSchoolClassIndex!, 1)  
+            return
         }
+
+        let track = tmpSchoolClass!._track.value == "" ? undefined : new Track(tmpSchoolClass!._track.value)
+        let newSchoolClass = SchoolClass.of(
+            tmpSchoolClass!._id!,
+            tmpSchoolClass!._year.value,
+            tmpSchoolClass!._section.value,
+            track?.value
+        )
+        schoolClassesMap.get(tmpSchoolClass!._year.value)?.push(newSchoolClass)
+        // delete the old school class
+        schoolClassesMap.get(tmpSchoolClassYear!)!.splice(tmpSchoolClassIndex!, 1)
+
         
         schoolClassesMap = schoolClassesMap
         cancelEditSchoolClass()
     }
 
-    function saveNewSchoolClass() {
+    function saveNewSchoolClass(tmpSchoolClass: SchoolClassFormData | null, schoolClassesMap: Map<number, SchoolClass[]>) {
+        if(classAlreadyExists(tmpSchoolClass, schoolClassesMap)){
+            alert("School class already exists")
+            return
+        }
+        const track = tmpSchoolClass!._track.value == "" ? undefined : new Track(tmpSchoolClass!._track.value)
+        const newSchoolClass = SchoolClass.of(
+            tmpSchoolClass!._id!,
+            tmpSchoolClass!._year.value,
+            tmpSchoolClass!._section.value,
+            track?.value
+        )
+
+        schoolClassesMap.get(newSchoolClass.year.value)!.push(newSchoolClass)
+        schoolClassesMap = schoolClassesMap
+        cancelEditSchoolClass()
     }
 
     function saveSchoolClass() {
         if(tmpSchoolClassIndex != null && tmpSchoolClassYear != null)
             saveExistingSchoolClass()
-        else saveNewSchoolClass()
+        else
+            saveNewSchoolClass(tmpSchoolClass, schoolClassesMap)
+    }
+
+    function classAlreadyExists(tmpSchoolClass: SchoolClassFormData | null, schoolClassesMap: Map<number, SchoolClass[]>): boolean{
+        let exists = false
+        const schoolClassesList = schoolClassesMap.get(tmpSchoolClass!._year.value)
+        schoolClassesList?.forEach(schoolClass => {
+            if (schoolClass.section.value == tmpSchoolClass!._section.value && schoolClass.track?.value == (tmpSchoolClass!._track.value.toUpperCase() || undefined))
+                exists = true
+        })
+
+        return exists
     }
 
 </script>
