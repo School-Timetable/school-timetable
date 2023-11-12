@@ -18,7 +18,7 @@
 		Table,
 	} from "sveltestrap";
     import { Year } from "$model/school-class/year";
-    import type { Track } from "$model/school-class/track";
+    import { Track } from "$model/school-class/track";
 
 	let schoolClassTemplate = SchoolClass.of(100, 1, "A");
     let schoolClass = SchoolClass.of(4, 2, "D");
@@ -41,6 +41,7 @@
     // TODO: set schoolClasses from db
 
 	let tmpSchoolClassIndex: number | null = null;
+    let tmpSchoolClassYear: number | null = null; // year of school class to edit (before editing it) -> used to find it in the map
 	let tmpSchoolClass: SchoolClassFormData | null = null;
 
 	type SchoolClassFormData = {
@@ -51,7 +52,15 @@
 	};
 
 	function editSchoolClass(schoolClass: SchoolClass) {
-        console.log("edit button clicked")
+        tmpSchoolClassIndex = schoolClassesMap.get(schoolClass.year.value)!.indexOf(schoolClass);
+        tmpSchoolClassYear = schoolClass.year.value;
+        tmpSchoolClass = {
+            _id: schoolClass.id,
+            _year: { value: schoolClass.year.value },
+            _section: { value: schoolClass.section.value },
+            _track: { value: schoolClass.track?.value || "" }
+        };
+        schoolClassesMap = schoolClassesMap;
 	}
 
 	function createNewSchoolClass() {
@@ -60,8 +69,10 @@
 	}
 
     function cancelEditSchoolClass() {
-        console.log("cancel button clicked")
-
+        tmpSchoolClass = null;
+        tmpSchoolClassYear = null
+		tmpSchoolClassIndex = null
+		schoolClassesMap = schoolClassesMap
 	}
 
     function removeSchoolClass(schoolClass: SchoolClass) {
@@ -70,14 +81,33 @@
 
 
     function saveExistingSchoolClass() {
-
+        // check if there's already a school class with the same year, section and track
+        if(schoolClassesMap.get(tmpSchoolClass!._year.value)?.find(
+            schoolClass => schoolClass.section.value == tmpSchoolClass!._section.value &&
+            schoolClass.track?.value == tmpSchoolClass!._track.value))
+            alert("School class already exists")
+        else {
+            let track = tmpSchoolClass!._track.value == "" ? undefined : new Track(tmpSchoolClass!._track.value)
+            let newSchoolClass = SchoolClass.of(
+                tmpSchoolClass!._id!,
+                tmpSchoolClass!._year.value,
+                tmpSchoolClass!._section.value,
+                track?.value
+            )
+            schoolClassesMap.get(tmpSchoolClass!._year.value)?.push(newSchoolClass)
+            // delete the old school class
+            schoolClassesMap.get(tmpSchoolClassYear!)!.splice(tmpSchoolClassIndex!, 1)  
+        }
+        
+        schoolClassesMap = schoolClassesMap
+        cancelEditSchoolClass()
     }
 
     function saveNewSchoolClass() {
     }
 
     function saveSchoolClass() {
-        if(tmpSchoolClassIndex)
+        if(tmpSchoolClassIndex != null && tmpSchoolClassYear != null)
             saveExistingSchoolClass()
         else saveNewSchoolClass()
     }
@@ -98,7 +128,7 @@
 		<tbody>
             {#each [...schoolClassesMap] as [year, classesList]}
                 {#each classesList as schoolClass, index}
-                    {#if tmpSchoolClassIndex != index}
+                    {#if tmpSchoolClassYear != year && tmpSchoolClassIndex != index}
                         <tr>
                             <td>{schoolClass.year}</td>
                             <td>{schoolClass.section}</td>
@@ -107,8 +137,7 @@
                             <td>
                                 <Button
                                     color="primary"
-                                    on:click={() => editSchoolClass(schoolClass)}
-                                >
+                                    on:click={() => editSchoolClass(schoolClass)}>
                                     Edit <Icon name="pencil-square" />
                                 </Button>
                                 <!-- TODO: add confirmation dialog -->
@@ -126,12 +155,10 @@
                                 <Input
                                     type="number"
                                     label="year"
-                                    name="year"
                                     id="year"
                                     bind:value={tmpSchoolClass._year.value}
                                     min="1"
                                     max="5"
-                                    on:keydown = {(event) => {event?.preventDefault()}}
                                 />
                             </td>
                             <td>
@@ -147,7 +174,6 @@
                                 <Input
                                     type="text"
                                     label="track"
-                                    name="track"
                                     id="track"
                                     bind:value={tmpSchoolClass._track.value}
                                 />
@@ -167,7 +193,7 @@
                 {/each}
 			{/each}
 
-			{#if tmpSchoolClass && tmpSchoolClassIndex == null}
+			{#if tmpSchoolClass && tmpSchoolClassIndex == null && tmpSchoolClassYear == null}
 				<tr>
 					<td>
                         <Label for="year">Year</Label>
