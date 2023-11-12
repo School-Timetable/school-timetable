@@ -11,6 +11,7 @@ export const schoolClassSchema = z.object({
 
 // TODO: id check
 export class SchoolClass {
+
     private readonly _id: number
     private _year: Year
     private _section: Section
@@ -27,7 +28,6 @@ export class SchoolClass {
     }
 
     static of(id: number, year: number, section: string, track?: string){
-        console.log("this ", year, section, track)
         const instance = new SchoolClass(
             id,
             new Year(year),

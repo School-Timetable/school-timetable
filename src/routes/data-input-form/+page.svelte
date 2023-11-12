@@ -6,6 +6,7 @@
     import { slide } from 'svelte/transition';
     import { onMount } from 'svelte';
     import { linear } from 'svelte/easing';
+    import Classes from '$lib/components/Classes.svelte';
 
     onMount(async () => {
         document.getElementsByTagName("body")[0].setAttribute("data-load", "complete");
@@ -32,7 +33,7 @@
     </div>
 {:else if activeTab === 'Class'}
     <div in:slide|global={{...options, axis: "y",delay: 100}} out:slide|global={{...options, axis:"y"}}>
-        Class
+        <Classes />
     </div>
 {:else if activeTab === 'Subject'}
     <div in:slide|global={{...options, axis: "y",delay: 100}} out:slide|global={{...options, axis:"y"}}>
