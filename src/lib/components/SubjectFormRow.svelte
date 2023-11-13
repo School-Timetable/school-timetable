@@ -5,12 +5,14 @@
 	import type { SchoolClass } from "$model/school-class/school-class";
 	import { Subject } from "$model/subject/subject";
 	import type { Professor } from "$model/professor/professor";
-	import Professors from "./Professors.svelte";
 
-	const eventDispatcher = createEventDispatcher();
+	const dispatch = createEventDispatcher<{
+		save: { subject: Subject };
+		cancel: void;
+	}>();
 
 	export let subject: Subject | null = null;
-	export let professors: Professors[] = [];
+	export let professors: Professor[] = [];
 	export let schoolClasses: SchoolClass[] = [];
 
 	type SubjectFormData = {
@@ -42,7 +44,7 @@
 				editingSubject._hoursPerWeek.value
 			);
 
-			eventDispatcher("save", { subject: savedSubject });
+			dispatch("save", { subject: savedSubject });
 		} catch (e) {
 			if (e instanceof ZodError)
 				alert(e.issues.map((issue) => issue.message).join("\n"));
@@ -50,7 +52,7 @@
 	}
 
 	function cancel(): void {
-		eventDispatcher("cancel");
+		dispatch("cancel");
 	}
 </script>
 
@@ -104,6 +106,7 @@
 		label="name"
 		name="name"
 		id="name"
+		placeholder="Name"
 		bind:value={editingSubject._name.value}
 	/>
 </td>
@@ -135,7 +138,7 @@
 </td>
 <td>
 	<!-- save button -->
-	<Button color="primary" on:click={saveSubject}>
+	<Button color="primary" on:click={save}>
 		Save <Icon name="check" />
 	</Button>
 	<!-- cancel button -->

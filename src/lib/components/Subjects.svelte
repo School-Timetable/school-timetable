@@ -17,105 +17,105 @@
 		Label,
 		Table,
 	} from "sveltestrap";
+	import SubjectFormRow from "./SubjectFormRow.svelte";
 
-	let professor = new Professor(
-		new ProfessorName("Mario"),
-		new Surname("Rossi"),
-		new Mail("mario.rossi@gmail.com"),
-		new Cellphone("3331234567")
-	);
+	let professors: Professor[] = [
+		Professor.of(
+			"Mario",
+			"Alviano",
+			"mario.alviano@unical.it",
+			"+391234567890"
+		),
+		Professor.of(
+			"Francesco",
+			"Calimeri",
+			"francesco.calimeri@unical.it",
+			"+393335557890"
+		),
+		Professor.of(
+			"Giovambattista",
+			"Ianni",
+			"giovambattista.ianni@unica.it",
+			"+398889990101"
+		),
+		Professor.of(
+			"Simona",
+			"Perri",
+			"simona.perri@unical.it",
+			"+391002003004"
+		),
+	];
 
-	let schoolClass = SchoolClass.of(69, 5, "A");
+	let schoolClasses: SchoolClass[] = [
+		SchoolClass.of(1, "A"),
+		SchoolClass.of(2, "A"),
+		SchoolClass.of(3, "A"),
+		SchoolClass.of(4, "A"),
+		SchoolClass.of(5, "A"),
+		SchoolClass.of(1, "B"),
+		SchoolClass.of(2, "B"),
+		SchoolClass.of(3, "B"),
+		SchoolClass.of(4, "B"),
+		SchoolClass.of(5, "B"),
+	];
 
 	let subjects: Subject[] = [
-		Subject.of(schoolClass, professor, "Math", "Math", 7, 13),
-		Subject.of(schoolClass, professor, "English", "Eng", 5, 9),
-		Subject.of(schoolClass, professor, "Science", "Sci", 5, 8),
+		Subject.of(schoolClasses[1], professors[1], "Math", "Math", 7, 13),
+		Subject.of(schoolClasses[0], professors[2], "English", "Eng", 5, 9),
+		Subject.of(schoolClasses[3], professors[0], "Science", "Sci", 5, 8),
+		Subject.of(
+			schoolClasses[3],
+			professors[0],
+			"Artificial Intelligence",
+			"AI",
+			7,
+			8
+		),
 	];
 
 	let editingSubjectIndex: number | null = null;
-	let editingSubject: SubjectFormData | null = null;
-
-	type SubjectFormData = {
-		_schoolClass: SchoolClass;
-		_professor: Professor;
-		_name: { value: string };
-		_abbreviation: { value: string };
-		_weight: { value: number };
-		_hoursPerWeek: { value: number };
-	};
 
 	function editSubject(subject: Subject) {
 		editingSubjectIndex = subjects.indexOf(subject);
-		editingSubject = {
-			_schoolClass: subject.schoolClass,
-			_professor: subject.professor,
-			_name: { value: subject.name.value },
-			_abbreviation: { value: subject.abbreviation.value },
-			_weight: { value: subject.weight.value },
-			_hoursPerWeek: { value: subject.hoursPerWeek.value },
-		};
-		subjects = subjects;
 	}
 
 	function createNewSubject() {
 		if (editingSubjectIndex !== null) {
 			cancelEditSubject();
 		}
-		editingSubject = {
-			_schoolClass: schoolClass,
-			_professor: professor,
-			_name: { value: "" },
-			_abbreviation: { value: "" },
-			_weight: { value: 1 },
-			_hoursPerWeek: { value: 0 },
-		};
-		subjects = subjects;
+		editingSubjectIndex = subjects.length;
 	}
 
-	function saveSubject() {
-		if (!editingSubject) return;
-
-		try {
-			const savedSubject = Subject.of(
-				editingSubject._schoolClass,
-				editingSubject._professor,
-				editingSubject._name.value,
-				editingSubject._abbreviation.value,
-				editingSubject._weight.value,
-				editingSubject._hoursPerWeek.value
-			);
-			if (editingSubjectIndex == null) {
-				subjects.push(savedSubject);
-			} else {
-				subjects[editingSubjectIndex] = savedSubject;
-			}
-			editingSubjectIndex = null;
-			editingSubject = null;
-			subjects = subjects;
-		} catch (e) {
-			if (e instanceof ZodError) {
-				alert(e.issues.map((issue) => issue.message).join("\n"));
-			}
-			return;
+	function saveSubject(subject: Subject, index?: number) {
+		if (index != undefined && isIndexValid(index)) {
+			subjects[index] = subject;
+		} else {
+			subjects.push(subject);
 		}
+		editingSubjectIndex = null;
+		subjects = subjects;
 	}
 
 	function cancelEditSubject() {
 		editingSubjectIndex = null;
-		editingSubject = null;
 		subjects = subjects;
 	}
 
-	function removeSubject(subject: Subject) {
-		const index = subjects.indexOf(subject);
+	function removeSubject(index: number) {
 		if (editingSubjectIndex != null) {
 			cancelEditSubject();
 		}
-		if (index !== -1) {
+
+		if (isIndexValid(index)) {
 			subjects.splice(index, 1);
 			subjects = subjects;
+		} else {
+			console.error("Index out of bounds");
 		}
+	}
+
+	function isIndexValid(index: number): boolean {
+		return 0 <= index && index < subjects.length;
 	}
 </script>
 
@@ -154,98 +154,31 @@
 							<!-- TODO: add confirmation dialog -->
 							<Button
 								color="danger"
-								on:click={() => removeSubject(subject)}
+								on:click={() => removeSubject(index)}
 							>
 								Delete <Icon name="trash-fill" />
 							</Button>
 						</td>
 					</tr>
-				{:else if editingSubject}
+				{:else}
+					<SubjectFormRow
+						{subject}
+						{professors}
+						{schoolClasses}
+						on:save={(e) => saveSubject(e.detail.subject, index)}
+						on:cancel={cancelEditSubject}
+					/>
 					<tr />
 				{/if}
 			{/each}
 
-			{#if editingSubject && editingSubjectIndex == null}
-				<tr>
-					<td>
-						<Label for="schoolClass">Class</Label>
-						<Input
-							type="select"
-							label="schoolClass"
-							name="schoolClass"
-							id="schoolClass"
-							bind:value={editingSubject._schoolClass}
-						>
-							<option value={schoolClass}>{schoolClass}</option>
-						</Input>
-					</td>
-					<td>
-						<Label for="professor">Professor</Label>
-						<Input
-							type="select"
-							label="professor"
-							name="professor"
-							id="professor"
-							bind:value={editingSubject._professor}
-						>
-							<option value={professor}>{professor}</option>
-						</Input>
-					</td>
-					<td>
-						<Label for="abbreviation">Abbreviation</Label>
-						<Input
-							type="text"
-							label="abbreviation"
-							name="abbreviation"
-							id="abbreviation"
-							bind:value={editingSubject._abbreviation.value}
-						/>
-					</td>
-					<td>
-						<Label for="name">Name</Label>
-						<Input
-							type="text"
-							label="name"
-							name="name"
-							id="name"
-							bind:value={editingSubject._name.value}
-						/>
-					</td>
-					<td>
-						<Label for="weight">Weight</Label>
-						<Input
-							type="number"
-							label="weight"
-							name="weight"
-							id="weight"
-							bind:value={editingSubject._weight.value}
-							min="1"
-							max="10"
-						/>
-					</td>
-					<td>
-						<Label for="hoursPerWeek">Hours per week</Label>
-						<Input
-							type="number"
-							label="hoursPerWeek"
-							name="hoursPerWeek"
-							id="hoursPerWeek"
-							bind:value={editingSubject._hoursPerWeek.value}
-							min="0"
-							max="30"
-						/>
-					</td>
-					<td>
-						<!-- save button -->
-						<Button color="primary" on:click={saveSubject}>
-							Save <Icon name="check" />
-						</Button>
-						<!-- cancel button -->
-						<Button color="danger" on:click={cancelEditSubject}>
-							Cancel <Icon name="x" />
-						</Button>
-					</td>
-				</tr>
+			{#if editingSubjectIndex == subjects.length}
+				<SubjectFormRow
+					{professors}
+					{schoolClasses}
+					on:save={(e) => saveSubject(e.detail.subject)}
+					on:cancel={cancelEditSubject}
+				/>
 			{/if}
 
 			<tr>
