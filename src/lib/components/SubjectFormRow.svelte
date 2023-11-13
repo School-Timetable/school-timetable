@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Icon, Input, Label } from "sveltestrap";
+	import { Button, ButtonGroup, Col, Icon, Input, Label } from "sveltestrap";
 	import { createEventDispatcher } from "svelte";
 	import { ZodError } from "zod";
 	import type { SchoolClass } from "$model/school-class/school-class";
@@ -56,7 +56,7 @@
 	}
 </script>
 
-<td>
+<Col>
 	<Label for="schoolClass">Class</Label>
 	<Input
 		type="select"
@@ -71,8 +71,8 @@
 			<option value={null}>no professors</option>
 		{/each}
 	</Input>
-</td>
-<td>
+</Col>
+<Col>
 	<Label for="professor">Professor</Label>
 	<Input
 		type="select"
@@ -84,11 +84,11 @@
 		{#each professors as professor}
 			<option value={professor}>{professor}</option>
 		{:else}
-			<option value={null}>no professors</option>
+			<option>no professors</option>
 		{/each}
 	</Input>
-</td>
-<td>
+</Col>
+<Col>
 	<Label for="abbreviation">Abbreviation</Label>
 	<Input
 		type="text"
@@ -98,8 +98,8 @@
 		placeholder="Abbreviation"
 		bind:value={editingSubject._abbreviation.value}
 	/>
-</td>
-<td>
+</Col>
+<Col>
 	<Label for="name">Name</Label>
 	<Input
 		type="text"
@@ -109,8 +109,8 @@
 		placeholder="Name"
 		bind:value={editingSubject._name.value}
 	/>
-</td>
-<td>
+</Col>
+<Col>
 	<Label for="weight">Weight</Label>
 	<Input
 		type="number"
@@ -122,8 +122,8 @@
 		min="1"
 		max="10"
 	/>
-</td>
-<td>
+</Col>
+<Col>
 	<Label for="hoursPerWeek">Hours per week</Label>
 	<Input
 		type="number"
@@ -135,14 +135,14 @@
 		min="0"
 		max="30"
 	/>
-</td>
-<td>
-	<!-- save button -->
-	<Button color="primary" on:click={save}>
-		Save <Icon name="check" />
-	</Button>
-	<!-- cancel button -->
-	<Button color="danger" on:click={cancel}>
-		Cancel <Icon name="x" />
-	</Button>
-</td>
+</Col>
+<Col>
+	<ButtonGroup>
+		<Button color="primary" on:click={save}>
+			Save <Icon name="check" />
+		</Button>
+		<Button color="danger" on:click={cancel}>
+			Cancel <Icon name="x" />
+		</Button>
+	</ButtonGroup>
+</Col>

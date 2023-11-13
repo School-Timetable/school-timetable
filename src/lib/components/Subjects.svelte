@@ -1,22 +1,8 @@
 <script lang="ts">
-	import { Cellphone } from "$model/professor/cellphone";
-	import { Mail } from "$model/professor/mail";
-	import { Name as ProfessorName } from "$model/professor/name";
 	import { Professor } from "$model/professor/professor";
-	import { Surname } from "$model/professor/surname";
 	import { SchoolClass } from "$model/school-class/school-class";
-	import { Section } from "$model/school-class/section";
-	import { ZodError, z } from "zod";
 	import { Subject } from "$model/subject/subject";
-	import {
-		Button,
-		ButtonGroup,
-		Form,
-		Icon,
-		Input,
-		Label,
-		Table,
-	} from "sveltestrap";
+	import { Button, ButtonGroup, Col, Form, Icon, Row } from "sveltestrap";
 	import SubjectFormRow from "./SubjectFormRow.svelte";
 
 	let professors: Professor[] = [
@@ -121,75 +107,73 @@
 
 <h1>Subjects</h1>
 
-<Form>
-	<table class="text-center">
-		<thead>
-			<tr>
-				<th>Class</th>
-				<th>Professor</th>
-				<th>Abbreviation</th>
-				<th>Name</th>
-				<th>Weight</th>
-				<th>Hours per week</th>
-				<th>Actions</th>
-			</tr>
-		</thead>
-		<tbody>
-			{#each subjects as subject, index}
-				{#if editingSubjectIndex != index}
-					<tr>
-						<td>{subject.schoolClass}</td>
-						<td>{subject.professor}</td>
-						<td>{subject.abbreviation}</td>
-						<td>{subject.name}</td>
-						<td>{subject.weight}/10</td>
-						<td>{subject.hoursPerWeek}</td>
-						<td>
-							<Button
-								color="primary"
-								on:click={() => editSubject(subject)}
-							>
-								Edit <Icon name="pencil-square" />
-							</Button>
-							<!-- TODO: add confirmation dialog -->
-							<Button
-								color="danger"
-								on:click={() => removeSubject(index)}
-							>
-								Delete <Icon name="trash-fill" />
-							</Button>
-						</td>
-					</tr>
-				{:else}
-					<SubjectFormRow
-						{subject}
-						{professors}
-						{schoolClasses}
-						on:save={(e) => saveSubject(e.detail.subject, index)}
-						on:cancel={cancelEditSubject}
-					/>
-					<tr />
-				{/if}
-			{/each}
+<Form class="text-center">
+	<Row class="fw-bold py-3">
+		<Col>Class</Col>
+		<Col>Professor</Col>
+		<Col>Abbreviation</Col>
+		<Col>Name</Col>
+		<Col>Weight</Col>
+		<Col>Hours per week</Col>
+		<Col>Actions</Col>
+	</Row>
 
-			{#if editingSubjectIndex == subjects.length}
-				<SubjectFormRow
-					{professors}
-					{schoolClasses}
-					on:save={(e) => saveSubject(e.detail.subject)}
-					on:cancel={cancelEditSubject}
-				/>
-			{/if}
-
-			<tr>
-				<td colspan="7">
+	{#each subjects as subject, index}
+		{#if editingSubjectIndex != index}
+			<Row class="mb-3">
+				<Col>{subject.schoolClass}</Col>
+				<Col>{subject.professor}</Col>
+				<Col>{subject.abbreviation}</Col>
+				<Col>{subject.name}</Col>
+				<Col>{subject.weight}/10</Col>
+				<Col>{subject.hoursPerWeek}</Col>
+				<Col>
 					<ButtonGroup>
-						<Button color="primary" on:click={createNewSubject}>
-							Add <Icon name="plus" />
+						<Button
+							color="primary"
+							on:click={() => editSubject(subject)}
+						>
+							Edit <Icon name="pencil-square" />
+						</Button>
+						<!-- TODO: add confirmation dialog -->
+						<Button
+							color="danger"
+							on:click={() => removeSubject(index)}
+						>
+							Delete <Icon name="trash-fill" />
 						</Button>
 					</ButtonGroup>
-				</td>
-			</tr>
-		</tbody>
-	</table>
+				</Col>
+			</Row>
+		{:else}
+			<Row>
+				<SubjectFormRow
+					{subject}
+					on:save={(e) => saveSubject(e.detail.subject, index)}
+					on:cancel={cancelEditSubject}
+				/>
+			</Row>
+		{/if}
+	{/each}
+
+	{#if editingSubjectIndex == subjects.length}
+		<Row>
+			<SubjectFormRow
+				{professors}
+				{schoolClasses}
+				on:save={(e) => saveSubject(e.detail.subject)}
+				on:cancel={cancelEditSubject}
+			/>
+		</Row>
+	{/if}
+
+	<Row>
+		<Col>
+			<ButtonGroup>
+				<Button color="primary" on:click={createNewSubject}>
+					Add <Icon name="plus" />
+				</Button>
+			</ButtonGroup>
+		</Col>
+	</Row>
 </Form>
