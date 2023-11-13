@@ -2,6 +2,7 @@
     import {SchoolClass} from "$model/school-class/school-class";
     import {Button, ButtonGroup, Form, Icon, Input, Label,} from "sveltestrap";
     import {Track} from "$model/school-class/track";
+    import {ZodError} from "zod";
 
     let schoolClassTemplate = SchoolClass.of(1, "A");
     let schoolClass = SchoolClass.of(2, "D");
@@ -37,8 +38,6 @@
 	function createNewSchoolClass() {
         if (tmpSchoolClassIndex !== null)
             cancelEditSchoolClass()
-        const newId = getNextId(schoolClasses)
-        console.log("New id: ", newId)
         tmpSchoolClass = {
             _year: {value: schoolClassTemplate.year.value},
             _section: {value: schoolClassTemplate.section.value},
@@ -59,50 +58,35 @@
         schoolClasses = schoolClasses
 	}
 
-    function saveExistingSchoolClass() {
-        // check if there's already a school class with the same year, section and track
+    function saveSchoolClass() {
         if(classAlreadyExists(tmpSchoolClass, schoolClasses)) {
             alert("School class already exists")
             return
         }
 
         let track = tmpSchoolClass!._track.value == "" ? undefined : new Track(tmpSchoolClass!._track.value)
-        let newSchoolClass = SchoolClass.of(
-            tmpSchoolClass!._year.value,
-            tmpSchoolClass!._section.value,
-            track?.value
-        )
-        schoolClasses.push(newSchoolClass)
-        // delete the old school class
-        schoolClasses.splice(tmpSchoolClassIndex!, 1)
+        try {
+            let newSchoolClass = SchoolClass.of(
+                tmpSchoolClass!._year.value,
+                tmpSchoolClass!._section.value,
+                track?.value
+            )
 
-        
-        schoolClasses = schoolClasses
-        cancelEditSchoolClass()
-    }
+            schoolClasses.push(newSchoolClass)
 
-    function saveNewSchoolClass(tmpSchoolClass: SchoolClassFormData | null, schoolClasses: SchoolClass[]) {
-        if(classAlreadyExists(tmpSchoolClass, schoolClasses)){
-            alert("School class already exists")
-            return
+
+            // if it is an edit
+            if(tmpSchoolClassIndex != null)
+                // delete the old school class
+                schoolClasses.splice(tmpSchoolClassIndex!, 1)
+
+            schoolClasses = schoolClasses
+            cancelEditSchoolClass()
         }
-        const track = tmpSchoolClass!._track.value == "" ? undefined : new Track(tmpSchoolClass!._track.value)
-        const newSchoolClass = SchoolClass.of(
-            tmpSchoolClass!._year.value,
-            tmpSchoolClass!._section.value,
-            track?.value
-        )
-
-        schoolClasses.push(newSchoolClass)
-        schoolClasses = schoolClasses
-        cancelEditSchoolClass()
-    }
-
-    function saveSchoolClass() {
-        if(tmpSchoolClassIndex != null)
-            saveExistingSchoolClass()
-        else
-            saveNewSchoolClass(tmpSchoolClass, schoolClasses)
+        catch (e) {
+            if(e instanceof ZodError)
+                alert(e.issues.map((issue) => issue.message).join("\n"))
+        }
     }
 
     function classAlreadyExists(tmpSchoolClass: SchoolClassFormData | null, schoolClasses: SchoolClass[]): boolean{
