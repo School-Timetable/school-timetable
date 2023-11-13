@@ -2,10 +2,8 @@
 name: G1-pipeline
 
 on:
-  push:
-    branches: [ "g1-main" ]
   pull_request:
-    branches: [ "g1-main" ]
+    branches: [ "main" ]
 
 jobs:
     build:
