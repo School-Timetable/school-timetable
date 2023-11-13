@@ -5,7 +5,7 @@ const valueSchema = z.string()
     .max(15,    "The cellphone is too long (max 15 characters)")
     .regex(/^\+?[0-9]+$/,  "The cellphone is not valid");
 
-export const cellphoneSchema = z.object({
+export const cellPhoneSchema = z.object({
     value: valueSchema,
 }).strict();
 

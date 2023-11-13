@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { Button, Form, Icon, Input, Label } from "sveltestrap";
+    import { Button, Col, Container, Form, Icon, Input, Label, Row } from "sveltestrap";
     import { Professor } from '$model/professor/professor'
-    import { slide } from "svelte/transition";
+    import { fade, slide } from "svelte/transition";
     import ProfessorFormRow from "./ProfessorFormRow.svelte";
     import { linear } from "svelte/easing";
 
@@ -16,7 +16,7 @@
         cellPhone: { value: string };
     };
 
-    let options = {duration: 300,easing: linear};
+    let options = {duration: 200 ,easing: linear};
 
     let editingProfessor: ProfessorFormData | null = null;
     let editingIndex: number | null = null;
@@ -54,51 +54,49 @@
 
 <Form>
 
-    <table class="text-center">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Surname</th>
-                <th>Mail</th>
-                <th>Cellphone</th>
-            </tr>
-        </thead>
-        <tbody>
-            {#each professors as professor, i}
-                <div transition:slide|local={{duration:250}}>
-                    <tr>
-                        {#if editingIndex != i}
-
-                            <td>{professor.name.value}</td>
-                            <td>{professor.surname.value}</td>
-                            <td>{professor.email.value}</td>
-                            <td>{professor.cellPhone.value}</td>
-                            <td>
-                                <Button color="primary" on:click={() => editProfessor(i)}>
-                                    <Icon name="pencil-square" /> Edit</Button>
-                            </td>
-                            <td><Button color="danger" on:click={() => {professors.splice(i,1); professors = professors}}>
-                                    <Icon name="trash-fill"/> Delete</Button>
-                            </td>
-                        {:else}
-                            <ProfessorFormRow {professor} on:cancel={() =>{editingIndex = null}} 
-                                on:save={(e) => {saveProfessor(e, i)}}/>
-                        {/if}
-                    </tr>
-                </div>
-            {/each}
-            {#if editingIndex == professors.length}
-                <tr>
-                        <ProfessorFormRow on:cancel={() =>{editingIndex = null}} 
-                            on:save={createProfessor}/>
-                </tr>
-            {/if}
-            <tr>
-                <td colspan="7">
-                    <Button color="primary" on:click={() => addProfessor()}>Add</Button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <Container>
+        <Row>
+            <Col sm={{size: 1}}>Id</Col>
+            <Col sm={{size: 2}}><strong>Name</strong></Col>
+            <Col sm={{size: 2}}><strong>Surname</strong></Col>
+            <Col sm={{size: 2}}><strong>Mail</strong></Col>
+            <Col sm={{size: 2}}><strong>Cellphone</strong></Col>
+        </Row>
+        {#each professors as professor, i}
+            <div class="row" transition:slide|local={{...options}}>
+                {#if editingIndex != i}
+                    <Col sm={{size: 1}}>{i+1}</Col>
+                    <Col sm={{size: 2}}>{professor.name.value}</Col>
+                    <Col sm={{size: 2}}>{professor.surname.value}</Col>
+                    <Col sm={{size: 2}}>{professor.email.value}</Col>
+                    <Col sm={{size: 2}}>{professor.cellPhone.value}</Col>
+                    <Col sm={{size: 3}}>
+                        <Button color="primary" on:click={() => editProfessor(i)}>
+                            <Icon name="pencil-square" /> Edit
+                        </Button>
+                        <Button color="danger" on:click={() => {professors.splice(i,1); professors = professors}}>
+                            <Icon name="trash-fill"/> Delete
+                        </Button>
+                    </Col>
+                {:else}
+                    <div class="row" transition:slide|local={{...options}}>
+                        <ProfessorFormRow {professor} on:cancel={() =>{editingIndex = null}} 
+                            on:save={(e) => {saveProfessor(e, i)}}/>
+                    </div>
+                {/if}
+            </div>
+        {/each}
+        {#if editingIndex == professors.length}
+            <div class="row" transition:slide|local={{...options}}>
+                <ProfessorFormRow on:cancel={() =>{editingIndex = null}} 
+                    on:save={createProfessor}/>
+            </div>
+        {/if}
+        <Row>
+            <div class="col-12 text-center">
+                <Button color="primary" on:click={() => addProfessor()}><Icon name="plus" />Add</Button>
+            </div>
+        </Row>
+    </Container>
 
 </Form>
