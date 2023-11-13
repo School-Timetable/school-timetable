@@ -34,6 +34,15 @@ export class Professor {
         this._cellPhone = cellPhone;
     }
 
+    static of(name: string, surname: string, email: string, cellPhone: string): Professor {
+        return new Professor(
+            new Name(name),
+            new Surname(surname),
+            new Mail(email),
+            new Cellphone(cellPhone)
+        );
+    }
+
     get name(): Name {
         return this._name;
     }
@@ -71,7 +80,7 @@ export class Professor {
     }
 
     public toString(): string {
-        return this._name.toString() + " " + this._surname.toString() + " " + this._email.toString() + " " + this._cellPhone.toString();
+        return this._name.toString() + " " + this._surname.toString();
     }
 
 }

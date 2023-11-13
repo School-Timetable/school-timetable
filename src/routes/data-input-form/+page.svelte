@@ -3,6 +3,7 @@
     import type { TabItem } from '$model/model-generics';
     import Tabs from '$lib/components/Tabs.svelte';
     import Subjects from '$lib/components/Subjects.svelte';
+    import Professors from '$lib/components/Professors.svelte';
     import { slide } from 'svelte/transition';
     import { onMount } from 'svelte';
     import { linear } from 'svelte/easing';
@@ -29,7 +30,7 @@
 <Tabs {tabItems} activeItem={activeTab} on:tabChange={triggerTabChange} />
 {#if activeTab === 'Professor'}
     <div in:slide|global={{...options, axis: "y",delay: 100}} out:slide|global={{...options, axis:"y"}}>
-        Professor
+        <Professors />
     </div>
 {:else if activeTab === 'Class'}
     <div in:slide|global={{...options, axis: "y",delay: 100}} out:slide|global={{...options, axis:"y"}}>
