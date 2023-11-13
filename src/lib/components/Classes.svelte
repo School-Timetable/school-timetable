@@ -3,9 +3,9 @@
     import {Button, ButtonGroup, Form, Icon, Input, Label,} from "sveltestrap";
     import {Track} from "$model/school-class/track";
 
-    let schoolClassTemplate = SchoolClass.of(100, 1, "A");
-    let schoolClass = SchoolClass.of(4, 2, "D");
-	let schoolClass2 = SchoolClass.of(3, 4, "C", "Scientifico");
+    let schoolClassTemplate = SchoolClass.of(1, "A");
+    let schoolClass = SchoolClass.of(2, "D");
+	let schoolClass2 = SchoolClass.of(4, "C", "Scientifico");
 
     // TODO: check  
     const sections = [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"]
@@ -19,7 +19,6 @@
 	let tmpSchoolClass: SchoolClassFormData | null = null;
 
 	type SchoolClassFormData = {
-        _id: number | undefined;
 		_year: { value: number };
 		_section: { value: string };
 		_track: { value: string };
@@ -28,7 +27,6 @@
 	function editSchoolClass(schoolClass: SchoolClass) {
         tmpSchoolClassIndex = schoolClasses.indexOf(schoolClass);
         tmpSchoolClass = {
-            _id: schoolClass.id,
             _year: { value: schoolClass.year.value },
             _section: { value: schoolClass.section.value },
             _track: { value: schoolClass.track?.value || "" }
@@ -42,7 +40,6 @@
         const newId = getNextId(schoolClasses)
         console.log("New id: ", newId)
         tmpSchoolClass = {
-            _id: newId,
             _year: {value: schoolClassTemplate.year.value},
             _section: {value: schoolClassTemplate.section.value},
             _track: {value: ""}
@@ -62,17 +59,6 @@
         schoolClasses = schoolClasses
 	}
 
-    // TODO: This is just a temporary function whose content must be replaced with the actual ID assignment...
-    function getNextId(schoolClasses: SchoolClass[]): number {
-        let lastId = 0
-        schoolClasses.forEach(schoolClass => {
-            if(schoolClass.id > lastId)
-                lastId = schoolClass.id
-        })
-        
-        return lastId + 1
-    }
-
     function saveExistingSchoolClass() {
         // check if there's already a school class with the same year, section and track
         if(classAlreadyExists(tmpSchoolClass, schoolClasses)) {
@@ -82,7 +68,6 @@
 
         let track = tmpSchoolClass!._track.value == "" ? undefined : new Track(tmpSchoolClass!._track.value)
         let newSchoolClass = SchoolClass.of(
-            tmpSchoolClass!._id!,
             tmpSchoolClass!._year.value,
             tmpSchoolClass!._section.value,
             track?.value
@@ -103,7 +88,6 @@
         }
         const track = tmpSchoolClass!._track.value == "" ? undefined : new Track(tmpSchoolClass!._track.value)
         const newSchoolClass = SchoolClass.of(
-            tmpSchoolClass!._id!,
             tmpSchoolClass!._year.value,
             tmpSchoolClass!._section.value,
             track?.value
@@ -124,7 +108,7 @@
     function classAlreadyExists(tmpSchoolClass: SchoolClassFormData | null, schoolClasses: SchoolClass[]): boolean{
         let exists = false
         schoolClasses.forEach(schoolClass => {
-            if (schoolClass.section.value == tmpSchoolClass!._section.value && schoolClass.track?.value == (tmpSchoolClass!._track.value.toUpperCase() || undefined))
+            if (schoolClass.year.value == tmpSchoolClass!._year.value && schoolClass.section.value == tmpSchoolClass!._section.value && schoolClass.track?.value == (tmpSchoolClass!._track.value.toUpperCase() || undefined))
                 exists = true
         })
 

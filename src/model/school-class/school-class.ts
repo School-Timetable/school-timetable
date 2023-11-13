@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { Year, yearSchema } from "./year";
 import { Section, sectionSchema } from "./section";
 import { Track, trackSchema } from "./track";
+import { v4 as uuid } from "uuid"
 
 export const schoolClassSchema = z.object({
     year: yearSchema,
@@ -12,24 +13,23 @@ export const schoolClassSchema = z.object({
 // TODO: id check
 export class SchoolClass {
 
-    private readonly _id: number
+    private readonly _id: string
     private _year: Year
     private _section: Section
     private _track?: Track
 
-    private constructor(id: number, year: Year, section: Section) {
+    private constructor(year: Year, section: Section) {
         schoolClassSchema.parse({
             year: year,
             section: section
         })
-        this._id = id
+        this._id = uuid()
         this._year = year
         this._section = section
     }
 
-    static of(id: number, year: number, section: string, track?: string){
+    static of(year: number, section: string, track?: string){
         const instance = new SchoolClass(
-            id,
             new Year(year),
             new Section(section)
         )
@@ -38,7 +38,7 @@ export class SchoolClass {
         return instance
     }
 
-    get id(): number {
+    get id(): string {
         return this._id;
     }
 

@@ -21,7 +21,6 @@ function getProfessor(): Professor {
 
 function getSchoolClass(): SchoolClass {
     return SchoolClass.of(
-        69,
         5,
         "A"
     );

@@ -7,8 +7,8 @@ import { SchoolClass } from "$model/school-class/school-class";
 const year = 5
 const section = "A"
 const track = "Informatica"
-const schoolClassWithTrack = SchoolClass.of(1, year, section, track)
-const schoolClassWithoutTrack = SchoolClass.of(1, year, section)
+const schoolClassWithTrack = SchoolClass.of(year, section, track)
+const schoolClassWithoutTrack = SchoolClass.of(year, section)
 
 test('test_school_class_fixture_test', () => {
     expect(schoolClassWithTrack.year.value).toStrictEqual(year)
