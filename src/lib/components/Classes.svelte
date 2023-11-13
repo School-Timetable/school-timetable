@@ -10,21 +10,12 @@
     // TODO: check  
     const sections = [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"]
 
-    let schoolClassesMap = new Map<number, SchoolClass[]>();
-    for (let i = 1; i <= 5; i++) {
-        console.log("index ", i)
-        schoolClassesMap.set(i, []);
-    }
+    let schoolClasses = [schoolClass, schoolClass2]
 
-    console.log("map before get: ", schoolClass)
-
-    schoolClassesMap.get(schoolClass.year.value)!.push(schoolClass);
-    schoolClassesMap.get(schoolClass2.year.value)!.push(schoolClass2);
-    console.log("map: ", schoolClassesMap)
+    console.log("array: ", schoolClasses)
     // TODO: set schoolClasses from db
 
 	let tmpSchoolClassIndex: number | null = null;
-    let tmpSchoolClassYear: number | null = null; // year of school class to edit (before editing it) -> used to find it in the map
 	let tmpSchoolClass: SchoolClassFormData | null = null;
 
 	type SchoolClassFormData = {
@@ -35,21 +26,20 @@
 	};
 
 	function editSchoolClass(schoolClass: SchoolClass) {
-        tmpSchoolClassIndex = schoolClassesMap.get(schoolClass.year.value)!.indexOf(schoolClass);
-        tmpSchoolClassYear = schoolClass.year.value;
+        tmpSchoolClassIndex = schoolClasses.indexOf(schoolClass);
         tmpSchoolClass = {
             _id: schoolClass.id,
             _year: { value: schoolClass.year.value },
             _section: { value: schoolClass.section.value },
             _track: { value: schoolClass.track?.value || "" }
         };
-        schoolClassesMap = schoolClassesMap;
+        schoolClasses = schoolClasses;
 	}
 
 	function createNewSchoolClass() {
         if (tmpSchoolClassIndex !== null)
             cancelEditSchoolClass()
-        const newId = getNextId(schoolClassesMap)
+        const newId = getNextId(schoolClasses)
         console.log("New id: ", newId)
         tmpSchoolClass = {
             _id: newId,
@@ -57,37 +47,35 @@
             _section: {value: schoolClassTemplate.section.value},
             _track: {value: ""}
         }
-        schoolClassesMap = schoolClassesMap
+        schoolClasses = schoolClasses
 	}
 
     function cancelEditSchoolClass() {
         tmpSchoolClass = null;
-        tmpSchoolClassYear = null
 		tmpSchoolClassIndex = null
-		schoolClassesMap = schoolClassesMap
+		schoolClasses = schoolClasses
 	}
 
     function removeSchoolClass(schoolClass: SchoolClass) {
-        const toRemoveIndex = schoolClassesMap.get(schoolClass.year.value)!.indexOf(schoolClass)
-        schoolClassesMap.get(schoolClass.year.value)!.splice(toRemoveIndex, 1)
-        schoolClassesMap = schoolClassesMap
+        const toRemoveIndex = schoolClasses.indexOf(schoolClass)
+        schoolClasses.splice(toRemoveIndex, 1)
+        schoolClasses = schoolClasses
 	}
 
     // TODO: This is just a temporary function whose content must be replaced with the actual ID assignment...
-    function getNextId(schoolClassesMap: Map<number, SchoolClass[]>): number {
+    function getNextId(schoolClasses: SchoolClass[]): number {
         let lastId = 0
-        for (const [year, schoolClassesList] of schoolClassesMap){
-            schoolClassesList.forEach(schoolClass => {
-                if(schoolClass.id > lastId)
-                    lastId = schoolClass.id
-            })
-        }
+        schoolClasses.forEach(schoolClass => {
+            if(schoolClass.id > lastId)
+                lastId = schoolClass.id
+        })
+        
         return lastId + 1
     }
 
     function saveExistingSchoolClass() {
         // check if there's already a school class with the same year, section and track
-        if(classAlreadyExists(tmpSchoolClass, schoolClassesMap)) {
+        if(classAlreadyExists(tmpSchoolClass, schoolClasses)) {
             alert("School class already exists")
             return
         }
@@ -99,17 +87,17 @@
             tmpSchoolClass!._section.value,
             track?.value
         )
-        schoolClassesMap.get(tmpSchoolClass!._year.value)?.push(newSchoolClass)
+        schoolClasses.push(newSchoolClass)
         // delete the old school class
-        schoolClassesMap.get(tmpSchoolClassYear!)!.splice(tmpSchoolClassIndex!, 1)
+        schoolClasses.splice(tmpSchoolClassIndex!, 1)
 
         
-        schoolClassesMap = schoolClassesMap
+        schoolClasses = schoolClasses
         cancelEditSchoolClass()
     }
 
-    function saveNewSchoolClass(tmpSchoolClass: SchoolClassFormData | null, schoolClassesMap: Map<number, SchoolClass[]>) {
-        if(classAlreadyExists(tmpSchoolClass, schoolClassesMap)){
+    function saveNewSchoolClass(tmpSchoolClass: SchoolClassFormData | null, schoolClasses: SchoolClass[]) {
+        if(classAlreadyExists(tmpSchoolClass, schoolClasses)){
             alert("School class already exists")
             return
         }
@@ -121,22 +109,21 @@
             track?.value
         )
 
-        schoolClassesMap.get(newSchoolClass.year.value)!.push(newSchoolClass)
-        schoolClassesMap = schoolClassesMap
+        schoolClasses.push(newSchoolClass)
+        schoolClasses = schoolClasses
         cancelEditSchoolClass()
     }
 
     function saveSchoolClass() {
-        if(tmpSchoolClassIndex != null && tmpSchoolClassYear != null)
+        if(tmpSchoolClassIndex != null)
             saveExistingSchoolClass()
         else
-            saveNewSchoolClass(tmpSchoolClass, schoolClassesMap)
+            saveNewSchoolClass(tmpSchoolClass, schoolClasses)
     }
 
-    function classAlreadyExists(tmpSchoolClass: SchoolClassFormData | null, schoolClassesMap: Map<number, SchoolClass[]>): boolean{
+    function classAlreadyExists(tmpSchoolClass: SchoolClassFormData | null, schoolClasses: SchoolClass[]): boolean{
         let exists = false
-        const schoolClassesList = schoolClassesMap.get(tmpSchoolClass!._year.value)
-        schoolClassesList?.forEach(schoolClass => {
+        schoolClasses.forEach(schoolClass => {
             if (schoolClass.section.value == tmpSchoolClass!._section.value && schoolClass.track?.value == (tmpSchoolClass!._track.value.toUpperCase() || undefined))
                 exists = true
         })
@@ -158,74 +145,72 @@
 			</tr>
 		</thead>
 		<tbody>
-            {#each [...schoolClassesMap] as [year, classesList]}
-                {#each classesList as schoolClass, index}
-                    {#if tmpSchoolClassYear != year && tmpSchoolClassIndex != index}
-                        <tr>
-                            <td>{schoolClass.year}</td>
-                            <td>{schoolClass.section}</td>
-                            <td>{schoolClass.track || "-"}</td>
-                            
-                            <td>
-                                <Button
-                                    color="primary"
-                                    on:click={() => editSchoolClass(schoolClass)}>
-                                    Edit <Icon name="pencil-square" />
-                                </Button>
-                                <!-- TODO: add confirmation dialog -->
-                                <Button
-                                    color="danger"
-                                    on:click={() => removeSchoolClass(schoolClass)}>
-                                    Delete <Icon name="trash-fill" />
-                                </Button>
-                            </td>
-                        </tr>
-                    {:else if tmpSchoolClass}
-                        <tr>
-                            <td>
-                                <Label for="year">Year</Label>
-                                <Input
-                                    type="number"
-                                    label="year"
-                                    id="year"
-                                    bind:value={tmpSchoolClass._year.value}
-                                    min="1"
-                                    max="5"
-                                />
-                            </td>
-                            <td>
-                                <Label for="section">Section</Label>
-                                <select class="form-select" bind:value={tmpSchoolClass._section.value}> <!-- on:change={() => (answer = '')}-->
-                                    {#each sections as section}
-                                        <option value={section}>{section}</option>
-                                    {/each}
-                                </select>
-                            </td>
-                            <td>
-                                <Label for="track">Track</Label>
-                                <Input
-                                    type="text"
-                                    label="track"
-                                    id="track"
-                                    bind:value={tmpSchoolClass._track.value}
-                                />
-                            </td>
-                            <td>
-                                <!-- save button -->
-                                <Button color="primary" on:click={saveSchoolClass}>
-                                    Save <Icon name="check" />
-                                </Button>
-                                <!-- cancel button -->
-                                <Button color="danger" on:click={cancelEditSchoolClass}>
-                                    Cancel <Icon name="x" />
-                                </Button>
-                            </td>
-                        </tr>
-                    {/if}
-                {/each}
+            {#each schoolClasses as schoolClass, index}
+                {#if tmpSchoolClassIndex != index}
+                    <tr>
+                        <td>{schoolClass.year}</td>
+                        <td>{schoolClass.section}</td>
+                        <td>{schoolClass.track || "-"}</td>
+                        
+                        <td>
+                            <Button
+                                color="primary"
+                                on:click={() => editSchoolClass(schoolClass)}>
+                                Edit <Icon name="pencil-square" />
+                            </Button>
+                            <!-- TODO: add confirmation dialog -->
+                            <Button
+                                color="danger"
+                                on:click={() => removeSchoolClass(schoolClass)}>
+                                Delete <Icon name="trash-fill" />
+                            </Button>
+                        </td>
+                    </tr>
+                {:else if tmpSchoolClass}
+                    <tr>
+                        <td>
+                            <Label for="year">Year</Label>
+                            <Input
+                                type="number"
+                                label="year"
+                                id="year"
+                                bind:value={tmpSchoolClass._year.value}
+                                min="1"
+                                max="5"
+                            />
+                        </td>
+                        <td>
+                            <Label for="section">Section</Label>
+                            <select class="form-select" bind:value={tmpSchoolClass._section.value}> <!-- on:change={() => (answer = '')}-->
+                                {#each sections as section}
+                                    <option value={section}>{section}</option>
+                                {/each}
+                            </select>
+                        </td>
+                        <td>
+                            <Label for="track">Track</Label>
+                            <Input
+                                type="text"
+                                label="track"
+                                id="track"
+                                bind:value={tmpSchoolClass._track.value}
+                            />
+                        </td>
+                        <td>
+                            <!-- save button -->
+                            <Button color="primary" on:click={saveSchoolClass}>
+                                Save <Icon name="check" />
+                            </Button>
+                            <!-- cancel button -->
+                            <Button color="danger" on:click={cancelEditSchoolClass}>
+                                Cancel <Icon name="x" />
+                            </Button>
+                        </td>
+                    </tr>
+                {/if}
 			{/each}
 
-			{#if tmpSchoolClass && tmpSchoolClassIndex == null && tmpSchoolClassYear == null}
+			{#if tmpSchoolClass && tmpSchoolClassIndex == null}
 				<tr>
 					<td>
                         <Label for="year">Year</Label>
