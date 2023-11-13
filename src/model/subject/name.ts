@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const MAX_LENGTH = 20;
+const MAX_LENGTH = 30;
 const valueSchema = z.string()
     .min(2, "name must be at least 2 characters")
     .max(MAX_LENGTH, `name must be at most ${MAX_LENGTH} characters`)

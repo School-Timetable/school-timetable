@@ -1,16 +1,18 @@
 <script lang="ts">
-	import { Button, Icon, Input, Label } from "sveltestrap";
+	import { Button, ButtonGroup, Col, Icon, Input, Label } from "sveltestrap";
 	import { createEventDispatcher } from "svelte";
 	import { ZodError } from "zod";
 	import type { SchoolClass } from "$model/school-class/school-class";
 	import { Subject } from "$model/subject/subject";
 	import type { Professor } from "$model/professor/professor";
-	import Professors from "./Professors.svelte";
 
-	const eventDispatcher = createEventDispatcher();
+	const dispatch = createEventDispatcher<{
+		save: { subject: Subject };
+		cancel: void;
+	}>();
 
 	export let subject: Subject | null = null;
-	export let professors: Professors[] = [];
+	export let professors: Professor[] = [];
 	export let schoolClasses: SchoolClass[] = [];
 
 	type SubjectFormData = {
@@ -42,7 +44,7 @@
 				editingSubject._hoursPerWeek.value
 			);
 
-			eventDispatcher("save", { subject: savedSubject });
+			dispatch("save", { subject: savedSubject });
 		} catch (e) {
 			if (e instanceof ZodError)
 				alert(e.issues.map((issue) => issue.message).join("\n"));
@@ -50,11 +52,11 @@
 	}
 
 	function cancel(): void {
-		eventDispatcher("cancel");
+		dispatch("cancel");
 	}
 </script>
 
-<td>
+<Col>
 	<Label for="schoolClass">Class</Label>
 	<Input
 		type="select"
@@ -69,8 +71,8 @@
 			<option value={null}>no professors</option>
 		{/each}
 	</Input>
-</td>
-<td>
+</Col>
+<Col>
 	<Label for="professor">Professor</Label>
 	<Input
 		type="select"
@@ -82,11 +84,11 @@
 		{#each professors as professor}
 			<option value={professor}>{professor}</option>
 		{:else}
-			<option value={null}>no professors</option>
+			<option>no professors</option>
 		{/each}
 	</Input>
-</td>
-<td>
+</Col>
+<Col>
 	<Label for="abbreviation">Abbreviation</Label>
 	<Input
 		type="text"
@@ -96,18 +98,19 @@
 		placeholder="Abbreviation"
 		bind:value={editingSubject._abbreviation.value}
 	/>
-</td>
-<td>
+</Col>
+<Col>
 	<Label for="name">Name</Label>
 	<Input
 		type="text"
 		label="name"
 		name="name"
 		id="name"
+		placeholder="Name"
 		bind:value={editingSubject._name.value}
 	/>
-</td>
-<td>
+</Col>
+<Col>
 	<Label for="weight">Weight</Label>
 	<Input
 		type="number"
@@ -119,8 +122,8 @@
 		min="1"
 		max="10"
 	/>
-</td>
-<td>
+</Col>
+<Col>
 	<Label for="hoursPerWeek">Hours per week</Label>
 	<Input
 		type="number"
@@ -132,14 +135,14 @@
 		min="0"
 		max="30"
 	/>
-</td>
-<td>
-	<!-- save button -->
-	<Button color="primary" on:click={saveSubject}>
-		Save <Icon name="check" />
-	</Button>
-	<!-- cancel button -->
-	<Button color="danger" on:click={cancel}>
-		Cancel <Icon name="x" />
-	</Button>
-</td>
+</Col>
+<Col>
+	<ButtonGroup>
+		<Button color="primary" on:click={save}>
+			Save <Icon name="check" />
+		</Button>
+		<Button color="danger" on:click={cancel}>
+			Cancel <Icon name="x" />
+		</Button>
+	</ButtonGroup>
+</Col>

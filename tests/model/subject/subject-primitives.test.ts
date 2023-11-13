@@ -18,10 +18,10 @@ test('Name with spaces', () => {
 test('Name length', () => {
     expect(() => new Name("")).toThrowError();
     expect(() => new Name("a")).toThrowError();
-    expect(() => new Name("a".repeat(21))).toThrowError();
+    expect(() => new Name("a".repeat(31))).toThrowError();
 
     new Name("a".repeat(2));
-    new Name("a".repeat(20));
+    new Name("a".repeat(30));
 })
 
 test('Name throws on invalid characters', () => {
