@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { v4 as uuid } from "uuid"
 
 export const professorSchema = z.object({
+    _id: z.string(),
     _name: nameSchema,
     _surname: surnameSchema,
     _email: mailSchema,
@@ -21,19 +22,20 @@ export class Professor {
     private _cellPhone: Cellphone;
 
     constructor(name: Name, surname: Surname, email: Mail, cellPhone: Cellphone) {
-
+        let id = uuid();
         professorSchema.parse({
+            _id: id,
             _name: name,
             _surname: surname,
             _email: email,
             _cellPhone: cellPhone,
         });
 
+        this._id = id;
         this._name = name;
         this._surname = surname;
         this._email = email;
         this._cellPhone = cellPhone;
-        this._id = uuid();
     }
 
     static of(name: string, surname: string, email: string, cellPhone: string): Professor {

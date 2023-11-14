@@ -24,14 +24,25 @@
 		_hoursPerWeek: { value: number };
 	};
 
-	let editingSubject: SubjectFormData = {
-		_schoolClass: subject?.schoolClass ?? undefined,
-		_professor: subject?.professor ?? undefined,
-		_name: { value: subject?.name.value ?? "" },
-		_abbreviation: { value: subject?.abbreviation.value ?? "" },
-		_weight: { value: subject?.weight.value ?? 1 },
-		_hoursPerWeek: { value: subject?.hoursPerWeek.value ?? 0 },
-	};
+	let editingSubject: SubjectFormData;
+
+	if (subject == null) {
+		editingSubject = {
+			_name: { value: "" },
+			_abbreviation: { value: "" },
+			_weight: { value: 5 },
+			_hoursPerWeek: { value: 1 },
+		};
+	} else {
+		editingSubject = {
+			_schoolClass: subject.schoolClass,
+			_professor: subject.professor,
+			_name: { value: subject.name.value },
+			_abbreviation: { value: subject.abbreviation.value },
+			_weight: { value: subject.weight.value },
+			_hoursPerWeek: { value: subject.hoursPerWeek.value },
+		};
+	}
 
 	function save() {
 		try {
@@ -132,7 +143,7 @@
 		id="hoursPerWeek"
 		placeholder="Hours per week"
 		bind:value={editingSubject._hoursPerWeek.value}
-		min="0"
+		min="1"
 		max="30"
 	/>
 </Col>
