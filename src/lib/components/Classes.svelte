@@ -1,19 +1,22 @@
 <script lang="ts">
     import {SchoolClass} from "$model/school-class/school-class";
-    import {Button, ButtonGroup, Form, Icon, Input, Label,} from "sveltestrap";
+    import {Button, ButtonGroup, Col, Container, Form, Icon, Input, Label, Row,} from "sveltestrap";
     import {Track} from "$model/school-class/track";
     import {ZodError} from "zod";
+    import { slide } from "svelte/transition";
+    import {linear} from "svelte/easing";
+    import ClassFormRow from "$lib/components/ClassFormRow.svelte";
+
 
     let schoolClassTemplate = SchoolClass.of(1, "A");
     let schoolClass = SchoolClass.of(2, "D");
 	let schoolClass2 = SchoolClass.of(4, "C", "Scientifico");
 
-    // TODO: check  
-    const sections = [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"]
+    let options = {duration: 200 ,easing: linear};
 
+    // TODO: check
     let schoolClasses = [schoolClass, schoolClass2]
 
-    console.log("array: ", schoolClasses)
     // TODO: set schoolClasses from db
 
 	let tmpSchoolClassIndex: number | null = null;
@@ -25,75 +28,46 @@
 		_track: { value: string };
 	};
 
-	function editSchoolClass(schoolClass: SchoolClass) {
-        tmpSchoolClassIndex = schoolClasses.indexOf(schoolClass);
+	function editSchoolClass(index: number) {
+        tmpSchoolClassIndex = index
+        schoolClasses = schoolClasses
+	}
+
+    function addSchoolClass() {
         tmpSchoolClass = {
             _year: { value: schoolClass.year.value },
             _section: { value: schoolClass.section.value },
             _track: { value: schoolClass.track?.value || "" }
         };
         schoolClasses = schoolClasses;
-	}
-
-	function createNewSchoolClass() {
-        if (tmpSchoolClassIndex !== null)
-            cancelEditSchoolClass()
-        tmpSchoolClass = {
-            _year: {value: schoolClassTemplate.year.value},
-            _section: {value: schoolClassTemplate.section.value},
-            _track: {value: ""}
-        }
-        schoolClasses = schoolClasses
-	}
-
-    function cancelEditSchoolClass() {
-        tmpSchoolClass = null;
-		tmpSchoolClassIndex = null
-		schoolClasses = schoolClasses
-	}
-
-    function removeSchoolClass(schoolClass: SchoolClass) {
-        const toRemoveIndex = schoolClasses.indexOf(schoolClass)
-        schoolClasses.splice(toRemoveIndex, 1)
-        schoolClasses = schoolClasses
-	}
-
-    function saveSchoolClass() {
-        if(classAlreadyExists(tmpSchoolClass, schoolClasses)) {
-            alert("School class already exists")
+        tmpSchoolClassIndex = schoolClasses.length
+    }
+	const createSchoolClass = (event: { detail: any }) => {
+        const newClass = event.detail.schoolClass
+        if (classAlreadyExists(newClass, schoolClasses)) {
+            alert("Class already exists")
             return
         }
+        schoolClasses = [
+            ...schoolClasses,
+            newClass
+        ]
 
-        let track = tmpSchoolClass!._track.value == "" ? undefined : new Track(tmpSchoolClass!._track.value)
-        try {
-            let newSchoolClass = SchoolClass.of(
-                tmpSchoolClass!._year.value,
-                tmpSchoolClass!._section.value,
-                track?.value
-            )
-
-            schoolClasses.push(newSchoolClass)
-
-
-            // if it is an edit
-            if(tmpSchoolClassIndex != null)
-                // delete the old school class
-                schoolClasses.splice(tmpSchoolClassIndex!, 1)
-
-            schoolClasses = schoolClasses
-            cancelEditSchoolClass()
-        }
-        catch (e) {
-            if(e instanceof ZodError)
-                alert(e.issues.map((issue) => issue.message).join("\n"))
-        }
+        tmpSchoolClassIndex = null
     }
 
-    function classAlreadyExists(tmpSchoolClass: SchoolClassFormData | null, schoolClasses: SchoolClass[]): boolean{
+
+    const saveSchoolClass = (event: { detail: any }, index: number) => {
+        schoolClasses[index] = event.detail.schoolClass
+        tmpSchoolClassIndex = null
+    }
+
+    function classAlreadyExists(schoolClass: SchoolClass, schoolClasses: SchoolClass[]): boolean{
         let exists = false
-        schoolClasses.forEach(schoolClass => {
-            if (schoolClass.year.value == tmpSchoolClass!._year.value && schoolClass.section.value == tmpSchoolClass!._section.value && schoolClass.track?.value == (tmpSchoolClass!._track.value.toUpperCase() || undefined))
+        schoolClasses.forEach((sc) => {
+            if (sc.year.value === schoolClass.year.value && sc.section.value === schoolClass.section.value && sc.track?.value === schoolClass.track?.value) {
                 exists = true
+            }
         })
 
         return exists
@@ -101,137 +75,47 @@
 
 </script>
 
-<h1>Classes</h1>
-
 <Form>
-	<table class="text-center">
-		<thead>
-			<tr>
-				<th>Year</th>
-				<th>Section</th>
-				<th>Track</th>
-			</tr>
-		</thead>
-		<tbody>
-            {#each schoolClasses as schoolClass, index}
-                {#if tmpSchoolClassIndex != index}
-                    <tr>
-                        <td>{schoolClass.year}</td>
-                        <td>{schoolClass.section}</td>
-                        <td>{schoolClass.track || "-"}</td>
-                        
-                        <td>
-                            <Button
-                                color="primary"
-                                on:click={() => editSchoolClass(schoolClass)}>
-                                Edit <Icon name="pencil-square" />
-                            </Button>
-                            <!-- TODO: add confirmation dialog -->
-                            <Button
-                                color="danger"
-                                on:click={() => removeSchoolClass(schoolClass)}>
-                                Delete <Icon name="trash-fill" />
-                            </Button>
-                        </td>
-                    </tr>
-                {:else if tmpSchoolClass}
-                    <tr>
-                        <td>
-                            <Label for="year">Year</Label>
-                            <Input
-                                type="number"
-                                label="year"
-                                id="year"
-                                bind:value={tmpSchoolClass._year.value}
-                                min="1"
-                                max="5"
-                            />
-                        </td>
-                        <td>
-                            <Label for="section">Section</Label>
-                            <select class="form-select" bind:value={tmpSchoolClass._section.value}> <!-- on:change={() => (answer = '')}-->
-                                {#each sections as section}
-                                    <option value={section}>{section}</option>
-                                {/each}
-                            </select>
-                        </td>
-                        <td>
-                            <Label for="track">Track</Label>
-                            <Input
-                                type="text"
-                                label="track"
-                                id="track"
-                                bind:value={tmpSchoolClass._track.value}
-                            />
-                        </td>
-                        <td>
-                            <!-- save button -->
-                            <Button color="primary" on:click={saveSchoolClass}>
-                                Save <Icon name="check" />
-                            </Button>
-                            <!-- cancel button -->
-                            <Button color="danger" on:click={cancelEditSchoolClass}>
-                                Cancel <Icon name="x" />
-                            </Button>
-                        </td>
-                    </tr>
+    <Container>
+        <Row>
+            <Col sm={{size: 2}}>Year</Col>
+            <Col sm={{size: 2}}><strong>Section</strong></Col>
+            <Col sm={{size: 8}}><strong>Track</strong></Col>
+        </Row>
+        {#each schoolClasses as schoolClass, index}
+            <div class="row" transition:slide|local={{...options}}>
+                {#if tmpSchoolClassIndex !== index}
+                    <Col sm={{size: 2}}>{schoolClass.year.value}</Col>
+                    <Col sm={{size: 2}}>{schoolClass.section.value}</Col>
+                    <Col sm={{size: 5}}>{schoolClass.track?.value || "-"}</Col>
+                    <Col sm={{size: 3}}>
+                        <Button color="primary" on:click={() => editSchoolClass(index)}>
+                            <Icon name="pencil-square" /> Edit
+                        </Button>
+                        <Button color="danger" on:click={() => {schoolClasses.splice(index,1); schoolClasses = schoolClasses}}>
+                            <Icon name="trash-fill"/> Delete
+                        </Button>
+                    </Col>
+                {:else}
+                    <div class="row" transition:slide|local={{...options}}>
+                        <ClassFormRow {schoolClass}
+                                      on:cancel={() => tmpSchoolClassIndex = null}
+                                      on:save={(e) => {saveSchoolClass(e,index)}}/>
+                    </div>
                 {/if}
-			{/each}
+            </div>
+        {/each}
+        {#if tmpSchoolClassIndex === schoolClasses.length}
+            <div class="row" transition:slide|local={{...options}}>
+                <ClassFormRow on:cancel={() => {tmpSchoolClassIndex = null}}
+                              on:save={createSchoolClass}/>
 
-			{#if tmpSchoolClass && tmpSchoolClassIndex == null}
-				<tr>
-					<td>
-                        <Label for="year">Year</Label>
-                        <Input
-                            type="number"
-                            label="year"
-                            name="year"
-                            id="year"
-                            bind:value={tmpSchoolClass._year.value}
-                            min="1"
-                            max="5"
-                        />
-                    </td>
-                    <td>
-                        <Label for="section">Section</Label>
-                        <select class="form-select" bind:value={tmpSchoolClass._section.value}> <!-- on:change={() => (answer = '')}-->
-                        {#each sections as section}
-                            <option value={section}>{section}</option>
-                        {/each}
-                        </select>
-                    </td>
-                    <td>
-                        <Label for="track">Track</Label>
-                        <Input
-                            type="text"
-                            label="track"
-                            name="track"
-                            id="track"
-                            bind:value={tmpSchoolClass._track.value}
-                        />
-                    </td>
-					<td>
-						<!-- save button -->
-						<Button color="primary" on:click={saveSchoolClass}>
-							Save <Icon name="check" />
-						</Button>
-						<!-- cancel button -->
-						<Button color="danger" on:click={cancelEditSchoolClass}>
-							Cancel <Icon name="x" />
-						</Button>
-					</td>
-				</tr>
-			{/if}
-
-			<tr>
-				<td colspan="7">
-					<ButtonGroup>
-						<Button color="primary" on:click={createNewSchoolClass}>
-							Add <Icon name="plus" />
-						</Button>
-					</ButtonGroup>
-				</td>
-			</tr>
-		</tbody>
-	</table>
+            </div>
+        {/if}
+        <Row>
+            <div class="col-12 text-center">
+                <Button color="primary" on:click={() => addSchoolClass()}><Icon name="plus" />Add</Button>
+            </div>
+        </Row>
+	</Container>
 </Form>
