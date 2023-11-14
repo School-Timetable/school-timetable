@@ -24,5 +24,8 @@
 	"type": "module",
 	"publishConfig": {
 		"registry": ""
+	},
+	"dependencies": {
+		"sveltestrap": "^5.11.2"
 	}
 }
