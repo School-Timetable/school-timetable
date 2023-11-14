@@ -4,9 +4,9 @@
     import {Track} from "$model/school-class/track";
     import {ZodError} from "zod";
 
-    let schoolClassTemplate = SchoolClass.of(1, "A");
-    let schoolClass = SchoolClass.of(2, "D");
-	let schoolClass2 = SchoolClass.of(4, "C", "Scientifico");
+    let schoolClassTemplate = SchoolClass.of(null, 1, "A");
+    let schoolClass = SchoolClass.of(null, 2, "D");
+	let schoolClass2 = SchoolClass.of(null, 4, "C", "Scientifico");
 
     // TODO: check  
     const sections = [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"]

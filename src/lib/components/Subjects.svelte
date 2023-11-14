@@ -7,24 +7,28 @@
 
 	let professors: Professor[] = [
 		Professor.of(
+			null,
 			"Mario",
 			"Alviano",
 			"mario.alviano@unical.it",
 			"+391234567890"
 		),
 		Professor.of(
+			null,
 			"Francesco",
 			"Calimeri",
 			"francesco.calimeri@unical.it",
 			"+393335557890"
 		),
 		Professor.of(
+			null,
 			"Giovambattista",
 			"Ianni",
 			"giovambattista.ianni@unica.it",
 			"+398889990101"
 		),
 		Professor.of(
+			null,
 			"Simona",
 			"Perri",
 			"simona.perri@unical.it",
@@ -33,23 +37,24 @@
 	];
 
 	let schoolClasses: SchoolClass[] = [
-		SchoolClass.of(1, "A"),
-		SchoolClass.of(2, "A"),
-		SchoolClass.of(3, "A"),
-		SchoolClass.of(4, "A"),
-		SchoolClass.of(5, "A"),
-		SchoolClass.of(1, "B"),
-		SchoolClass.of(2, "B"),
-		SchoolClass.of(3, "B"),
-		SchoolClass.of(4, "B"),
-		SchoolClass.of(5, "B"),
+		SchoolClass.of(null, 1, "A"),
+		SchoolClass.of(null, 2, "A"),
+		SchoolClass.of(null, 3, "A"),
+		SchoolClass.of(null, 4, "A"),
+		SchoolClass.of(null, 5, "A"),
+		SchoolClass.of(null, 1, "B"),
+		SchoolClass.of(null, 2, "B"),
+		SchoolClass.of(null, 3, "B"),
+		SchoolClass.of(null, 4, "B"),
+		SchoolClass.of(null, 5, "B"),
 	];
 
 	let subjects: Subject[] = [
-		Subject.of(schoolClasses[1], professors[1], "Math", "Math", 7, 13),
-		Subject.of(schoolClasses[0], professors[2], "English", "Eng", 5, 9),
-		Subject.of(schoolClasses[3], professors[0], "Science", "Sci", 5, 8),
+		Subject.of(null, schoolClasses[1], professors[1], "Math", "Math", 7, 13),
+		Subject.of(null, schoolClasses[0], professors[2], "English", "Eng", 5, 9),
+		Subject.of(null, schoolClasses[3], professors[0], "Science", "Sci", 5, 8),
 		Subject.of(
+			null, 
 			schoolClasses[3],
 			professors[0],
 			"Artificial Intelligence",

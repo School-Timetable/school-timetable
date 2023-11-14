@@ -12,12 +12,16 @@ export const trackSchema = z.object({
 export class Track {
     public readonly value: string
 
+    get valueUppercase() {
+        return this.value.toUpperCase();
+    }
+
     constructor(value: string) {
         valueSchema.parse(value)
-        this.value = value.toUpperCase()
+        this.value = value;
     }
 
     public toString(): string {
-        return this.value
+        return this.value.toUpperCase();
     }
 }

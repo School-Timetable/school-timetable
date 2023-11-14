@@ -51,12 +51,12 @@ test('test_section_validation_undefined', () => {
 
 test('test_track_validation', () => {
     const track = new Track("Informatica")
-    expect(track.value).toBe("INFORMATICA")
+    expect(track.valueUppercase).toBe("INFORMATICA")
 })
 
 test('test_track_validation_with_final_dot', () => {
     const track = new Track("Inf.")
-    expect(track.value).toBe("INF.")
+    expect(track.valueUppercase).toBe("INF.")
 })
 
 test('test_track_validation_too_short', () => {

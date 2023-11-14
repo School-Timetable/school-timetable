@@ -13,6 +13,7 @@ import { SchoolClass } from '$model/school-class/school-class';
 
 function getProfessor(): Professor {
     return new Professor(
+        "abc",
         new ProfessorName("Mario"),
         new Surname("Rossi"),
         new Mail("mario.rossi@gmail.com"),
@@ -21,8 +22,7 @@ function getProfessor(): Professor {
 
 function getSchoolClass(): SchoolClass {
     return SchoolClass.of(
-        5,
-        "A"
+        "abc", 5, "A"
     );
 }
 
@@ -37,7 +37,7 @@ test('Subject is created', () => {
     const weight = new Weight(5);
     const hoursPerWeek = new HoursPerWeek(6);
 
-    const subject = new Subject(schoolClass, professor, name, abbreviation, weight, hoursPerWeek);
+    const subject = new Subject("abc", schoolClass, professor, name, abbreviation, weight, hoursPerWeek);
 
 
     expect(subject.schoolClass).toBe(schoolClass);
@@ -53,7 +53,7 @@ test('Subject is created with of', () => {
     const schoolClass = getSchoolClass();
     const professor = getProfessor();
 
-    const subject = Subject.of(schoolClass, professor, "Matematica", "MAT", 5, 6);
+    const subject = Subject.of("abc", schoolClass, professor, "Matematica", "MAT", 5, 6);
 
     expect(subject.schoolClass).toBe(schoolClass);
     expect(subject.professor).toBe(professor);

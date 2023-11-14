@@ -21,8 +21,11 @@ export class Professor {
     private _email: Mail;
     private _cellPhone: Cellphone;
 
-    constructor(name: Name, surname: Surname, email: Mail, cellPhone: Cellphone) {
-        let id = uuid();
+    constructor(id: string | null, name: Name, surname: Surname, email: Mail, cellPhone: Cellphone) {
+        if(!id || id === null) {
+            id = uuid();
+        }
+
         professorSchema.parse({
             _id: id,
             _name: name,
@@ -38,13 +41,23 @@ export class Professor {
         this._cellPhone = cellPhone;
     }
 
-    static of(name: string, surname: string, email: string, cellPhone: string): Professor {
+    static of(id: string | null, name: string, surname: string, email: string, cellPhone: string): Professor {
         return new Professor(
+            id,
             new Name(name),
             new Surname(surname),
             new Mail(email),
             new Cellphone(cellPhone)
         );
+    }
+
+    static ofCsv(csv: string): Professor {
+        if(csv.substring(0,2) !== "P:") {
+            throw new Error(`${csv} is not a professor string`);
+        }
+
+        let match = csv.match(/^P:([^;]+);([^;]+);([^;]+);([^;]+);([^;]+)$/)!;
+        return Professor.of(match[1], match[2], match[3], match[4], match[5]);
     }
 
     get id(): string {
@@ -89,6 +102,10 @@ export class Professor {
 
     public toString(): string {
         return this._name.toString() + " " + this._surname.toString();
+    }
+
+    public toCsv() {
+        return `P:${this._id};${this._name.value};${this._surname.value};${this._email.value};${this._cellPhone.value}`;
     }
 
 }

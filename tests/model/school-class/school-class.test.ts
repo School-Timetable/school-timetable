@@ -7,13 +7,13 @@ import { SchoolClass } from "$model/school-class/school-class";
 const year = 5
 const section = "A"
 const track = "Informatica"
-const schoolClassWithTrack = SchoolClass.of(year, section, track)
-const schoolClassWithoutTrack = SchoolClass.of(year, section)
+const schoolClassWithTrack = SchoolClass.of("abc", year, section, track)
+const schoolClassWithoutTrack = SchoolClass.of("abc", year, section)
 
 test('test_school_class_fixture_test', () => {
     expect(schoolClassWithTrack.year.value).toStrictEqual(year)
     expect(schoolClassWithTrack.section.value).toStrictEqual(section)
-    expect(schoolClassWithTrack.track?.value).toStrictEqual(track.toUpperCase())
+    expect(schoolClassWithTrack.track?.valueUppercase).toStrictEqual(track.toUpperCase())
 })
 
 test('test_school_class_fixture_test_without_track', () => {
@@ -27,7 +27,7 @@ test('test_school_class_without_track_to_string', () => {
 })
 
 test('test_school_class_with_track_to_string', () => {
-    expect(schoolClassWithTrack.toString()).toMatch("5A INFORMATICA")
+    expect(schoolClassWithTrack.toString()).toMatch("5A Informatica")
 })
 
 test('test_school_class_number_change', () => {
@@ -48,5 +48,5 @@ test('test_school_class_section_change', () => {
 
 test('test_school_class_without_track_change', () => {
     schoolClassWithoutTrack.track = new Track("Inf.");
-    expect(schoolClassWithoutTrack.track.value).toBe("INF.");
+    expect(schoolClassWithoutTrack.track.valueUppercase).toBe("INF.");
 });
