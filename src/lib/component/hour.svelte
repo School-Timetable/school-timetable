@@ -55,7 +55,7 @@
 </script>
 
 <!--per avere le classi colorate con un colore diverso in base alla materia, elimina class:notNullHour="{professor}"-->
-<section class="hour text-wrap btn align-middle container-fluid {subject?.subject}"  class:highlight="{highlight}" on:dragleave={event => highlight = false}  on:dragenter={event => highlight = draggable} style="user-select: none;" id={id} on:dragstart={event => drag(event)} draggable={subject != null && draggable} on:dragover={event => allowDrop(event)} on:drop={event => drop(event)}>{set_cell_content(subject) || ""}</section>
+<section class="hour text-wrap btn align-middle container-fluid {subject?.subject}"  class:highlight="{highlight}" class:disabled="{!draggable}" on:dragleave={event => highlight = false}  on:dragenter={event => highlight = draggable} style="user-select: none;" id={id} on:dragstart={event => drag(event)} draggable={subject != null && draggable} on:dragover={event => allowDrop(event)} on:drop={event => drop(event)}>{set_cell_content(subject) || ""}</section>
 
 
 <style>
@@ -78,8 +78,10 @@
         border: transparent;
     }
 
-    .hour:hover {
-        background-color: +50%;
+    
+
+    .disabled {
+        background-color: rgb(178, 177, 177) !important; 
     }
 
     .ENG {
