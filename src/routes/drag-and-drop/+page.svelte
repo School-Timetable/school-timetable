@@ -4,59 +4,65 @@
 	// Inspired by https://svelte.dev/repl/810b0f1e16ac4bbd8af8ba25d5e0deff?version=3.4.2.
 	import Prova from '$lib/component/hour.svelte';
 	import {flip} from 'svelte/animate';
-	import type { DayColumn, Professor, ProfessorOption, WeekClass } from "$lib/model";
+	import type { ClassSubject, DayColumn, Professor, SubjectOption, WeekClass } from "$lib/model";
  	import Hour from '$lib/component/hour.svelte';
 
 
-	export let weekMatrix : (Professor | null)[][];
+	// export let weekMatrix : (Professor | null)[][];
 
 	export let weekNames = ["MON","TUE","WED","THU","FRI","SAT"]
 
-	export let options : ProfessorOption[] = [  {amount: 5, prof: {id: 1, name: "Mario", surname: "Rossi", subject: "MAT"}},
-                                                {amount: 3, prof: {id: 2, name: "Luigi", surname: "Bianchi", subject: "ITA"}},
-                                                {amount: 7, prof: {id: 3, name: "Michele", surname: "Verdi", subject: "GEO"}},
-                                                {amount: 3, prof: {id: 4, name: "Elisa", surname: "Gialli", subject: "ENG"}},
-                                                {amount: 3, prof: {id: 5, name: "Filomena", surname: "Violi", subject: "STO"}},
-                                            ]
+    // prova
+    export let subjects: ClassSubject[] = [
+        {class: "1A", professor: {id: 1, name: "Mario", surname: "Rossi"}, subject: "MAT", remainingHours: 5},
+        {class: "1A", professor: {id: 2, name: "Luigi", surname: "Rossi"}, subject: "GEO", remainingHours: 6},
+        {class: "1A", professor: {id: 3, name: "Elisa", surname: "Rossi"}, subject: "STO", remainingHours: 3},
+        {class: "1A", professor: {id: 4, name: "Michele", surname: "Rossi"}, subject: "ITA", remainingHours: 10}
+    ]
+    
+    export let weekClass: WeekClass = {
+        name: "1A",
+        grid: [],
+        sidebar: subjects
+    }
 
-
-
-	weekMatrix = []
+	// weekMatrix = []
 
 	for(let i = 0;i < weekNames.length;i++)
-		weekMatrix.push([null,null,null,null,null])
-
+		//weekMatrix.push([null,null,null,null,null])
+        weekClass.grid.push([null,null,null,null,null])
 
 	
-	function dropValue(hour: number,day: number,info: any)
+	function dropValue(hour: number,day: number, info: any)
 	{
 
-		if(info.prof.name == weekMatrix[hour][day]?.name)
-			return
+		//if(info.prof.name == weekClass.grid[hour][day]?.professor.name)
+		//	return
 
-		const oldValue = weekMatrix[hour][day]
-		weekMatrix[hour][day] = info.prof
+		const oldValue = weekClass.grid[hour][day]
+		weekClass.grid[hour][day] = info.subject
+        console.log(info.subject.class)
 
 		const pos = info.id.split(",")
 		if(pos.length == 2)
-			weekMatrix[pos[0]][pos[1]] = oldValue
+			weekClass.grid[pos[0]][pos[1]] = oldValue
 		else
 		{
 			if(oldValue)
-				options.find(val => val.prof.name == oldValue.name)!.amount += 1
-			options.find(val => val.prof.name == info.prof.name)!.amount -= 1
-			options = options
+				weekClass.sidebar.find(val => val.professor.id == oldValue.professor.id)!.remainingHours += 1
+			weekClass.sidebar.find(val => val.professor.id == info.subject.professor.id)!.remainingHours -= 1
+			weekClass.sidebar = weekClass.sidebar
 		}
 	}
 
 	function sideBarDrop(event: any)
 	{
-		const professor : Professor = JSON.parse(event.dataTransfer.getData("prof"))
+		const subject : ClassSubject = JSON.parse(event.dataTransfer.getData("subject"))
 		const id = event.dataTransfer.getData("id")
 		const coord = id.split(",")
-		weekMatrix[coord[0]][coord[1]] = null
-		options.find(val => val.prof.name == professor.name)!.amount += 1
-		options = options
+		weekClass.grid[coord[0]][coord[1]] = null
+		weekClass.sidebar.find(val => val.professor.id == subject.professor.id)!.remainingHours += 1
+		weekClass.sidebar = weekClass.sidebar
 	
 	}
 
@@ -77,11 +83,11 @@
         <!--sidebar-->
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <div class="col-2 row" on:dragover={event => event.preventDefault()} on:drop={event => sideBarDrop(event)}>
-            {#each options as option, optionIndex (option)}
+            {#each weekClass.sidebar as item, itemIndex}
                 <div class='col-10'>
-                   <Hour droppable={false} draggable={option.amount > 0} id="prova" professor={option.prof} on:hourDrop={event => {}}></Hour>
+                   <Hour droppable={false} draggable={item.remainingHours > 0} id="prova" subject={item} on:hourDrop={event => {}}></Hour>
                 </div>
-                <div class="col-1 text-center">{option.amount}</div>
+                <div class="col-1 text-center">{item.remainingHours}</div>
             {/each}
         </div>
 
@@ -91,7 +97,7 @@
                 <!--header-->
                 <thead>
                     <tr>
-                        {#each weekMatrix as day, dayIndex (day)}
+                        {#each weekClass.grid as day, dayIndex (day)}
                             <th class="col-2">{weekNames[dayIndex]}</th>
                         {/each}
                     </tr>
@@ -100,9 +106,9 @@
                 <!--cells-->
                 {#each {length: 5} as _, i}
                     <tr>
-                        {#each weekMatrix as day, dayIndex (day)}
+                        {#each weekClass.grid as day, dayIndex (day)}
                             <td>
-                                <Hour id={`${i},${dayIndex}`} on:hourDrop={event => dropValue(i,dayIndex,event.detail)} professor={weekMatrix[i][dayIndex]}></Hour>
+                                <Hour id={`${i},${dayIndex}`} on:hourDrop={event => dropValue(i,dayIndex,event.detail)} subject={weekClass.grid[i][dayIndex]}></Hour>
                             </td>
                         {/each}
                     </tr>

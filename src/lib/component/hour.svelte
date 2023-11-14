@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Professor } from "$lib/model";
+    import type { ClassSubject } from "$lib/model";
     import { createEventDispatcher } from "svelte";
 
     const dispatch = createEventDispatcher();
@@ -13,7 +13,7 @@
     export let highlight: Boolean = false
 
 
-    export let professor: Professor | null
+    export let subject: ClassSubject | null
 
 
 
@@ -24,39 +24,38 @@
 
     function drag(ev:any) {
         //ev.dataTransfer.setData("text", ev.target.id);
-        ev.dataTransfer.setData("prof", JSON.stringify(professor));
+        ev.dataTransfer.setData("subject", JSON.stringify(subject));
         ev.dataTransfer.setData("id", ev.target.id);
         
 
-        dispatch("hourDrag",professor)
+        dispatch("hourDrag", subject)
 
     }
 
     function drop(ev:any) {
         ev.preventDefault();
+        console.log("ciao")
         //var data = ev.dataTransfer.getData("text");
-        let prof : Professor | null = JSON.parse(ev.dataTransfer.getData("prof"))
+        let draggedSubject : ClassSubject | null = JSON.parse(ev.dataTransfer.getData("subject"))
 
-        dispatch("hourDrop", {prof: prof,id: ev.dataTransfer.getData("id")})
+        dispatch("hourDrop", {subject: draggedSubject, id: ev.dataTransfer.getData("id")})
         highlight = false
 
-
+        console.log(draggedSubject)
     }
 
-   
 
-
-    function set_cell_content(professor: Professor) {
-        if (!professor) {
+    function set_cell_content(subject: ClassSubject | null) {
+        if (!subject) {
             return undefined;
         }
-        return `${professor.name} ${professor.surname} - ${professor.subject}`
+        return `${subject.professor.name} ${subject.professor.surname} - ${subject.subject}`
     }
 
 </script>
 
 <!--per avere le classi colorate con un colore diverso in base alla materia, elimina class:notNullHour="{professor}"-->
-<section class="hour text-wrap btn align-middle container-fluid {professor?.subject}"  class:highlight="{highlight}" on:dragleave={event => highlight = false}  on:dragenter={event => highlight = draggable} style="user-select: none;" id={id} on:dragstart={event => drag(event)} draggable={professor != null && draggable} on:dragover={event => allowDrop(event)} on:drop={event => drop(event)}>{set_cell_content(professor) || ""}</section>
+<section class="hour text-wrap btn align-middle container-fluid {subject?.subject}"  class:highlight="{highlight}" on:dragleave={event => highlight = false}  on:dragenter={event => highlight = draggable} style="user-select: none;" id={id} on:dragstart={event => drag(event)} draggable={subject != null && draggable} on:dragover={event => allowDrop(event)} on:drop={event => drop(event)}>{set_cell_content(subject) || ""}</section>
 
 
 <style>

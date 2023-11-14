@@ -1,15 +1,14 @@
 export interface Professor
 {
-    id?: number
+    id: number
     name: string
     surname?: string
-    subject: string  // questa non c'è nel modello reale, è stata inserita per rappresentarla graficamente
 }
 
-export interface ProfessorOption
+export interface SubjectOption
 {
     amount: number
-    prof: Professor
+    subject: ClassSubject
 }
 
 
@@ -20,9 +19,22 @@ export interface DayColumn
     size: number
 }
 
+// prova
+
 export interface WeekClass
 {
-    name: string
-    days: DayColumn[]
+    name: string            // nome classe (1A)
+    grid: (ClassSubject | null)[][]
+    sidebar: ClassSubject[]
+}
+
+
+
+export interface ClassSubject
+{
+    professor: Professor
+    class: string
+    subject: string
+    remainingHours: number  // numero di ore di questa materia da fare nella classe class
 }
 
