@@ -1,17 +1,16 @@
 <script>
-    import { all_classrooms, all_professor, all_subjects } from "$lib/stores/global_store";
+    import { allClassrooms, allProfessors, allSubjects } from "$lib/stores/global_store";
     import { generateCookieFile } from "$lib/utils/cookie_file_writer";
     import { onMount } from "svelte";
-
+    import { get } from "svelte/store";
 
     onMount(() => {
-        const generate_file = () => localStorage.setItem("data.tdf", generateCookieFile($all_professor, $all_classrooms, $all_subjects));
+        const generate_file = () => localStorage.setItem("data.tdf", generateCookieFile($allProfessors, $allClassrooms, $allSubjects));
 
-        all_professor.subscribe(generate_file);
-        all_classrooms.subscribe(generate_file);
-        all_subjects.subscribe(generate_file);
+        allProfessors.subscribe(generate_file);
+        allClassrooms.subscribe(generate_file);
+        allSubjects.subscribe(generate_file);
     });
-
 </script>
 
 <slot />

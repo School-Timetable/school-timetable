@@ -17,8 +17,7 @@ export const file_data = getExistingData();
 const prof_data = getExistingProfessorFromFile(file_data);
 const class_data = getExistingClassroomsFromFile(file_data);
 
-export const all_professor = writable(prof_data);
-export const all_classrooms = writable(class_data);
-export const all_subjects = writable(getExistingSubjectsFromFile(file_data, prof_data, class_data));
+export const allProfessors = writable(prof_data);
+export const allClassrooms = writable(class_data);
+export const allSubjects = writable(getExistingSubjectsFromFile(file_data, prof_data, class_data));
 
-console.log("SONO QUI NELLA PAGINA");
