@@ -9,7 +9,7 @@ const name = new Name("John");
 const surname = new Surname("Claire");
 const cellphone = new Cellphone("123456789");
 const mail = new Mail("abcd13@gmail.com");
-const professor = new Professor(name, surname, mail, cellphone);
+const professor = new Professor("abc", name, surname, mail, cellphone);
 
 
 test('professor_entity_fixture_test', () => {
@@ -21,12 +21,12 @@ test('professor_entity_fixture_test', () => {
 
 test('professor_entity_test_name_change', () => {
     professor.name = new Name("Johnny");
-    expect(professor.name.value).toBe("JOHNNY");
+    expect(professor.name.valueUppercase).toBe("JOHNNY");
 });
 
 test('professor_entity_test_surname_change', () => {
     professor.surname = new Surname("Hill");
-    expect(professor.surname.value).toBe("HILL");
+    expect(professor.surname.valueUppercase).toBe("HILL");
 });
 
 test('professor_entity_test_cellphone_change', () => {

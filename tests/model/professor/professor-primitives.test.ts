@@ -6,7 +6,7 @@ import { test, expect } from '@jest/globals';
 
 test('test_name_validation', () => {
     const name = new Name("John claire");
-    expect(name.value).toBe("JOHN CLAIRE");
+    expect(name.valueUppercase).toBe("JOHN CLAIRE");
 });
 
 test('test_name_validation_undefined', () => {
@@ -35,7 +35,7 @@ test('test_name_validation_invalid', () => {
 
 test('test_surname_validation', () => {
     const surname = new Surname("John claire");
-    expect(surname.value).toBe("JOHN CLAIRE");
+    expect(surname.valueUppercase).toBe("JOHN CLAIRE");
 });
 
 test('test_surname_validation_too_short', () => {

@@ -5,9 +5,9 @@
     import ProfessorFormRow from "./ProfessorFormRow.svelte";
     import { linear } from "svelte/easing";
 
-    let professors = [  Professor.of("John", "Doe", "johndoe@gmail.com", "+391234567890"), 
-                        Professor.of("Jane", "Doe", "janedoe@gmail.com", "+391334567890"),
-                        Professor.of("Will", "Spt", "willspt@gmail.com", "+391234367890")]
+    let professors = [  Professor.of(null, "John", "Doe", "johndoe@gmail.com", "+391234567890"), 
+                        Professor.of(null, "Jane", "Doe", "janedoe@gmail.com", "+391334567890"),
+                        Professor.of(null, "Will", "Spt", "willspt@gmail.com", "+391234367890")]
 
     type ProfessorFormData = {
         name: { value: string };

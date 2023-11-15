@@ -14,13 +14,16 @@ export class Surname {
 
     public readonly value: string;
 
-    constructor(surname: string) {
-        valueSchema.parse(surname);
-        this.value = surname.toUpperCase();
+    public get valueUppercase() {
+        return this.value.toUpperCase();
     }
 
+    constructor(surname: string) {
+        valueSchema.parse(surname);
+        this.value = surname;
+    }
 
     public toString(): string {
-        return this.value.toString();
+        return this.value.toUpperCase();
     }
 }

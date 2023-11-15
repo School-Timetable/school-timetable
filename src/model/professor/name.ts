@@ -13,13 +13,17 @@ export class Name {
 
     public readonly value: string;
 
+    public get valueUppercase() {
+        return this.value.toUpperCase();
+    }
+
     constructor(name: string) {
         valueSchema.parse(name);
-        this.value = name.toUpperCase();
+        this.value = name;
     }
 
     public toString(): string {
-        return this.value.toString();
+        return this.value.toUpperCase();
     }
 
 }
