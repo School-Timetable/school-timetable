@@ -56,21 +56,21 @@
 
     <Container>
         <Row>
-            <Col sm={{size: 1}}>Id</Col>
+            <!-- <Col sm={{size: 1}}>Id</Col> -->
             <Col sm={{size: 2}}><strong>Name</strong></Col>
             <Col sm={{size: 2}}><strong>Surname</strong></Col>
-            <Col sm={{size: 2}}><strong>Mail</strong></Col>
+            <Col sm={{size: 3}}><strong>Mail</strong></Col>
             <Col sm={{size: 2}}><strong>Cellphone</strong></Col>
         </Row>
         {#each professors as professor, i}
             <div class="row" transition:slide|local={{...options}}>
                 {#if editingIndex != i}
-                    <Col sm={{size: 1}}>{i+1}</Col>
+                    <!-- <Col sm={{size: 1}}>{i+1}</Col> -->
                     <Col sm={{size: 2}}>{professor.name.value}</Col>
                     <Col sm={{size: 2}}>{professor.surname.value}</Col>
-                    <Col sm={{size: 2}}>{professor.email.value}</Col>
+                    <Col sm={{size: 3}}>{professor.email.value}</Col>
                     <Col sm={{size: 2}}>{professor.cellPhone.value}</Col>
-                    <Col sm={{size: 3}}>
+                    <Col sm={{size: 3}} style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 13pt;">
                         <Button color="primary" on:click={() => editProfessor(i)}>
                             <Icon name="pencil-square" /> Edit
                         </Button>
@@ -79,10 +79,8 @@
                         </Button>
                     </Col>
                 {:else}
-                    <div class="row" transition:slide|local={{...options}}>
-                        <ProfessorFormRow {professor} on:cancel={() =>{editingIndex = null}} 
-                            on:save={(e) => {saveProfessor(e, i)}}/>
-                    </div>
+                    <ProfessorFormRow {professor} on:cancel={() =>{editingIndex = null}} 
+                        on:save={(e) => {saveProfessor(e, i)}}/>
                 {/if}
             </div>
         {/each}

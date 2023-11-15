@@ -143,7 +143,7 @@
 
 </script>
 
-<Col sm={{size: 2, offset: 1}}>
+<Col sm={{size: 2}}>
     <FormGroup floating label="Name" style="color: grey;">
         <Input type="text" label="name" placeholder="Enter a value" name="name" id="name"
             bind:value={editingProfessor.name.value} on:keyup={validateName} bind:feedback={nameErrorMessage}
@@ -157,7 +157,7 @@
             bind:valid={surnameValid} bind:invalid={surnameInvalid} />
     </FormGroup>
 </Col>
-<Col sm={{size: 2}}>
+<Col sm={{size: 3}}>
     <FormGroup floating label="Email" style="color: grey;">
         <Input type="text" label="email" placeholder="Enter a value" name="email" id="email"
             bind:value={editingProfessor.email.value} on:keyup={validateEmail} bind:feedback={emailErrorMessage}
@@ -171,7 +171,7 @@
             bind:valid={cellPhoneValid} bind:invalid={cellPhoneInvalid} />
     </FormGroup>
 </Col>
-<Col sm={{size: 3}} style="display: flex; align-items: center; margin-bottom: 13pt;">
+<Col sm={{size: 3}} style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 13pt;">
     <Button color="primary" on:click={save}>
         <Icon name="check"/> Save</Button>
     <Button color="danger" on:click={() => eventDispatcher('cancel')}>
