@@ -1,8 +1,8 @@
 <script lang="ts">
     import { Professor } from "$model/professor/professor";
-    import { Button, ButtonGroup, Col, FormGroup, Icon, Input, Label } from "sveltestrap";
+    import { Button, Col, FormGroup, Icon, Input, Label } from "sveltestrap";
     import { createEventDispatcher } from "svelte";
-    import { ZodArray, ZodError, ZodIssueCode, type ZodIssue } from "zod";
+    import { ZodError } from "zod";
     import { nameSchema } from "$model/professor/name";
     import { surnameSchema } from "$model/professor/surname";
     import { mailSchema } from "$model/professor/mail";
@@ -12,27 +12,12 @@
 
     export let professor: Professor | null = null;
 
-    let nameErrorMessage: string = "";
-    let nameValid: boolean = false;
-    let nameInvalid: boolean;
-    $: nameInvalid = !nameValid;
+    let nameValidation = { errorMessage: "", valid: false, invalid: false };
+    let surnameValidation = { errorMessage: "", valid: false, invalid: false };
+    let mailValidation = { errorMessage: "", valid: false, invalid: false };
+    let cellPhoneValidation = { errorMessage: "", valid: false, invalid: false };
+
     const correctFeedback = "";
-
-    let surnameErrorMessage: string = "";
-    let surnameValid: boolean = false;
-    let surnameInvalid: boolean;
-    $: surnameInvalid = !surnameValid;
-
-
-    let emailErrorMessage: string = "";
-    let emailValid: boolean = false;
-    let emailInvalid: boolean;
-    $: emailInvalid = !emailValid;
-
-    let cellPhoneErrorMessage: string = "";
-    let cellPhoneValid: boolean = false;
-    let cellPhoneInvalid: boolean;
-    $: cellPhoneInvalid = !cellPhoneValid;
 
     type ProfessorFormData = {
         name: { value: string };
@@ -71,7 +56,7 @@
         validateEmail()
         validateCellPhone()
         try{
-            let savedProfessor: Professor = Professor.of(   editingProfessor.name.value,
+            let savedProfessor: Professor = Professor.of(   null, editingProfessor.name.value,
                                                             editingProfessor.surname.value,
                                                             editingProfessor.email.value,
                                                             editingProfessor.cellPhone.value)
@@ -87,13 +72,15 @@
     function validateName(){
         try{
             nameSchema.parse(editingProfessor.name);
-            nameValid = true;
-            nameErrorMessage = correctFeedback
+            nameValidation.valid = true;
+            nameValidation.invalid = false;
+            nameValidation.errorMessage = correctFeedback
         }catch(e){
             if(e instanceof ZodError)
             {
-                nameErrorMessage = e.issues[0].message;
-                nameValid = false;
+                nameValidation.errorMessage = e.issues[0].message;
+                nameValidation.valid = false;
+                nameValidation.invalid = true;
             }
         }
     }
@@ -101,13 +88,15 @@
     function validateSurname(){
         try{
             surnameSchema.parse(editingProfessor.surname);
-            surnameValid = true;
-            surnameErrorMessage = correctFeedback
+            surnameValidation.valid = true;
+            surnameValidation.invalid = false;
+            surnameValidation.errorMessage = correctFeedback
         }catch(e){
             if(e instanceof ZodError)
             {
-                surnameErrorMessage = e.issues[0].message;
-                surnameValid = false;
+                surnameValidation.errorMessage = e.issues[0].message;
+                surnameValidation.valid = false;
+                surnameValidation.invalid = true;
             }
         }
     }
@@ -115,13 +104,15 @@
     function validateEmail(){
         try{
             mailSchema.parse(editingProfessor.email);
-            emailValid = true;
-            emailErrorMessage = correctFeedback
+            mailValidation.valid = true;
+            mailValidation.invalid = false;
+            mailValidation.errorMessage = correctFeedback
         }catch(e){
             if(e instanceof ZodError)
             {
-                emailErrorMessage = e.issues[0].message;
-                emailValid = false;
+                mailValidation.errorMessage = e.issues[0].message;
+                mailValidation.valid = false;
+                mailValidation.invalid = true;
             }
         }
     }
@@ -129,13 +120,15 @@
     function validateCellPhone(){
         try{
             cellPhoneSchema.parse(editingProfessor.cellPhone);
-            cellPhoneValid = true;
-            cellPhoneErrorMessage = correctFeedback
+            cellPhoneValidation.valid = true;
+            cellPhoneValidation.invalid = false;
+            cellPhoneValidation.errorMessage = correctFeedback
         }catch(e){
             if(e instanceof ZodError)
             {
-                cellPhoneErrorMessage = e.issues[0].message;
-                cellPhoneValid = false;
+                cellPhoneValidation.errorMessage = e.issues[0].message;
+                cellPhoneValidation.valid = false;
+                cellPhoneValidation.invalid = true;
             }
         }
     }
@@ -146,29 +139,29 @@
 <Col sm={{size: 2}}>
     <FormGroup floating label="Name" style="color: grey;">
         <Input type="text" label="name" placeholder="Enter a value" name="name" id="name"
-            bind:value={editingProfessor.name.value} on:keyup={validateName} bind:feedback={nameErrorMessage}
-            bind:valid={nameValid} bind:invalid={nameInvalid} />
+            bind:value={editingProfessor.name.value} on:keyup={validateName} bind:feedback={nameValidation.errorMessage}
+            bind:valid={nameValidation.valid} bind:invalid={nameValidation.invalid} />
     </FormGroup>
 </Col>
 <Col sm={{size: 2}}>
     <FormGroup floating label="Surname" style="color: grey;">
         <Input type="text" label="surname" placeholder="Enter a value" name="surname" id="surname"
-            bind:value={editingProfessor.surname.value} on:keyup={validateSurname} bind:feedback={surnameErrorMessage}
-            bind:valid={surnameValid} bind:invalid={surnameInvalid} />
+            bind:value={editingProfessor.surname.value} on:keyup={validateSurname} bind:feedback={surnameValidation.errorMessage}
+            bind:valid={surnameValidation.valid} bind:invalid={surnameValidation.invalid} />
     </FormGroup>
 </Col>
 <Col sm={{size: 3}}>
     <FormGroup floating label="Email" style="color: grey;">
         <Input type="text" label="email" placeholder="Enter a value" name="email" id="email"
-            bind:value={editingProfessor.email.value} on:keyup={validateEmail} bind:feedback={emailErrorMessage}
-            bind:valid={emailValid} bind:invalid={emailInvalid}/>
+            bind:value={editingProfessor.email.value} on:keyup={validateEmail} bind:feedback={mailValidation.errorMessage}
+            bind:valid={mailValidation.valid} bind:invalid={mailValidation.invalid}/>
     </FormGroup>
 </Col>
 <Col sm={{size: 2}}>
     <FormGroup floating label="Phone number" style="color: grey;">
         <Input type="text" label="cellPhone" placeholder="Enter a value" name="cellPhone" id="cellPhone"
-            bind:value={editingProfessor.cellPhone.value} on:keyup={validateCellPhone} bind:feedback={cellPhoneErrorMessage}
-            bind:valid={cellPhoneValid} bind:invalid={cellPhoneInvalid} />
+            bind:value={editingProfessor.cellPhone.value} on:keyup={validateCellPhone} bind:feedback={cellPhoneValidation.errorMessage}
+            bind:valid={cellPhoneValidation.valid} bind:invalid={cellPhoneValidation.invalid} />
     </FormGroup>
 </Col>
 <Col sm={{size: 3}} style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 13pt;">
