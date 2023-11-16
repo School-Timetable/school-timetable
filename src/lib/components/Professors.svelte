@@ -69,10 +69,10 @@
 	}
 
 	let tableHeaderElements = [
-		{ name: "_name", label: "Name", size: 2 },
-		{ name: "_surname", label: "Surname", size: 2 },
-		{ name: "_email", label: "Email", size: 3 },
-		{ name: "_cellPhone", label: "Cellphone", size: 2 },
+		{ name: "name", label: "Name", size: 2 },
+		{ name: "surname", label: "Surname", size: 2 },
+		{ name: "email", label: "Email", size: 3 },
+		{ name: "cellPhone", label: "Cellphone", size: 2 },
 	];
 </script>
 
@@ -82,7 +82,7 @@
 			<Col sm={{ size: headerElement.size }}>
 				<Button
 					color="link"
-					class="text-decoration-none text-primary"
+					class="text-decoration-none text-reset text-secondary"
 					on:click={() => sortBy(headerElement.name)}
 				>
 					{headerElement.label}
