@@ -34,7 +34,7 @@
 		let:index
 		professor={item}
 		on:save={(e) => save(e.detail.professor, index)}
-		on:cancel={() => (editingId.set (null))}
+		on:cancel={() => (editingId.set(null))}
 	/>
 	<ProfessorFormRow
 		slot="create"
