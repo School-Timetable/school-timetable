@@ -34,6 +34,7 @@
     let tmpSchoolClass: SchoolClassFormData;
 
     type SchoolClassFormData = {
+        _id: { value: string | null };
         _year: { value: number };
         _section: { value: string };
         _track: { value: string };
@@ -42,6 +43,7 @@
     {
         if(schoolClass) {
             tmpSchoolClass = {
+                _id: { value: schoolClass.id },
                 _year: { value: schoolClass.year.value },
                 _section: { value: schoolClass.section.value },
                 _track: { value: schoolClass.track?.value || "" }
@@ -49,6 +51,7 @@
         }
         else {
             tmpSchoolClass = {
+                _id: { value: null },
                 _year: { value: 1 },
                 _section: { value: "A" },
                 _track: { value: "" }
@@ -66,6 +69,7 @@
         try {
             let track = tmpSchoolClass!._track.value == "" ? undefined : new Track(tmpSchoolClass!._track.value)
             let savedSchoolClass: SchoolClass = SchoolClass.of(
+                tmpSchoolClass._id.value,
                 tmpSchoolClass._year.value,
                 tmpSchoolClass._section.value,
                 track?.value

@@ -40,12 +40,6 @@ test('test_school_class_section_change', () => {
     expect(schoolClassWithTrack.section.value).toBe("C");
 });
 
-// TODO: check if a "defined" track can be modified to undefined
-/* test('test_school_class_with_track_change', () => {
-    schoolClassWithTrack.track = undefined;
-    expect(schoolClassWithTrack.track).toBe(undefined);
-}); */
-
 test('test_school_class_without_track_change', () => {
     schoolClassWithoutTrack.track = new Track("Inf.");
     expect(schoolClassWithoutTrack.track.valueUppercase).toBe("INF.");

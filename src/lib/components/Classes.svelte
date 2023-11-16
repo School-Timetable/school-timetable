@@ -1,46 +1,26 @@
 <script lang="ts">
-    import {SchoolClass} from "$model/school-class/school-class";
-    import {Button, ButtonGroup, Col, Container, Form, Icon, Input, Label, Row,} from "sveltestrap";
-    import {Track} from "$model/school-class/track";
-    import {ZodError} from "zod";
+    import type {SchoolClass} from "$model/school-class/school-class";
+    import {Button, Col, Container, Form, Icon, Row,} from "sveltestrap";
     import { slide } from "svelte/transition";
     import {linear} from "svelte/easing";
     import ClassFormRow from "$lib/components/ClassFormRow.svelte";
-
-
-    let schoolClassTemplate = SchoolClass.of(null, 1, "A");
-    let schoolClass = SchoolClass.of(null, 2, "D");
-	let schoolClass2 = SchoolClass.of(null, 4, "C", "Scientifico");
+    import FormSearch from "$lib/components/FormSearch.svelte";
+    import { get } from "svelte/store";
+    import { allClassrooms } from "$lib/stores/global_store";
 
     let options = {duration: 200 ,easing: linear};
 
-    // TODO: check
-    let schoolClasses = [schoolClass, schoolClass2]
+    let schoolClasses = get(allClassrooms)
 
-    // TODO: set schoolClasses from db
+    let filteredList = schoolClasses
 
-	let tmpSchoolClassIndex: number | null = null;
-	let tmpSchoolClass: SchoolClassFormData | null = null;
-
-	type SchoolClassFormData = {
-		_year: { value: number };
-		_section: { value: string };
-		_track: { value: string };
-	};
-
-	function editSchoolClass(index: number) {
-        tmpSchoolClassIndex = index
-        schoolClasses = schoolClasses
+	let editingId: string | null = null;
+    function editSchoolClass(id: string) {
+        editingId = id
 	}
 
     function addSchoolClass() {
-        tmpSchoolClass = {
-            _year: { value: schoolClass.year.value },
-            _section: { value: schoolClass.section.value },
-            _track: { value: schoolClass.track?.value || "" }
-        };
-        schoolClasses = schoolClasses;
-        tmpSchoolClassIndex = schoolClasses.length
+        editingId = ""
     }
 	const createSchoolClass = (event: { detail: any }) => {
         const newClass = event.detail.schoolClass
@@ -52,17 +32,25 @@
             ...schoolClasses,
             newClass
         ]
-
-        tmpSchoolClassIndex = null
+        allClassrooms.set(schoolClasses)
+        editingId = null
     }
 
 
-    const saveSchoolClass = (event: { detail: any }, index: number) => {
-        schoolClasses[index] = event.detail.schoolClass
-        tmpSchoolClassIndex = null
+    const saveSchoolClass = (event: { detail: any }) => {
+        const newClass = event.detail.schoolClass
+        if (classAlreadyExists(newClass, schoolClasses)) {
+            alert("Class already exists")
+            return
+        }
+        const indexInFullList = schoolClasses.findIndex((sc) => sc.id === newClass.id)
+        schoolClasses.splice(indexInFullList, 1, newClass)
+        schoolClasses = schoolClasses
+        allClassrooms.set(schoolClasses)
+        editingId = null
     }
 
-    function classAlreadyExists(schoolClass: SchoolClass, schoolClasses: SchoolClass[]): boolean{
+    function classAlreadyExists(schoolClass: SchoolClass, schoolClasses: SchoolClass[]): boolean {
         let exists = false
         schoolClasses.forEach((sc) => {
             if (sc.year.value === schoolClass.year.value && sc.section.value === schoolClass.section.value && sc.track?.value === schoolClass.track?.value) {
@@ -73,41 +61,63 @@
         return exists
     }
 
+    const manageSearchResults = (event: { detail: any }) => {
+        filteredList = event.detail.searchResults
+    }
+
+    function removeClass(tmpId: string) {
+        const index = getIndexById(tmpId)
+        console.log(index)
+        schoolClasses.splice(index, 1)
+        schoolClasses = schoolClasses
+        allClassrooms.set(schoolClasses)
+    }
+
+    function getIndexById(id: string): number {
+        return schoolClasses.findIndex((sc) => sc.id === id)
+    }
+
 </script>
 
 <Form>
     <Container>
         <Row>
+            <Col sm="12" md={{ size: 6, offset: 3 }}>
+                <FormSearch bind:list={schoolClasses}
+                            on:search={(event) => manageSearchResults(event)}/>
+            </Col>
+        </Row>
+        <Row>
             <Col sm={{size: 2}}>Year</Col>
             <Col sm={{size: 2}}><strong>Section</strong></Col>
             <Col sm={{size: 8}}><strong>Track</strong></Col>
         </Row>
-        {#each schoolClasses as schoolClass, index}
+            {#each filteredList as schoolClass}
+                <div class="row" transition:slide|local={{...options}}>
+                    {#if editingId !== schoolClass.id}
+                        <Col sm={{size: 2}}>{schoolClass.year.value}</Col>
+                        <Col sm={{size: 2}}>{schoolClass.section.value}</Col>
+                        <Col sm={{size: 5}}>{schoolClass.track?.value || "-"}</Col>
+                        <Col sm={{size: 3}}>
+                            <Button color="primary" on:click={() => editSchoolClass(schoolClass.id)}>
+                                <Icon name="pencil-square" /> Edit
+                            </Button>
+                            <Button color="danger" on:click={() => {removeClass(schoolClass.id)}}>
+                                <Icon name="trash-fill"/> Delete
+                            </Button>
+                        </Col>
+                    {:else}
+                        <div class="row" transition:slide|local={{...options}}>
+                            <ClassFormRow {schoolClass}
+                                          on:cancel={() => editingId = null}
+                                          on:save={(e) => {saveSchoolClass(e)}}/>
+                        </div>
+                    {/if}
+                </div>
+            {/each}
+        {#if editingId === ""}
             <div class="row" transition:slide|local={{...options}}>
-                {#if tmpSchoolClassIndex !== index}
-                    <Col sm={{size: 2}}>{schoolClass.year.value}</Col>
-                    <Col sm={{size: 2}}>{schoolClass.section.value}</Col>
-                    <Col sm={{size: 5}}>{schoolClass.track?.value || "-"}</Col>
-                    <Col sm={{size: 3}}>
-                        <Button color="primary" on:click={() => editSchoolClass(index)}>
-                            <Icon name="pencil-square" /> Edit
-                        </Button>
-                        <Button color="danger" on:click={() => {schoolClasses.splice(index,1); schoolClasses = schoolClasses}}>
-                            <Icon name="trash-fill"/> Delete
-                        </Button>
-                    </Col>
-                {:else}
-                    <div class="row" transition:slide|local={{...options}}>
-                        <ClassFormRow {schoolClass}
-                                      on:cancel={() => tmpSchoolClassIndex = null}
-                                      on:save={(e) => {saveSchoolClass(e,index)}}/>
-                    </div>
-                {/if}
-            </div>
-        {/each}
-        {#if tmpSchoolClassIndex === schoolClasses.length}
-            <div class="row" transition:slide|local={{...options}}>
-                <ClassFormRow on:cancel={() => {tmpSchoolClassIndex = null}}
+                <ClassFormRow on:cancel={() => {editingId = null}}
                               on:save={createSchoolClass}/>
 
             </div>

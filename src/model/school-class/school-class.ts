@@ -13,13 +13,13 @@ export const schoolClassSchema = z.object({
 
 export class SchoolClass {
 
-    private _id: string
+    private readonly _id: string
     private _year: Year
     private _section: Section
     private _track?: Track
 
     private constructor(id: string | null, year: Year, section: Section) {
-        if(!id || id === null) {
+        if(!id) {
             id = uuid();
         }
 
@@ -97,5 +97,9 @@ export class SchoolClass {
 
     public toCsv(): string {
         return `C:${this._id};${this._year};${this._section};${this._track ? this._track.value : ''}`
+    }
+
+    public toFullString(): string {
+        return this.toString()
     }
 }
