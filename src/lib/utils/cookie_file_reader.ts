@@ -5,7 +5,7 @@ import { Subject } from "$model/subject/subject";
 export function getExistingProfessorFromFile(file_data: string[]) {
     let professors: Professor[] = []
     file_data.forEach(line => {
-        if (line.substring(0,2) === "P:") {
+        if (line.substring(0, 2) === "P:") {
             professors.push(Professor.ofCsv(line))
         }
     });
@@ -17,7 +17,7 @@ export function getExistingProfessorFromFile(file_data: string[]) {
 export function getExistingClassroomsFromFile(file_data: string[]) {
     let classes: SchoolClass[] = []
     file_data.forEach(line => {
-        if (line.substring(0,2) === "C:") {
+        if (line.substring(0, 2) === "C:") {
             classes.push(SchoolClass.ofCsv(line))
         }
     });
@@ -28,7 +28,7 @@ export function getExistingClassroomsFromFile(file_data: string[]) {
 export function getExistingSubjectsFromFile(file_data: string[], existing_prof: Professor[], existing_class: SchoolClass[]) {
     let subjects: Subject[] = []
     file_data.forEach(line => {
-        if (line.substring(0,2) === "S:") {
+        if (line.substring(0, 2) === "S:") {
             subjects.push(Subject.ofCsv(line, existing_prof, existing_class))
         }
     });

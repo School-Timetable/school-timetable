@@ -1,4 +1,4 @@
-@media (prefers-color-scheme: light) {
+/* @media (prefers-color-scheme: light) {
     :root {
       --color-lightest: hsl(0deg, 0%, 100%);
       --color-verylight: hsl(0deg, 0%, 100%);
@@ -24,4 +24,4 @@
         --color-text-area: hsl(0deg, 0%, 85%);
         --color-active: hsl(132, 62%, 55%);
     }
-}
+} */
