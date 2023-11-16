@@ -8,8 +8,6 @@
 
 	let items = get(allProfessors);
 
-	//let editingId: string | null = null;
-
 	function save(item: Professor, index?: number) {
 		if (index != undefined && index >= 0 && index < items.length)
 			items[index] = item;
@@ -25,20 +23,21 @@
 		{ fieldName: "email", label: "Email", columns: 3 },
 		{ fieldName: "cellPhone", label: "Cell Phone", columns: 3 },
 	];
+
 </script>
 
-<TableList {items} {fieldsInfo} editingId={get(editingId)}>
+<TableList {items} {fieldsInfo}>
 	<ProfessorFormRow
 		slot="edit"
 		let:item
 		let:index
 		professor={item}
 		on:save={(e) => save(e.detail.professor, index)}
-		on:cancel={() => (editingId.set(null))}
+		on:cancel={() => {editingId.set(null)}}
 	/>
 	<ProfessorFormRow
 		slot="create"
 		on:save={(e) => save(e.detail.professor)}
-		on:cancel={() => (editingId.set(null))}
+		on:cancel={() => {editingId.set(null)}}
 	/>
 </TableList>

@@ -9,6 +9,8 @@
 	import type { Subject } from "$model/subject/subject";
 	import { createEventDispatcher } from "svelte";
 	import type { FieldInfo } from "$model/model-generics";
+	import { editingId } from "$lib/stores/global_store";
+    import { get } from "svelte/store";
 
 	const eventDispatcher = createEventDispatcher<{
 		delete: { value: AcceptedTypes };
@@ -18,7 +20,7 @@
 	type AcceptedTypes = Professor | SchoolClass | Subject;
 	export let items: AcceptedTypes[] = [];
 
-	export let editingId: string | null = null;
+	// let editingId: string | null = null;
 
 	export let fieldsInfo: FieldInfo[] = [];
 
@@ -26,7 +28,7 @@
 	let sortAsc: boolean = true;
 
 	function editItem(item: AcceptedTypes) {
-		editingId = item.id;
+		editingId.set(item.id);
 		eventDispatcher("editStart", { value: item });
 	}
 
@@ -36,7 +38,7 @@
 	}
 
 	function createNew() {
-		editingId = "";
+		editingId.set("");
 	}
 
 	function backgroundForIndex(index: number) {
@@ -92,7 +94,7 @@
 			class="px-2 rounded shadow-sm mb-2 {backgroundForIndex(index)}"
 			animate:flip={{ duration: 400, easing: sineOut }}
 		>
-			{#if editingId != item.id}
+			{#if $editingId != item.id}
 				<Row class="align-items-center">
 					{#each fieldsInfo as fieldInfo}
 						<Col sm={{ size: fieldInfo.columns }}>
@@ -123,7 +125,7 @@
 			</slot>
 		</div>
 	{/each}
-	{#if editingId === ""}
+	{#if $editingId === ""}
 		<div in:fade>
 			<slot name="create" />
 		</div>
