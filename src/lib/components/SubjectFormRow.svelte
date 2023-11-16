@@ -1,5 +1,14 @@
 <script lang="ts">
-	import { Button, ButtonGroup, Col, Icon, Input, Label } from "sveltestrap";
+	import {
+		Button,
+		ButtonGroup,
+		Col,
+		Form,
+		Icon,
+		Input,
+		Label,
+		Row,
+	} from "sveltestrap";
 	import { createEventDispatcher } from "svelte";
 	import { ZodError } from "zod";
 	import type { SchoolClass } from "$model/school-class/school-class";
@@ -12,10 +21,11 @@
 	}>();
 
 	export let subject: Subject | null = null;
-	export let professors: Professor[] = [];
 	export let schoolClasses: SchoolClass[] = [];
+	export let professors: Professor[] = [];
 
 	type SubjectFormData = {
+		_id: string | null;
 		_schoolClass?: SchoolClass;
 		_professor?: Professor;
 		_name: { value: string };
@@ -28,6 +38,7 @@
 
 	if (subject == null) {
 		editingSubject = {
+			_id: null,
 			_name: { value: "" },
 			_abbreviation: { value: "" },
 			_weight: { value: 5 },
@@ -35,6 +46,7 @@
 		};
 	} else {
 		editingSubject = {
+			_id: subject.id,
 			_schoolClass: subject.schoolClass,
 			_professor: subject.professor,
 			_name: { value: subject.name.value },
@@ -47,6 +59,7 @@
 	function save() {
 		try {
 			let savedSubject = Subject.of(
+				editingSubject._id,
 				editingSubject._schoolClass!,
 				editingSubject._professor!,
 				editingSubject._name.value,
@@ -67,93 +80,95 @@
 	}
 </script>
 
-<Col>
-	<Label for="schoolClass">Class</Label>
-	<Input
-		type="select"
-		label="schoolClass"
-		name="schoolClass"
-		id="schoolClass"
-		bind:value={editingSubject._schoolClass}
-	>
-		{#each schoolClasses as schoolClass}
-			<option value={schoolClass}>{schoolClass}</option>
-		{:else}
-			<option value={null}>no professors</option>
-		{/each}
-	</Input>
-</Col>
-<Col>
-	<Label for="professor">Professor</Label>
-	<Input
-		type="select"
-		label="professor"
-		name="professor"
-		id="professor"
-		bind:value={editingSubject._professor}
-	>
-		{#each professors as professor}
-			<option value={professor}>{professor}</option>
-		{:else}
-			<option>no professors</option>
-		{/each}
-	</Input>
-</Col>
-<Col>
-	<Label for="abbreviation">Abbreviation</Label>
-	<Input
-		type="text"
-		label="abbreviation"
-		name="abbreviation"
-		id="abbreviation"
-		placeholder="Abbreviation"
-		bind:value={editingSubject._abbreviation.value}
-	/>
-</Col>
-<Col>
-	<Label for="name">Name</Label>
-	<Input
-		type="text"
-		label="name"
-		name="name"
-		id="name"
-		placeholder="Name"
-		bind:value={editingSubject._name.value}
-	/>
-</Col>
-<Col>
-	<Label for="weight">Weight</Label>
-	<Input
-		type="number"
-		label="weight"
-		name="weight"
-		id="weight"
-		placeholder="Weight"
-		bind:value={editingSubject._weight.value}
-		min="1"
-		max="10"
-	/>
-</Col>
-<Col>
-	<Label for="hoursPerWeek">Hours per week</Label>
-	<Input
-		type="number"
-		label="hoursPerWeek"
-		name="hoursPerWeek"
-		id="hoursPerWeek"
-		placeholder="Hours per week"
-		bind:value={editingSubject._hoursPerWeek.value}
-		min="1"
-		max="30"
-	/>
-</Col>
-<Col>
-	<ButtonGroup>
-		<Button color="primary" on:click={save}>
-			Save <Icon name="check" />
-		</Button>
-		<Button color="danger" on:click={cancel}>
-			Cancel <Icon name="x" />
-		</Button>
-	</ButtonGroup>
-</Col>
+<Row>
+	<Col>
+		<Label for="schoolClass">Class</Label>
+		<Input
+			type="select"
+			label="schoolClass"
+			name="schoolClass"
+			id="schoolClass"
+			bind:value={editingSubject._schoolClass}
+		>
+			{#each schoolClasses as schoolClass}
+				<option value={schoolClass}>{schoolClass}</option>
+			{:else}
+				<option value={null}>no classes</option>
+			{/each}
+		</Input>
+	</Col>
+	<Col>
+		<Label for="professor">Professor</Label>
+		<Input
+			type="select"
+			label="professor"
+			name="professor"
+			id="professor"
+			bind:value={editingSubject._professor}
+		>
+			{#each professors as professor}
+				<option value={professor}>{professor}</option>
+			{:else}
+				<option>no professors</option>
+			{/each}
+		</Input>
+	</Col>
+	<Col>
+		<Label for="abbreviation">Abbreviation</Label>
+		<Input
+			type="text"
+			label="abbreviation"
+			name="abbreviation"
+			id="abbreviation"
+			placeholder="Abbreviation"
+			bind:value={editingSubject._abbreviation.value}
+		/>
+	</Col>
+	<Col>
+		<Label for="name">Name</Label>
+		<Input
+			type="text"
+			label="name"
+			name="name"
+			id="name"
+			placeholder="Name"
+			bind:value={editingSubject._name.value}
+		/>
+	</Col>
+	<Col>
+		<Label for="weight">Weight</Label>
+		<Input
+			type="number"
+			label="weight"
+			name="weight"
+			id="weight"
+			placeholder="Weight"
+			bind:value={editingSubject._weight.value}
+			min="1"
+			max="10"
+		/>
+	</Col>
+	<Col>
+		<Label for="hoursPerWeek">Hours per week</Label>
+		<Input
+			type="number"
+			label="hoursPerWeek"
+			name="hoursPerWeek"
+			id="hoursPerWeek"
+			placeholder="Hours per week"
+			bind:value={editingSubject._hoursPerWeek.value}
+			min="1"
+			max="30"
+		/>
+	</Col>
+	<Col>
+		<ButtonGroup>
+			<Button color="primary" on:click={save}>
+				Save <Icon name="check" />
+			</Button>
+			<Button color="danger" on:click={cancel}>
+				Cancel <Icon name="x" />
+			</Button>
+		</ButtonGroup>
+	</Col>
+</Row>

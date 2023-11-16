@@ -151,25 +151,23 @@
 				</Col>
 			</Row>
 		{:else}
-			<Row>
-				<SubjectFormRow
-					{subject}
-					on:save={(e) => saveSubject(e.detail.subject, index)}
-					on:cancel={cancelEditSubject}
-				/>
-			</Row>
+			<SubjectFormRow
+				{subject}
+				{schoolClasses}
+				{professors}
+				on:save={(e) => saveSubject(e.detail.subject, index)}
+				on:cancel={cancelEditSubject}
+			/>
 		{/if}
 	{/each}
 
 	{#if editingSubjectIndex == subjects.length}
-		<Row>
-			<SubjectFormRow
-				{professors}
-				{schoolClasses}
-				on:save={(e) => saveSubject(e.detail.subject)}
-				on:cancel={cancelEditSubject}
-			/>
-		</Row>
+		<SubjectFormRow
+			{schoolClasses}
+			{professors}
+			on:save={(e) => saveSubject(e.detail.subject)}
+			on:cancel={cancelEditSubject}
+		/>
 	{/if}
 
 	<Row>

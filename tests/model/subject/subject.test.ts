@@ -12,18 +12,11 @@ import { Name as ProfessorName } from '$model/professor/name';
 import { SchoolClass } from '$model/school-class/school-class';
 
 function getProfessor(): Professor {
-    return new Professor(
-        "abc",
-        new ProfessorName("Mario"),
-        new Surname("Rossi"),
-        new Mail("mario.rossi@gmail.com"),
-        new Cellphone("3331234567"));
+    return Professor.of("customId", "Mario", "Rossi", "mario.rossi@gmail.com", "3331234567");
 }
 
 function getSchoolClass(): SchoolClass {
-    return SchoolClass.of(
-        "abc", 5, "A"
-    );
+    return SchoolClass.of("customId", 5, "A");
 }
 
 

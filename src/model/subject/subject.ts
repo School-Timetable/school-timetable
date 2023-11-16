@@ -34,10 +34,10 @@ export class Subject {
     constructor(id: string | null, schoolClass: SchoolClass, professor: Professor, name: Name, abbreviation: Abbreviation,
         weight: Weight, hoursPerWeek: HoursPerWeek
     ) {
-        if(!id || id === null) {
+        if (!id || id === null) {
             id = uuid();
         }
-        
+
         subjectSchema.parse({
             _id: id,
             _schoolClass: schoolClass,
@@ -57,7 +57,7 @@ export class Subject {
         this._hoursPerWeek = hoursPerWeek;
     }
 
-    static of(id: string | null,schoolClass: SchoolClass, professor: Professor, name: string, abbreviation: string, weight: number, hoursPerWeek: number): Subject {
+    static of(id: string | null, schoolClass: SchoolClass, professor: Professor, name: string, abbreviation: string, weight: number, hoursPerWeek: number): Subject {
         return new Subject(
             id,
             schoolClass,
@@ -69,8 +69,8 @@ export class Subject {
         );
     }
 
-    static ofCsv(csv: string, all_prof: Professor[], all_classes: SchoolClass[]) {
-        if(csv.substring(0,2) !== "S:") {
+    static ofCsv(csv: string, professors: Professor[], classes: SchoolClass[]) {
+        if (csv.substring(0, 2) !== "S:") {
             throw new Error(`${csv} is not a subject string`);
         }
 
@@ -78,16 +78,21 @@ export class Subject {
         let classId = match[2];
         let profId = match[3];
 
-        let classIdx = all_classes.findIndex((e) => e.id === classId);
-        let profIdx = all_prof.findIndex((e) => e.id === profId);
+        let classIdx = classes.findIndex((e) => e.id === classId);
+        let profIdx = professors.findIndex((e) => e.id === profId);
 
-        if(classIdx === -1 || profIdx === -1) {
+        if (classIdx === -1 || profIdx === -1) {
             throw new Error("The class or prof id are not valid");
         }
 
-        return Subject.of(match[1], all_classes[classIdx], all_prof[profIdx], match[4], match[5], Number(match[6]), Number(match[7]));
+        return Subject.of(match[1], classes[classIdx], professors[profIdx], match[4], match[5], Number(match[6]), Number(match[7]));
     }
 
+    public toCsv() {
+        return `S:${this.id};${this.schoolClass.id};${this.professor.id};${this.name};${this.abbreviation};${this.weight};${this.hoursPerWeek}`
+    }
+
+    get id() { return this._id; }
     get schoolClass() { return this._schoolClass; }
     get professor() { return this._professor; }
     get name() { return this._name; }
@@ -118,10 +123,6 @@ export class Subject {
     set hoursPerWeek(value) {
         hoursPerWeekSchema.parse(value);
         this._hoursPerWeek = value;
-    }
-
-    public toCsv() {
-        return `S:${this._id};${this._schoolClass.id};${this._professor.id};${this._name};${this._abbreviation};${this._weight};${this._hoursPerWeek}`
     }
 
 }
