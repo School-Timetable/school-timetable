@@ -14,7 +14,7 @@
 
 	let nameValidation = { errorMessage: "", valid: false, invalid: false };
 	let surnameValidation = { errorMessage: "", valid: false, invalid: false };
-	let mailValidation = { errorMessage: "", valid: false, invalid: false };
+	let emailValidation = { errorMessage: "", valid: false, invalid: false };
 	let cellPhoneValidation = {
 		errorMessage: "",
 		valid: false,
@@ -24,10 +24,10 @@
 	const correctFeedback = "";
 
 	type ProfessorFormData = {
-		name: { value: string };
-		surname: { value: string };
-		email: { value: string };
-		cellPhone: { value: string };
+		_name: { value: string };
+		_surname: { value: string };
+		_email: { value: string };
+		_cellPhone: { value: string };
 	};
 
 	let editingProfessor: ProfessorFormData;
@@ -35,10 +35,10 @@
 	{
 		if (professor) {
 			editingProfessor = {
-				name: { value: professor.name.value },
-				surname: { value: professor.surname.value },
-				email: { value: professor.email.value },
-				cellPhone: { value: professor.cellPhone.value },
+				_name: { value: professor.name.value },
+				_surname: { value: professor.surname.value },
+				_email: { value: professor.email.value },
+				_cellPhone: { value: professor.cellPhone.value },
 			};
 			validateName();
 			validateSurname();
@@ -46,10 +46,10 @@
 			validateCellPhone();
 		} else {
 			editingProfessor = {
-				name: { value: "" },
-				surname: { value: "" },
-				email: { value: "" },
-				cellPhone: { value: "" },
+				_name: { value: "" },
+				_surname: { value: "" },
+				_email: { value: "" },
+				_cellPhone: { value: "" },
 			};
 		}
 	}
@@ -62,10 +62,10 @@
 		try {
 			let savedProfessor: Professor = Professor.of(
 				null,
-				editingProfessor.name.value,
-				editingProfessor.surname.value,
-				editingProfessor.email.value,
-				editingProfessor.cellPhone.value
+				editingProfessor._name.value,
+				editingProfessor._surname.value,
+				editingProfessor._email.value,
+				editingProfessor._cellPhone.value
 			);
 			eventDispatcher("save", { professor: savedProfessor });
 		} catch (e) {
@@ -76,7 +76,7 @@
 
 	function validateName() {
 		try {
-			nameSchema.parse(editingProfessor.name);
+			nameSchema.parse(editingProfessor._name);
 			nameValidation.valid = true;
 			nameValidation.invalid = false;
 			nameValidation.errorMessage = correctFeedback;
@@ -91,7 +91,7 @@
 
 	function validateSurname() {
 		try {
-			surnameSchema.parse(editingProfessor.surname);
+			surnameSchema.parse(editingProfessor._surname);
 			surnameValidation.valid = true;
 			surnameValidation.invalid = false;
 			surnameValidation.errorMessage = correctFeedback;
@@ -106,22 +106,22 @@
 
 	function validateEmail() {
 		try {
-			mailSchema.parse(editingProfessor.email);
-			mailValidation.valid = true;
-			mailValidation.invalid = false;
-			mailValidation.errorMessage = correctFeedback;
+			mailSchema.parse(editingProfessor._email);
+			emailValidation.valid = true;
+			emailValidation.invalid = false;
+			emailValidation.errorMessage = correctFeedback;
 		} catch (e) {
 			if (e instanceof ZodError) {
-				mailValidation.errorMessage = e.issues[0].message;
-				mailValidation.valid = false;
-				mailValidation.invalid = true;
+				emailValidation.errorMessage = e.issues[0].message;
+				emailValidation.valid = false;
+				emailValidation.invalid = true;
 			}
 		}
 	}
 
 	function validateCellPhone() {
 		try {
-			cellPhoneSchema.parse(editingProfessor.cellPhone);
+			cellPhoneSchema.parse(editingProfessor._cellPhone);
 			cellPhoneValidation.valid = true;
 			cellPhoneValidation.invalid = false;
 			cellPhoneValidation.errorMessage = correctFeedback;
@@ -140,10 +140,9 @@
 		<Input
 			type="text"
 			label="name"
-			placeholder="Enter a value"
 			name="name"
 			id="name"
-			bind:value={editingProfessor.name.value}
+			bind:value={editingProfessor._name.value}
 			on:keyup={validateName}
 			bind:feedback={nameValidation.errorMessage}
 			bind:valid={nameValidation.valid}
@@ -156,10 +155,9 @@
 		<Input
 			type="text"
 			label="surname"
-			placeholder="Enter a value"
 			name="surname"
 			id="surname"
-			bind:value={editingProfessor.surname.value}
+			bind:value={editingProfessor._surname.value}
 			on:keyup={validateSurname}
 			bind:feedback={surnameValidation.errorMessage}
 			bind:valid={surnameValidation.valid}
@@ -172,14 +170,13 @@
 		<Input
 			type="email"
 			label="email"
-			placeholder="Enter a value"
 			name="email"
 			id="email"
-			bind:value={editingProfessor.email.value}
+			bind:value={editingProfessor._email.value}
 			on:keyup={validateEmail}
-			bind:feedback={mailValidation.errorMessage}
-			bind:valid={mailValidation.valid}
-			bind:invalid={mailValidation.invalid}
+			bind:feedback={emailValidation.errorMessage}
+			bind:valid={emailValidation.valid}
+			bind:invalid={emailValidation.invalid}
 		/>
 	</FormGroup>
 </Col>
@@ -188,10 +185,9 @@
 		<Input
 			type="text"
 			label="cellPhone"
-			placeholder="Enter a value"
 			name="cellPhone"
 			id="cellPhone"
-			bind:value={editingProfessor.cellPhone.value}
+			bind:value={editingProfessor._cellPhone.value}
 			on:keyup={validateCellPhone}
 			bind:feedback={cellPhoneValidation.errorMessage}
 			bind:valid={cellPhoneValidation.valid}

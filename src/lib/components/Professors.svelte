@@ -2,7 +2,7 @@
 	import { Button, Col, Container, Form, Icon, Row } from "sveltestrap";
 	import { fade, fly, slide } from "svelte/transition";
 	import ProfessorFormRow from "./ProfessorFormRow.svelte";
-	import { circIn } from "svelte/easing";
+	import { circIn, sineIn, sineOut } from "svelte/easing";
 	import { flip } from "svelte/animate";
 	import { get } from "svelte/store";
 	import { allProfessors } from "$lib/stores/global_store";
@@ -16,17 +16,12 @@
 		Professor.of(null, "Will", "Spt", "willspt@gmail.com", "+391234367890"),
 	];
 
-	type ProfessorFormData = {
-		name: { value: string };
-		surname: { value: string };
-		email: { value: string };
-		cellPhone: { value: string };
-	};
-
 	let options = { duration: 200, easing: circIn };
 
-	let editingProfessor: ProfessorFormData | null = null;
 	let editingIndex: number | null = null;
+
+	let sortByField: string | null = null;
+	let sortAsc: boolean = true;
 
 	function editProfessor(index: number) {
 		editingIndex = index;
@@ -40,12 +35,6 @@
 	};
 
 	function addProfessor() {
-		editingProfessor = {
-			name: { value: "" },
-			surname: { value: "" },
-			email: { value: "" },
-			cellPhone: { value: "" },
-		};
 		editingIndex = professors.length;
 	}
 
@@ -55,31 +44,65 @@
 		allProfessors.set(professors);
 	};
 
-	const backgroundForIndex = (index: number) => {
+	function backgroundForIndex(index: number) {
 		return index % 2 ? "bg-body-tertiary" : "bg-body-secondary";
-	};
+	}
+
+	function sortBy(fieldName: string) {
+		if (fieldName == sortByField) sortAsc = !sortAsc;
+		else {
+			sortByField = fieldName;
+			sortAsc = true;
+		}
+
+		professors.sort((a: Professor, b: Professor) => {
+			// @ts-ignore
+			let aField = a[fieldName].value;
+			// @ts-ignore
+			let bField = b[fieldName].value;
+
+			if (aField < bField) return sortAsc ? -1 : 1;
+			else if (aField > bField) return sortAsc ? 1 : -1;
+			else return 0;
+		});
+		professors = professors;
+	}
+
+	let tableHeaderElements = [
+		{ name: "_name", label: "Name", size: 2 },
+		{ name: "_surname", label: "Surname", size: 2 },
+		{ name: "_email", label: "Email", size: 3 },
+		{ name: "_cellPhone", label: "Cellphone", size: 2 },
+	];
 </script>
 
 <div class="px-3 py-2">
 	<Row class="fw-bold mb-2">
-		<Col sm={{ size: 2 }}>
-			<Icon name="caret-{true ? 'down' : 'up'}-fill" /> Name
-		</Col>
-		<Col sm={{ size: 2 }}>
-			<Icon name="caret-{true ? 'down' : 'up'}-fill" /> Surname
-		</Col>
-		<Col sm={{ size: 3 }}>
-			<Icon name="caret-{true ? 'down' : 'up'}-fill" /> Mail
-		</Col>
-		<Col sm={{ size: 2 }}>
-			<Icon name="caret-{true ? 'down' : 'up'}-fill" /> Cellphone
-		</Col>
+		{#each tableHeaderElements as headerElement}
+			<Col sm={{ size: headerElement.size }}>
+				<Button
+					color="link"
+					class="text-decoration-none text-primary"
+					on:click={() => sortBy(headerElement.name)}
+				>
+					{headerElement.label}
+
+					{#if sortByField == headerElement.name}
+						{#if sortAsc}
+							<Icon name="caret-down-fill" />
+						{:else}
+							<Icon name="caret-up-fill" />
+						{/if}
+					{/if}
+				</Button>
+			</Col>
+		{/each}
 		<Col class="text-end">Actions</Col>
 	</Row>
 	{#each professors as professor, index (professor.id)}
 		<div
 			class="px-2 rounded shadow-sm mb-2 {backgroundForIndex(index)}"
-			animate:flip
+			animate:flip={{ duration: 400, easing: sineOut }}
 		>
 			<Row class="align-items-center">
 				{#if editingIndex != professors.indexOf(professor)}
@@ -119,6 +142,12 @@
 						}}
 					/>
 				{/if}
+			</Row>
+		</div>
+	{:else}
+		<div class="px-3 py-2" in:fade>
+			<Row>
+				<div class="col-12 text-center">No professors found</div>
 			</Row>
 		</div>
 	{/each}

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from "svelte";
-	import { Styles, Icon } from "sveltestrap";
+	import { Styles, Icon, Nav } from "sveltestrap";
 	import type { TabItem } from "$model/model-generics";
 	import { fly, slide } from "svelte/transition";
 	import { linear } from "svelte/easing";
@@ -36,17 +36,15 @@
 </div>
 
 <style>
-	.tabs {
-		margin-top: 10px;
-	}
 	ul {
 		display: flex;
 		justify-content: center;
 		padding: 0;
 		list-style-type: none;
+		min-height: 2rem;
 	}
 	li {
-		margin: 0 16px;
+		padding: 0 16px;
 		font-size: 18px;
 		cursor: pointer;
 		transition: 0.2s ease;
@@ -55,12 +53,14 @@
 	.active {
 		color: var(--bs-primary);
 		border-bottom: 2px solid var(--bs-primary);
-		padding-bottom: 8px;
+		padding-bottom: 0px;
 		transition: 0.2s ease;
+		font-weight: bold;
 	}
 
 	.zoom-hover-text:hover {
 		color: var(--bs-primary);
+		padding-bottom: 3px;
 		transition: 0.2s ease;
 	}
 
