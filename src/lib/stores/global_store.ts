@@ -23,6 +23,7 @@ export const allClassrooms = writable(class_data);
 export const allSubjects = writable(getExistingSubjectsFromFile(file_data, prof_data, class_data));
 
 export const theme = writable<"light" | "dark" | "auto">("auto");
+export const editingId = writable<string | null>(null);
 
 
 

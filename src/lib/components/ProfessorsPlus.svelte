@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { allProfessors } from "$lib/stores/global_store";
+	import { allProfessors, editingId } from "$lib/stores/global_store";
 	import type { Professor } from "$model/professor/professor";
 	import { get } from "svelte/store";
 	import TableList from "./TableList.svelte";
@@ -8,13 +8,13 @@
 
 	let items = get(allProfessors);
 
-	let editingId: string | null = null;
+	//let editingId: string | null = null;
 
 	function save(item: Professor, index?: number) {
 		if (index != undefined && index >= 0 && index < items.length)
 			items[index] = item;
 		else items.push(item);
-		editingId = null;
+		editingId.set(null);
 		allProfessors.set(items);
 		items = items;
 	}
@@ -27,18 +27,18 @@
 	];
 </script>
 
-<TableList {items} {fieldsInfo} {editingId}>
+<TableList {items} {fieldsInfo} editingId={get(editingId)}>
 	<ProfessorFormRow
 		slot="edit"
 		let:item
 		let:index
 		professor={item}
 		on:save={(e) => save(e.detail.professor, index)}
-		on:cancel={() => (editingId = null)}
+		on:cancel={() => (editingId.set (null))}
 	/>
 	<ProfessorFormRow
 		slot="create"
 		on:save={(e) => save(e.detail.professor)}
-		on:cancel={() => (editingId = null)}
+		on:cancel={() => (editingId.set(null))}
 	/>
 </TableList>
