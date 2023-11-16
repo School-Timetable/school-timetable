@@ -15,21 +15,11 @@
 
     export let schoolClass: SchoolClass | null = null
 
-    let yearErrorMessage: string = ""
-    let yearValid: boolean = false
-    let yearInvalid: boolean
-    $: yearInvalid = !yearValid
+    let yearValidation = { errorMessage: "", valid: false, invalid: false }
+    let sectionValidation = { errorMessage: "", valid: false, invalid: false }
+    let trackValidation = { errorMessage: "", valid: false, invalid: false }
+    
     const correctFeedback = ""
-
-    let sectionErrorMessage: string = ""
-    let sectionValid: boolean = false
-    let sectionInvalid: boolean
-    $: sectionInvalid = !sectionValid
-
-    let trackErrorMessage: string = ""
-    let trackValid: boolean = false
-    let trackInvalid: boolean
-    $: trackInvalid = !trackValid
 
     let tmpSchoolClass: SchoolClassFormData;
 
@@ -57,9 +47,6 @@
                 _track: { value: "" }
             }
         }
-        validateTrack()
-        validateYear()
-        validateSection()
     }
 
     function save() {
@@ -86,13 +73,15 @@
     function validateYear() {
         try {
             yearSchema.parse(tmpSchoolClass._year)
-            yearValid = true
-            yearErrorMessage = correctFeedback
+            yearValidation.valid = true
+            yearValidation.invalid = false
+            yearValidation.errorMessage = correctFeedback
         }
         catch (e){
             if (e instanceof ZodError){
-                yearErrorMessage = e.issues[0].message
-                yearValid = false
+                yearValidation.errorMessage = e.issues[0].message
+                yearValidation.valid = false
+                yearValidation.invalid = true
             }
         }
     }
@@ -100,37 +89,41 @@
     function validateSection() {
         try {
             sectionSchema.parse(tmpSchoolClass._section)
-            sectionValid = true
-            sectionErrorMessage = correctFeedback
+            sectionValidation.valid = true
+            sectionValidation.invalid = false
+            sectionValidation.errorMessage = correctFeedback
         }
         catch (e) {
             if (e instanceof ZodError){
-                sectionErrorMessage = e.issues[0].message
-                sectionValid = false
+                sectionValidation.errorMessage = e.issues[0].message
+                sectionValidation.valid = false
+                sectionValidation.invalid = true
             }
         }
     }
 
     function validateTrack() {
         if(tmpSchoolClass._track.value === ""){
-            trackValid = true
-
+            trackValidation.valid = true
+            trackValidation.invalid = false
         }
         else{
             try {
                 trackSchema.parse(tmpSchoolClass._track)
-                trackValid = true
+                trackValidation.valid = true
+                trackValidation.invalid = false
             }
             catch (e) {
                 if (e instanceof ZodError){
-                    trackErrorMessage = e.issues[0].message
-                    trackValid = false
+                    trackValidation.errorMessage = e.issues[0].message
+                    trackValidation.valid = false
+                    trackValidation.invalid = true
                 }
             }
         }
 
-        if (trackValid){
-            trackErrorMessage = correctFeedback
+        if (trackValidation.valid){
+            trackValidation.errorMessage = correctFeedback
         }
 
     }
@@ -142,9 +135,9 @@
         <Input type="select" name="year" id="year"
                on:change={validateYear}
                bind:value={tmpSchoolClass._year.value}
-               bind:feedback={yearErrorMessage}
-               bind:valid={yearValid}
-               bind:invalid={yearInvalid}
+               bind:feedback={yearValidation.errorMessage}
+               bind:valid={yearValidation.valid}
+               bind:invalid={yearValidation.invalid}
         >
             {#each years as year}
                 <option>{year}</option>
@@ -157,9 +150,9 @@
         <Input type="select" name="section" id="section"
                on:change={validateSection}
                bind:value={tmpSchoolClass._section.value}
-               bind:feedback={sectionErrorMessage}
-               bind:valid={sectionValid}
-               bind:invalid={sectionInvalid}
+               bind:feedback={sectionValidation.errorMessage}
+               bind:valid={sectionValidation.valid}
+               bind:invalid={sectionValidation.invalid}
         >
             {#each sections as section}
                 <option>{section}</option>
@@ -170,8 +163,8 @@
 <Col sm={{size: 4}}>
     <FormGroup floating label="Track" style="color: grey;">
         <Input type="text" label="email" placeholder="Enter a value" name="email" id="email"
-               bind:value={tmpSchoolClass._track.value} on:keyup={validateTrack} bind:feedback={trackErrorMessage}
-               bind:valid={trackValid} bind:invalid={trackInvalid}/>
+               bind:value={tmpSchoolClass._track.value} on:keyup={validateTrack} bind:feedback={trackValidation.errorMessage}
+               bind:valid={trackValidation.valid} bind:invalid={trackValidation.invalid}/>
     </FormGroup>
 </Col>
 <Col sm={{size: 4}} style="display: flex; align-items: center; margin-bottom: 13pt;">
