@@ -40,5 +40,3 @@
 		{/each}
 	</DropdownMenu>
 </Dropdown>
-
-<Styles theme={$theme} />
