@@ -44,6 +44,12 @@
 		allProfessors.set(professors);
 	};
 
+	function deleteProfessor(index: number) {
+		professors.splice(index, 1);
+		professors = professors;
+		allProfessors.set(professors);
+	}
+
 	function backgroundForIndex(index: number) {
 		return index % 2 ? "bg-body-tertiary" : "bg-body-secondary";
 	}
@@ -120,13 +126,7 @@
 						</Button>
 						<Button
 							color="danger"
-							on:click={() => {
-								professors.splice(
-									professors.indexOf(professor),
-									1
-								);
-								professors = professors;
-							}}
+							on:click={() => (deleteProfessor(index))}
 						>
 							<Icon name="trash-fill" /> Delete
 						</Button>

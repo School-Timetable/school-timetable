@@ -33,7 +33,7 @@
 	</DropdownToggle>
 	<DropdownMenu>
 		{#each options as option}
-			<DropdownItem on:click={() => ($theme = option.theme)}>
+			<DropdownItem on:click={() => (theme.set(option.theme))}>
 				{option.displayName}
 				<Icon name={option.icon} />
 			</DropdownItem>
