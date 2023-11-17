@@ -10,10 +10,15 @@
 		Row,
 	} from "sveltestrap";
 	import { createEventDispatcher } from "svelte";
-	import { ZodError } from "zod";
+	import { ZodError, z } from "zod";
 	import type { SchoolClass } from "$model/school-class/school-class";
 	import { Subject } from "$model/subject/subject";
 	import type { Professor } from "$model/professor/professor";
+    import { abbreviationSchema } from "$model/subject/abbreviation";
+    import { nameSchema } from "$model/professor/name";
+    import { weightSchema } from "$model/subject/weight";
+    import { hoursPerWeekSchema } from "$model/subject/hours-per-week";
+
 
 	const dispatch = createEventDispatcher<{
 		save: { subject: Subject };
@@ -33,6 +38,12 @@
 		_weight: { value: number };
 		_hoursPerWeek: { value: number };
 	};
+
+	type FormValidationResult = {
+		valid: boolean;
+		invalid: boolean;
+		feedback: string;
+	}
 
 	let editingSubject: SubjectFormData;
 
@@ -55,6 +66,9 @@
 			_hoursPerWeek: { value: subject.hoursPerWeek.value },
 		};
 	}
+	
+	let formValidationFeedback: FormValidationResult[] = new Array(4).fill({valid: false, invalid: true, feedback: ""});
+
 
 	function save() {
 		try {
@@ -78,6 +92,25 @@
 	function cancel(): void {
 		dispatch("cancel");
 	}
+
+	function validateWithSchema(value: object | undefined, fieldIdx: number, schema: any) {
+		try {
+			schema.parse(value);
+			formValidationFeedback[fieldIdx] = {
+				valid: true,
+				invalid: false,
+				feedback: ""
+			};
+		} catch(e) {
+			if(e instanceof ZodError) {
+				formValidationFeedback[fieldIdx] = {
+					valid: false,
+					invalid: true,
+					feedback: e.issues[0].message
+				};
+			}
+		}
+	}
 </script>
 
 <Row>
@@ -93,10 +126,11 @@
 			{#each schoolClasses as schoolClass}
 				<option value={schoolClass}>{schoolClass}</option>
 			{:else}
-				<option value={null}>no classes</option>
+				<option value={null}>No classes found</option>
 			{/each}
 		</Input>
 	</Col>
+
 	<Col>
 		<Label for="professor">Professor</Label>
 		<Input
@@ -113,6 +147,7 @@
 			{/each}
 		</Input>
 	</Col>
+
 	<Col>
 		<Label for="abbreviation">Abbreviation</Label>
 		<Input
@@ -122,8 +157,13 @@
 			id="abbreviation"
 			placeholder="Abbreviation"
 			bind:value={editingSubject._abbreviation.value}
+			bind:valid={formValidationFeedback[0].valid}
+			bind:invalid={formValidationFeedback[0].invalid}
+			bind:feedback={formValidationFeedback[0].feedback}
+			on:keyup={() => validateWithSchema(editingSubject._abbreviation, 0, abbreviationSchema)}
 		/>
 	</Col>
+
 	<Col>
 		<Label for="name">Name</Label>
 		<Input
@@ -133,8 +173,13 @@
 			id="name"
 			placeholder="Name"
 			bind:value={editingSubject._name.value}
+			bind:valid={formValidationFeedback[1].valid}
+			bind:invalid={formValidationFeedback[1].invalid}
+			bind:feedback={formValidationFeedback[1].feedback}
+			on:keyup={() => validateWithSchema(editingSubject._name, 1, nameSchema)}
 		/>
 	</Col>
+
 	<Col>
 		<Label for="weight">Weight</Label>
 		<Input
@@ -144,10 +189,15 @@
 			id="weight"
 			placeholder="Weight"
 			bind:value={editingSubject._weight.value}
+			bind:valid={formValidationFeedback[2].valid}
+			bind:invalid={formValidationFeedback[2].invalid}
+			bind:feedback={formValidationFeedback[2].feedback}
+			on:keyup={() => validateWithSchema(editingSubject._weight, 2, weightSchema)}
 			min="1"
 			max="10"
 		/>
 	</Col>
+
 	<Col>
 		<Label for="hoursPerWeek">Hours per week</Label>
 		<Input
@@ -157,10 +207,15 @@
 			id="hoursPerWeek"
 			placeholder="Hours per week"
 			bind:value={editingSubject._hoursPerWeek.value}
+			bind:valid={formValidationFeedback[3].valid}
+			bind:invalid={formValidationFeedback[3].invalid}
+			bind:feedback={formValidationFeedback[3].feedback}
+			on:keyup={() => validateWithSchema(editingSubject._hoursPerWeek, 3, hoursPerWeekSchema)}
 			min="1"
 			max="30"
 		/>
 	</Col>
+
 	<Col>
 		<ButtonGroup>
 			<Button color="primary" on:click={save}>
