@@ -1,7 +1,9 @@
 
 name: G1-pipeline
 
-on: push
+on: 
+  pull_request:
+    branches: [ main ]
   
 
 jobs:
