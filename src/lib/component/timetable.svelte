@@ -23,7 +23,6 @@
 
 		const oldValue = weekClass.grid[hour][day]
 		weekClass.grid[hour][day] = info.subject
-        console.log(info.subject.class)
 
 		const pos = info.id.split(",")
 		if(pos.length == 2)

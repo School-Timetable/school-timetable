@@ -1,10 +1,12 @@
+import type { Class } from "$lib/model";
+
 export class ClassService {
-    getClasses(num: number): any[] {
+    getClasses(num: number): Class[] {
         let res = [];
         for (let i = 0; i<num; i++) {
             res.push({
                 id: i,
-                nome: "className_"+i
+                name: "className_"+i
             });
         }
         return res;

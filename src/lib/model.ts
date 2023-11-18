@@ -3,27 +3,21 @@ export interface Professor
     id: number
     name: string
     surname?: string
+    telephone: string
+    email: string
 }
 
-export interface SubjectOption
+export interface Class 
 {
-    amount: number
-    subject: ClassSubject
-}
-
-
-export interface DayColumn 
-{
+    id: number
     name: string
-    professors: Professor[]
-    size: number
 }
 
 // prova
 
 export interface WeekClass
 {
-    name: string            // nome classe (1A)
+    className: string            // nome classe (1A)
     grid: (ClassSubject | null)[][]
     sidebar: ClassSubject[]
 }
@@ -32,9 +26,12 @@ export interface WeekClass
 
 export interface ClassSubject
 {
+    id: number
     professor: Professor
-    class: string
+    class: Class
     subject: string
+    abbreviation: string
+    weight: number
     remainingHours: number  // numero di ore di questa materia da fare nella classe class
 }
 
