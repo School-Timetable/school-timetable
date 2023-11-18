@@ -85,44 +85,51 @@
     }
 
     .ENG {
-        background-color: rgb(255, 204, 0);
+        background-color: rgb(252, 229, 138);
     }
 
     .ENG:hover {
-        background-color: rgb(255, 170, 0);
+        background-color: rgb(245, 202, 117);
     }
 
     .MAT {
-        background-color: rgb(167, 24, 24);
+        background-color: rgb(195, 79, 79);
     }
 
     .MAT:hover {
-        background-color: rgb(151, 19, 52);
+        background-color: rgb(184, 55, 87);
     }
 
     .GEO {
-        background-color: rgb(11, 113, 11);
+        background-color: rgb(88, 175, 88);
     }
 
     .GEO:hover {
-        background-color: rgb(10, 103, 47);
+        background-color: rgb(61, 134, 90);
     }
 
     .STO {
-        background-color: rgb(145, 101, 166);
+        background-color: rgb(182, 143, 199);
     }
 
     .STO:hover {
-        background-color: rgb(98, 62, 114);
+        background-color: rgb(151, 116, 165);
     }
 
     .ITA {
-        background-color: rgb(78, 139, 235);
+        background-color: rgb(136, 177, 242);
     }
 
     .ITA:hover {
         background-color: rgb(78, 123, 235);
     }
 
+    .ECO {
+        background-color: rgb(238, 170, 150);
+    }
+
+    .ECO:hover {
+        background-color: rgb(238, 146, 110);
+    }
     
 </style>
