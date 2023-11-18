@@ -14,7 +14,7 @@
 </script>
 
 <div
-	class="tabs py-3"
+	class="tabs pt-3"
 	in:slide|global={{ ...options, axis: "y", delay: 100 }}
 	out:slide|global={{ ...options, axis: "y" }}
 >

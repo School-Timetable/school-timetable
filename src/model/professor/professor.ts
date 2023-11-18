@@ -2,7 +2,7 @@ import { Name, nameSchema } from '$model/professor/name';
 import { Surname, surnameSchema } from '$model/professor/surname';
 import { Cellphone, cellPhoneSchema } from '$model/professor/cellphone';
 import { Mail, mailSchema } from '$model/professor/mail';
-import { z } from 'zod';
+import { string, z } from 'zod';
 import { v4 as uuid } from "uuid"
 
 export const professorSchema = z.object({
@@ -22,7 +22,7 @@ export class Professor {
     private _cellPhone: Cellphone;
 
     constructor(id: string | null, name: Name, surname: Surname, email: Mail, cellPhone: Cellphone) {
-        if(!id || id === null) {
+        if (!id || id === null) {
             id = uuid();
         }
 
@@ -52,7 +52,7 @@ export class Professor {
     }
 
     static ofCsv(csv: string): Professor {
-        if(csv.substring(0,2) !== "P:") {
+        if (csv.substring(0, 2) !== "P:") {
             throw new Error(`${csv} is not a professor string`);
         }
 
@@ -102,6 +102,10 @@ export class Professor {
 
     public toString(): string {
         return this._name.toString() + " " + this._surname.toString();
+    }
+
+    public toFullString(): string {
+        return this._name.toString() + " " + this._surname.toString() + " " + this._email.toString() + " " + this._cellPhone.toString();
     }
 
     public toCsv() {

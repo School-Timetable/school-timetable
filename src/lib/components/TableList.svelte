@@ -9,6 +9,7 @@
 	import { createEventDispatcher } from "svelte";
 	import type { FieldInfo } from "$model/model-generics";
 	import { editingId } from "$lib/stores/global_store";
+	import FormSearch from "./FormSearch.svelte";
 
 	const eventDispatcher = createEventDispatcher<{
 		delete: { value: AcceptedTypes };
@@ -17,10 +18,12 @@
 
 	type AcceptedTypes = Professor | SchoolClass | Subject;
 	export let items: AcceptedTypes[] = [];
-	let viewItems: AcceptedTypes[] = items;
+	let filteredItems: AcceptedTypes[] = items;
+	let viewItems: AcceptedTypes[] = filteredItems;
+
 	$: {
-		viewItems = items;
-		if (sortByField != null) sortItems();
+		if (sortByField != null) sortItems(filteredItems);
+		viewItems = filteredItems;
 	}
 	// let editingId: string | null = null;
 
@@ -48,16 +51,16 @@
 	}
 
 	function sortBy(fieldName: string) {
-		console.log(fieldName);
 		if (fieldName == sortByField) sortAsc = !sortAsc;
 		else {
 			sortByField = fieldName;
 			sortAsc = true;
 		}
-		sortItems();
+		sortItems(viewItems);
+		viewItems = viewItems;
 	}
 
-	function sortItems() {
+	function sortItems(list: AcceptedTypes[]) {
 		viewItems.sort((a: AcceptedTypes, b: AcceptedTypes) => {
 			// @ts-ignore
 			let aField = a[sortByField].value;
@@ -68,11 +71,24 @@
 			else if (aField > bField) return sortAsc ? 1 : -1;
 			else return 0;
 		});
-		viewItems = viewItems;
+	}
+
+	function onSearch(searchResults: AcceptedTypes[]) {
+		if (sortByField != null) sortItems(searchResults);
+		filteredItems = searchResults;
 	}
 </script>
 
-<div class="px-3 py-2">
+<div class="px-3">
+	<div class="py-2 w-50 mx-auto">
+		<FormSearch
+			list={items}
+			on:search={(e) => {
+				onSearch(e.detail.searchResults);
+			}}
+		/>
+	</div>
+
 	<Row class="fw-bold mb-2 text-body h5">
 		{#each fieldsInfo as headerElement}
 			<Col sm={{ size: headerElement.columns }}>
@@ -110,9 +126,6 @@
 							sm={{ size: fieldInfo.columns }}
 							class="text-truncate"
 						>
-							{#if index2 > 0}
-								<span class="vr" />
-							{/if}
 							{item[fieldInfo.fieldName].value}
 						</Col>
 					{/each}
@@ -158,7 +171,7 @@
 	{:else}
 		<div class="px-2" in:fade>
 			<Row noGutters>
-				<div class="col" />
+				<div class="col text-muted">{viewItems.length} items</div>
 				<div class="col-2">
 					<Button
 						color="primary"
