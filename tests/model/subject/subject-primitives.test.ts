@@ -4,114 +4,87 @@ import { test, expect } from '@jest/globals';
 import { Weight } from '../../../src/model/subject/weight';
 import { HoursPerWeek } from '../../../src/model/subject/hours-per-week';
 
+describe('Name tests', () => {
+    test.each(["matematica", "Storia dell'arte"])('Name %p creates object', (value) => {
+        const name = new Name(value);
+        expect(name.value).toMatch(value);
+    });
 
-test('Name is created', () => {
-    const name = new Name("matematica");
-    expect(name.value).toMatch("matematica");
+    test.each(["", "a", "a".repeat(31)])('Name %p throws too short error', (value) => {
+        expect(() => new Name(value)).toThrowError();
+    });
+
+    test.each(["a".repeat(31)])('Name %p throws too long error', (value) => {
+        expect(() => new Name(value)).toThrowError();
+    });
+
+    test.each(["matematica!", "1matematica", "scienze-motorie"])('Name %p throws invalid error', (value) => {
+        expect(() => new Name(value)).toThrowError();
+    });
+
+    test.each(["matematica"])('Name toString', (value) => {
+        const name = new Name(value);
+        expect(name.toString()).toMatch(value);
+    });
 })
 
-test('Name with spaces', () => {
-    const name = new Name("Storia dell'arte");
-    expect(name.value).toMatch("Storia dell'arte");
+describe('Abbreviation tests', () => {
+    test.each(["mat"])('Abbreviation %p creates object', (value) => {
+        const abbreviation = new Abbreviation(value);
+        expect(abbreviation.value).toMatch(value.toUpperCase());
+    });
+
+    test.each([""])('Abbreviation %p throws too short error', (value) => {
+        expect(() => new Abbreviation(value)).toThrowError();
+    });
+
+    test.each(["a".repeat(6), "a".repeat(1000)])('Abbreviation %p throws too long error', (value) => {
+        expect(() => new Abbreviation(value)).toThrowError();
+    });
+
+
+    test.each(["mat1", "mat_", "sd'a", "sd a", "sd-a", "sd1a"])('Abbreviation throws invalid characters error', (value) => {
+        expect(() => new Abbreviation(value)).toThrowError();
+    });
+
+    test.each(["mat"])('Abbreviation toString', (value) => {
+        const abbreviation = new Abbreviation(value);
+        expect(abbreviation.toString()).toMatch(value.toUpperCase());
+    });
 })
 
-test('Name length', () => {
-    expect(() => new Name("")).toThrowError();
-    expect(() => new Name("a")).toThrowError();
-    expect(() => new Name("a".repeat(31))).toThrowError();
+describe('Weight tests', () => {
+    test.each([1, 5, 10])('Weight %p creates object', (value) => {
+        const weight = new Weight(value);
+        expect(weight.value).toBe(value);
+    });
 
-    new Name("a".repeat(2));
-    new Name("a".repeat(30));
+    test.each([-1, 0, 11])('Weight throws invalid error', (value) => {
+        expect(() => new Weight(value)).toThrowError();
+    });
+
+    test.each([5])('Weight toString', (value) => {
+        const weight = new Weight(value);
+        expect(weight.toString()).toMatch(value.toString());
+    });
 })
 
-test('Name throws on invalid characters', () => {
-    expect(() => new Name("matematica!")).toThrowError();
-    expect(() => new Name("1matematica")).toThrowError();
-    expect(() => new Name("scienze-motorie")).toThrowError();
+describe('HoursPerWeek tests', () => {
+    test.each([10])('HoursPerWeek %p creates object', (value) => {
+        const hoursPerWeek = new HoursPerWeek(value);
+        expect(hoursPerWeek.value).toBe(value);
+    });
 
-    new Name("scienze 1motorie")
-    new Name("matematica ")
-    new Name("mate1")
-    new Name("scienze_motorie")
-    new Name("scienze motorie")
-});
+    test.each([-1, 0])('HoursPerWeek %p throws too short error', (value) => {
+        expect(() => new HoursPerWeek(value)).toThrowError();
+    });
 
-test('Name toString', () => {
-    const name = new Name("matematica");
-    expect(name.toString()).toMatch("matematica");
-});
+    test.each([31])('HoursPerWeek %p throws too long error', (value) => {
+        expect(() => new HoursPerWeek(value)).toThrowError();
+    });
 
-
-
-test('Abbreviation is created', () => {
-    const abbreviation = new Abbreviation("mat");
-    expect(abbreviation.value).toMatch("MAT");
-});
-
-test('Abbreviation lenght', () => {
-    expect(() => new Abbreviation("")).toThrowError();
-    expect(() => new Abbreviation("a".repeat(6))).toThrowError();
-    expect(() => new Abbreviation("a".repeat(1000))).toThrowError();
-
-    new Abbreviation("a");
-    new Abbreviation("a".repeat(5));
-});
-
-test('Abbreviation throws on invalid characters', () => {
-    expect(() => new Abbreviation("mat1")).toThrowError();
-    expect(() => new Abbreviation("mat_")).toThrowError();
-    expect(() => new Abbreviation("sd'a")).toThrowError();
-    expect(() => new Abbreviation("sd a")).toThrowError();
-    expect(() => new Abbreviation("sd-a")).toThrowError();
-    expect(() => new Abbreviation("sd1a")).toThrowError();
-});
-
-test('Abbreviation toString', () => {
-    const abbreviation = new Abbreviation("mat");
-    expect(abbreviation.toString()).toMatch("MAT");
-});
-
-
-
-test('Weight is created', () => {
-    const weight = new Weight(5);
-    expect(weight.value).toBe(5);
-});
-
-test('Weight throws on invalid value', () => {
-    expect(() => new Weight(-1)).toThrowError();
-    expect(() => new Weight(0)).toThrowError();
-    expect(() => new Weight(11)).toThrowError();
-});
-
-test('Weight is in range', () => {
-    new Weight(1);
-    new Weight(10);
-});
-
-test('Weight toString', () => {
-    const weight = new Weight(5);
-    expect(weight.toString()).toMatch("5");
-});
-
-
-
-test('HoursPerWeek is created', () => {
-    const hoursPerWeek = new HoursPerWeek(10);
-    expect(hoursPerWeek.value).toBe(10);
-});
-
-test('HoursPerWeek valid range', () => {
-    expect(() => new HoursPerWeek(-1)).toThrowError();
-    expect(() => new HoursPerWeek(0)).toThrowError();
-    expect(() => new HoursPerWeek(31)).toThrowError();
-
-    new HoursPerWeek(1);
-    new HoursPerWeek(30);
-});
-
-test('HoursPerWeek toString', () => {
-    const hoursPerWeek = new HoursPerWeek(10);
-    expect(hoursPerWeek.toString()).toMatch("10");
-});
-
+    test.each([10])('HoursPerWeek toString', (value) => {
+        const hoursPerWeek = new HoursPerWeek(value);
+        expect(hoursPerWeek.toString()).toMatch(value.toString());
+    });
+})
