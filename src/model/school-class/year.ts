@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 export const valueSchema = z.number()
-    .min(1, {message : "The class number is too small (min 1)"})
-    .max(5, {message : "The class number is too big (max 5)"})
+    .min(1, {message : "The year given is too small (min 1)"})
+    .max(5, {message : "The year given is too big (max 5)"})
 
 export const yearSchema = z.object({
     value: valueSchema

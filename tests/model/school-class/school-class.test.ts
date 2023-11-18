@@ -13,7 +13,7 @@ const schoolClassWithoutTrack = SchoolClass.of("abc", year, section)
 test('test_school_class_fixture_test', () => {
     expect(schoolClassWithTrack.year.value).toStrictEqual(year)
     expect(schoolClassWithTrack.section.value).toStrictEqual(section)
-    expect(schoolClassWithTrack.track?.valueUppercase).toStrictEqual(track.toUpperCase())
+    expect(schoolClassWithTrack.track?.value).toStrictEqual(track)
 })
 
 test('test_school_class_fixture_test_without_track', () => {
@@ -42,5 +42,5 @@ test('test_school_class_section_change', () => {
 
 test('test_school_class_without_track_change', () => {
     schoolClassWithoutTrack.track = new Track("Inf.");
-    expect(schoolClassWithoutTrack.track.valueUppercase).toBe("INF.");
+    expect(schoolClassWithoutTrack.track.value).toBe("Inf.");
 });
