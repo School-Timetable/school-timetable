@@ -17,7 +17,11 @@
 
 	type AcceptedTypes = Professor | SchoolClass | Subject;
 	export let items: AcceptedTypes[] = [];
-
+	let viewItems: AcceptedTypes[] = items;
+	$: {
+		viewItems = items;
+		if (sortByField != null) sortItems();
+	}
 	// let editingId: string | null = null;
 
 	export let fieldsInfo: FieldInfo[] = [];
@@ -44,23 +48,27 @@
 	}
 
 	function sortBy(fieldName: string) {
+		console.log(fieldName);
 		if (fieldName == sortByField) sortAsc = !sortAsc;
 		else {
 			sortByField = fieldName;
 			sortAsc = true;
 		}
+		sortItems();
+	}
 
-		items.sort((a: any, b: any) => {
+	function sortItems() {
+		viewItems.sort((a: AcceptedTypes, b: AcceptedTypes) => {
 			// @ts-ignore
-			let aField = a[fieldName].value;
+			let aField = a[sortByField].value;
 			// @ts-ignore
-			let bField = b[fieldName].value;
+			let bField = b[sortByField].value;
 
 			if (aField < bField) return sortAsc ? -1 : 1;
 			else if (aField > bField) return sortAsc ? 1 : -1;
 			else return 0;
 		});
-		items = items;
+		viewItems = viewItems;
 	}
 </script>
 
@@ -90,22 +98,28 @@
 		<Col class="text-end">Actions</Col>
 	</Row>
 
-	{#each items as item, index (item.id)}
+	{#each viewItems as item, index (item.id)}
 		<div
 			class="px-2 mb-2 rounded shadow-sm {backgroundForIndex(index)}"
 			animate:flip={{ duration: 400, easing: sineOut }}
 		>
 			{#if $editingId != item.id}
-				<Row class="align-items-center">
-					{#each fieldsInfo as fieldInfo}
-						<Col sm={{ size: fieldInfo.columns }}>
+				<Row noGutters class="align-items-center">
+					{#each fieldsInfo as fieldInfo, index2}
+						<Col
+							sm={{ size: fieldInfo.columns }}
+							class="text-truncate"
+						>
+							{#if index2 > 0}
+								<span class="vr" />
+							{/if}
 							{item[fieldInfo.fieldName].value}
 						</Col>
 					{/each}
 
 					<Col>
-						<Row noGutters>
-							<Col class="me-2">
+						<Row class="g-1">
+							<Col>
 								<Button
 									color="primary"
 									class="w-100"
@@ -143,9 +157,9 @@
 		</div>
 	{:else}
 		<div class="px-2" in:fade>
-			<Row>
+			<Row noGutters>
 				<div class="col" />
-				<div class="col-3">
+				<div class="col-2">
 					<Button
 						color="primary"
 						class="w-100"

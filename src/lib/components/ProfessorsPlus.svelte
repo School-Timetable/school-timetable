@@ -21,7 +21,7 @@
 		{ fieldName: "name", label: "Name", columns: 2 },
 		{ fieldName: "surname", label: "Surname", columns: 2 },
 		{ fieldName: "email", label: "Email", columns: 3 },
-		{ fieldName: "cellPhone", label: "Cell Phone", columns: 2 },
+		{ fieldName: "cellPhone", label: "Cell Phone", columns: 3 },
 	];
 </script>
 
