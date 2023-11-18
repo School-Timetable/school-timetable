@@ -23,7 +23,7 @@
 		{ name: "Class", icon: "door-closed" },
 		{ name: "Subject", icon: "file-earmark-ruled" },
 	];
-	export let activeTab: string = "Professor";
+	export let activeTab: string = "Professor +";
 
 	const triggerTabChange = (event: { detail: string }) => {
 		activeTab = event.detail;

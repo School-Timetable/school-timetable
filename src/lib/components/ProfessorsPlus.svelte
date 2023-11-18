@@ -21,9 +21,8 @@
 		{ fieldName: "name", label: "Name", columns: 2 },
 		{ fieldName: "surname", label: "Surname", columns: 2 },
 		{ fieldName: "email", label: "Email", columns: 3 },
-		{ fieldName: "cellPhone", label: "Cell Phone", columns: 3 },
+		{ fieldName: "cellPhone", label: "Cell Phone", columns: 2 },
 	];
-
 </script>
 
 <TableList {items} {fieldsInfo}>
@@ -33,11 +32,15 @@
 		let:index
 		professor={item}
 		on:save={(e) => save(e.detail.professor, index)}
-		on:cancel={() => {editingId.set(null)}}
+		on:cancel={() => {
+			editingId.set(null);
+		}}
 	/>
 	<ProfessorFormRow
 		slot="create"
 		on:save={(e) => save(e.detail.professor)}
-		on:cancel={() => {editingId.set(null)}}
+		on:cancel={() => {
+			editingId.set(null);
+		}}
 	/>
 </TableList>

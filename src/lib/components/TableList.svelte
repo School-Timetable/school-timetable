@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { Button, Col, Icon, Row } from "sveltestrap";
 	import { fade } from "svelte/transition";
-	import ProfessorFormRow from "./ProfessorFormRow.svelte";
 	import { sineOut } from "svelte/easing";
 	import { flip } from "svelte/animate";
 	import type { Professor } from "$model/professor/professor";
@@ -10,7 +9,6 @@
 	import { createEventDispatcher } from "svelte";
 	import type { FieldInfo } from "$model/model-generics";
 	import { editingId } from "$lib/stores/global_store";
-    import { get } from "svelte/store";
 
 	const eventDispatcher = createEventDispatcher<{
 		delete: { value: AcceptedTypes };
@@ -67,31 +65,34 @@
 </script>
 
 <div class="px-3 py-2">
-	<Row class="fw-bold mb-2">
+	<Row class="fw-bold mb-2 text-body h5">
 		{#each fieldsInfo as headerElement}
 			<Col sm={{ size: headerElement.columns }}>
-				<Button
-					color="link"
-					class="text-decoration-none text-reset text-secondary"
+				<button
+					class=""
 					on:click={() => sortBy(headerElement.fieldName)}
 				>
-					{headerElement.label}
-
-					{#if sortByField == headerElement.fieldName}
-						{#if sortAsc}
-							<Icon name="caret-down-fill" />
+					<span class="text-hover-light">
+						{#if sortByField == headerElement.fieldName}
+							{headerElement.label}
+							{#if sortAsc}
+								<Icon name="caret-down-fill" />
+							{:else}
+								<Icon name="caret-up-fill" />
+							{/if}
 						{:else}
-							<Icon name="caret-up-fill" />
+							{headerElement.label}
 						{/if}
-					{/if}
-				</Button>
+					</span>
+				</button>
 			</Col>
 		{/each}
 		<Col class="text-end">Actions</Col>
 	</Row>
+
 	{#each items as item, index (item.id)}
 		<div
-			class="px-2 rounded shadow-sm mb-2 {backgroundForIndex(index)}"
+			class="px-2 mb-2 rounded shadow-sm {backgroundForIndex(index)}"
 			animate:flip={{ duration: 400, easing: sineOut }}
 		>
 			{#if $editingId != item.id}
@@ -102,16 +103,27 @@
 						</Col>
 					{/each}
 
-					<Col class="text-end">
-						<Button color="primary" on:click={() => editItem(item)}>
-							<Icon name="pencil-square" /> Edit
-						</Button>
-						<Button
-							color="danger"
-							on:click={() => removeItem(item)}
-						>
-							<Icon name="trash-fill" /> Delete
-						</Button>
+					<Col>
+						<Row noGutters>
+							<Col class="me-2">
+								<Button
+									color="primary"
+									class="w-100"
+									on:click={() => editItem(item)}
+								>
+									<Icon name="pencil-square" /> Edit
+								</Button>
+							</Col>
+							<Col>
+								<Button
+									color="danger"
+									class="w-100"
+									on:click={() => removeItem(item)}
+								>
+									<Icon name="trash-fill" /> Delete
+								</Button>
+							</Col>
+						</Row>
 					</Col>
 				</Row>
 			{:else}
@@ -130,10 +142,14 @@
 			<slot name="create" />
 		</div>
 	{:else}
-		<div class="px-3" in:fade>
+		<div class="px-2" in:fade>
 			<Row>
-				<div class="col-12 text-end p-2">
-					<Button color="primary" on:click={() => createNew()}
+				<div class="col" />
+				<div class="col-3">
+					<Button
+						color="primary"
+						class="w-100"
+						on:click={() => createNew()}
 						><Icon name="plus" />New professor</Button
 					>
 				</div>
@@ -141,3 +157,27 @@
 		</div>
 	{/if}
 </div>
+
+<style>
+	button {
+		background: none;
+		border: none;
+		color: inherit;
+		padding: 0;
+		font: inherit;
+		cursor: pointer;
+		outline: inherit;
+	}
+
+	.text-hover-underline:hover {
+		text-decoration: underline;
+	}
+
+	.text-hover-bold:hover {
+		font-weight: bold;
+	}
+
+	.text-hover-light:hover {
+		color: #ffffff;
+	}
+</style>
