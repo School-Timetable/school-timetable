@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button, Col, Icon, Row } from "sveltestrap";
 	import { fade } from "svelte/transition";
-	import { sineOut } from "svelte/easing";
+	import { cubicOut, sineOut } from "svelte/easing";
 	import { flip } from "svelte/animate";
 	import type { Professor } from "$model/professor/professor";
 	import type { SchoolClass } from "$model/school-class/school-class";
@@ -61,7 +61,7 @@
 	}
 
 	function sortItems(list: AcceptedTypes[]) {
-		viewItems.sort((a: AcceptedTypes, b: AcceptedTypes) => {
+		list.sort((a: AcceptedTypes, b: AcceptedTypes) => {
 			// @ts-ignore
 			let aField = a[sortByField].value;
 			// @ts-ignore
@@ -74,7 +74,13 @@
 	}
 
 	function onSearch(searchResults: AcceptedTypes[]) {
-		if (sortByField != null) sortItems(searchResults);
+		// sorting order doesn't change when the filtered items are a subset of the original list
+		if (
+			sortByField != null &&
+			searchResults.length > filteredItems.length
+		) {
+			sortItems(searchResults);
+		}
 		filteredItems = searchResults;
 	}
 </script>
@@ -117,11 +123,11 @@
 	{#each viewItems as item, index (item.id)}
 		<div
 			class="px-2 mb-2 rounded shadow-sm {backgroundForIndex(index)}"
-			animate:flip={{ duration: 400, easing: sineOut }}
+			animate:flip={{ duration: 400, easing: cubicOut }}
 		>
 			{#if $editingId != item.id}
 				<Row noGutters class="align-items-center">
-					{#each fieldsInfo as fieldInfo, index2}
+					{#each fieldsInfo as fieldInfo}
 						<Col
 							sm={{ size: fieldInfo.columns }}
 							class="text-truncate"
@@ -154,13 +160,17 @@
 					</Col>
 				</Row>
 			{:else}
-				<slot name="edit" {item} {index} />
+				<div in:fade>
+					<slot name="edit" {item} {index} />
+				</div>
 			{/if}
 		</div>
 	{:else}
 		<div class="px-3 py-2" in:fade>
 			<slot name="empty">
-				<div class="col-12 text-center">No items found</div>
+				<div class="col-12 text-center h3 text-body">
+					No items found
+				</div>
 			</slot>
 		</div>
 	{/each}
@@ -169,7 +179,7 @@
 			<slot name="create" />
 		</div>
 	{:else}
-		<div class="px-2" in:fade>
+		<div class="px-2 pb-3" in:fade>
 			<Row noGutters>
 				<div class="col text-muted">{viewItems.length} items</div>
 				<div class="col-2">

@@ -17,6 +17,12 @@
 		items = items;
 	}
 
+	function removeItem(item: Professor): void {
+		let tmp = items.filter((i) => i.id != item.id);
+		allProfessors.set(tmp);
+		items = tmp;
+	}
+
 	let fieldsInfo: FieldInfo[] = [
 		{ fieldName: "name", label: "Name", columns: 2 },
 		{ fieldName: "surname", label: "Surname", columns: 2 },
@@ -25,7 +31,7 @@
 	];
 </script>
 
-<TableList {items} {fieldsInfo}>
+<TableList {items} {fieldsInfo} on:delete={(e) => removeItem(e.detail.value)}>
 	<ProfessorFormRow
 		slot="edit"
 		let:item

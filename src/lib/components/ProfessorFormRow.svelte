@@ -146,7 +146,7 @@
 	}
 </script>
 
-<Row>
+<Row class="align-items-top g-1">
 	<Col sm={{ size: 2 }}>
 		<FormGroup floating label="Name" style="color: grey;">
 			<Input
@@ -155,7 +155,8 @@
 				name="name"
 				id="name"
 				bind:value={editingProfessor._name.value}
-				on:keyup={validateName}
+				on:input={validateName}
+				on:change={validateName}
 				bind:feedback={nameValidation.errorMessage}
 				bind:valid={nameValidation.valid}
 				bind:invalid={nameValidation.invalid}
@@ -170,7 +171,8 @@
 				name="surname"
 				id="surname"
 				bind:value={editingProfessor._surname.value}
-				on:keyup={validateSurname}
+				on:input={validateSurname}
+				on:change={validateSurname}
 				bind:feedback={surnameValidation.errorMessage}
 				bind:valid={surnameValidation.valid}
 				bind:invalid={surnameValidation.invalid}
@@ -185,7 +187,8 @@
 				name="email"
 				id="email"
 				bind:value={editingProfessor._email.value}
-				on:keyup={validateEmail}
+				on:input={validateEmail}
+				on:change={validateEmail}
 				bind:feedback={emailValidation.errorMessage}
 				bind:valid={emailValidation.valid}
 				bind:invalid={emailValidation.invalid}
@@ -200,19 +203,30 @@
 				name="cellPhone"
 				id="cellPhone"
 				bind:value={editingProfessor._cellPhone.value}
-				on:keyup={validateCellPhone}
+				on:input={validateCellPhone}
+				on:change={validateCellPhone}
 				bind:feedback={cellPhoneValidation.errorMessage}
 				bind:valid={cellPhoneValidation.valid}
 				bind:invalid={cellPhoneValidation.invalid}
 			/>
 		</FormGroup>
 	</Col>
-	<Col class="text-end pe-3">
-		<Button color="primary" on:click={save}>
-			<Icon name="check" /> Save</Button
-		>
-		<Button color="danger" on:click={() => eventDispatcher("cancel")}>
-			<Icon name="x" /> Cancel</Button
-		>
+	<Col sm={{ size: 2 }} class="ms-auto ps-0">
+		<Row class="g-1">
+			<Col>
+				<Button color="primary" class="w-100" on:click={save}>
+					<Icon name="check" /> Save</Button
+				>
+			</Col>
+			<Col>
+				<Button
+					color="danger"
+					class="w-100"
+					on:click={() => eventDispatcher("cancel")}
+				>
+					<Icon name="x" /> Cancel</Button
+				>
+			</Col>
+		</Row>
 	</Col>
 </Row>
