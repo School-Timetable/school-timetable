@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { Styles } from "sveltestrap";
 	import type { TabItem } from "$model/model-generics";
 	import Tabs from "$lib/components/Tabs.svelte";
 	import Subjects from "$lib/components/Subjects.svelte";
@@ -8,8 +7,6 @@
 	import { onMount } from "svelte";
 	import { linear } from "svelte/easing";
 	import Classes from "$lib/components/Classes.svelte";
-	import TableList from "$lib/components/TableList.svelte";
-	import ProfessorsPlus from "$lib/components/ProfessorsPlus.svelte";
 
 	onMount(async () => {
 		document
@@ -19,11 +16,10 @@
 
 	export let tabItems: TabItem[] = [
 		{ name: "Professor", icon: "person-video2" },
-		{ name: "Professor +", icon: "person-video2" },
 		{ name: "Class", icon: "door-closed" },
 		{ name: "Subject", icon: "file-earmark-ruled" },
 	];
-	export let activeTab: string = "Professor +";
+	export let activeTab: string = "Professor";
 
 	const triggerTabChange = (event: { detail: string }) => {
 		activeTab = event.detail;
@@ -54,10 +50,4 @@
 	>
 		<Subjects />
 	</div>
-{:else if activeTab === "Professor +"}
-	<div
-		in:slide|global={{ ...options, axis: "y", delay: 100 }}
-		out:slide|global={{ ...options, axis: "y" }}
-	/>
-	<ProfessorsPlus />
 {/if}
