@@ -85,8 +85,8 @@
 	}
 </script>
 
-<div class="px-3">
-	<div class="py-2 w-50 mx-auto">
+<div class="px-3 pb-3">
+	<div class="pb-3 mx-auto" style="max-width: 500px;">
 		<FormSearch
 			list={items}
 			on:search={(e) => {
@@ -175,11 +175,14 @@
 		</div>
 	{/each}
 	{#if $editingId === ""}
-		<div in:fade>
+		<div
+			class="px-2 rounded shadow {backgroundForIndex(viewItems.length)}"
+			in:fade
+		>
 			<slot name="create" />
 		</div>
 	{:else}
-		<div class="px-2 pb-3" in:fade>
+		<div class="px-2" in:fade>
 			<Row noGutters>
 				<div class="col text-muted">{viewItems.length} items</div>
 				<div class="col-2">

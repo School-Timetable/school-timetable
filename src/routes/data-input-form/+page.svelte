@@ -5,8 +5,9 @@
 	import Professors from "$lib/components/Professors.svelte";
 	import { slide } from "svelte/transition";
 	import { onMount } from "svelte";
-	import { linear } from "svelte/easing";
+	import { backOut, cubicIn, cubicOut, linear, quadOut } from "svelte/easing";
 	import Classes from "$lib/components/Classes.svelte";
+	import { Col, Nav, NavLink, Row } from "sveltestrap";
 
 	onMount(async () => {
 		document
@@ -25,10 +26,25 @@
 		activeTab = event.detail;
 	};
 
-	let options = { duration: 300, easing: linear };
+	let options = { duration: 300, easing: quadOut };
 </script>
 
-<Tabs {tabItems} activeItem={activeTab} on:tabChange={triggerTabChange} />
+<Row>
+	<Col>
+		<Nav>
+			<NavLink href="/">Home</NavLink>
+		</Nav>
+	</Col>
+	<Col>
+		<Tabs
+			{tabItems}
+			activeItem={activeTab}
+			on:tabChange={triggerTabChange}
+		/>
+	</Col>
+	<Col />
+</Row>
+
 {#if activeTab === "Professor"}
 	<div
 		in:slide|global={{ ...options, axis: "y", delay: 100 }}

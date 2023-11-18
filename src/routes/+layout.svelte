@@ -23,6 +23,7 @@
 </script>
 
 <Styles theme={$theme} />
-<Container xxl class="bg-body rounded shadow">
+
+<Container xxl class="bg-body rounded shadow mt-2">
 	<slot />
 </Container>

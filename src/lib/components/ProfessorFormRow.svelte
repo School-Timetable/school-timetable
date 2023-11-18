@@ -146,7 +146,7 @@
 	}
 </script>
 
-<Row class="align-items-top g-1">
+<Row class="align-items-top g-1 mt-1">
 	<Col sm={{ size: 2 }}>
 		<FormGroup floating label="Name" style="color: grey;">
 			<Input
