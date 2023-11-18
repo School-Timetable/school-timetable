@@ -7,13 +7,29 @@
  	import Hour from '$lib/component/hour.svelte';
 
 
-	// export let weekMatrix : (Professor | null)[][];
-
 	export let weekNames = ["MON","TUE","WED","THU","FRI","SAT"]
 
     // prova    
     export let weekClass: WeekClass 
 
+    // getting subjects colors
+
+
+    let availableColors: string[] = [
+        "#fa968e",  // red
+        "#79c9f7",  // blue
+        "#88f28d",  // green
+        "#f0ce78",  // yellow
+        "#f2a477",  // orange
+        "#c57ff0",  // purple
+    ]
+
+    // Map<subject.id, color>
+    export let subjectColors: Map<number, string> = new Map()
+    let index = 0
+    weekClass.sidebar.forEach(subject => subjectColors.set(subject.id, availableColors[(index++)%availableColors.length]))
+
+    console.log(subjectColors)
 	
 	function dropValue(hour: number,day: number, info: any)
 	{
@@ -52,6 +68,13 @@
         alert("Work in progess...")
     }
 
+    function getSubjectColor(item: ClassSubject | null) 
+    {
+        if (item == null)
+            return 'transparent'
+        return subjectColors!.get(item.id)
+    }
+
 </script>
 
 
@@ -73,7 +96,7 @@
                 {#each weekClass.sidebar as item, itemIndex }
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <div class="w-75">
-                            <Hour droppable={false} draggable={item.remainingHours > 0} id="prova" subject={item} on:hourDrop={event => {}}></Hour>
+                            <Hour color={getSubjectColor(item)} droppable={false} draggable={item.remainingHours > 0} id="prova" subject={item} on:hourDrop={event => {}}></Hour>
                         </div>
                         <span class="badge bg-primary rounded-pill">{item.remainingHours}</span>
                     </li>
@@ -114,7 +137,7 @@
                     <tr>
                         {#each weekClass.grid as day, dayIndex (day)}
                             <td>
-                                <Hour id={`${i},${dayIndex}`} on:hourDrop={event => dropValue(i,dayIndex,event.detail)} subject={weekClass.grid[i][dayIndex]}></Hour>
+                                <Hour color={getSubjectColor(weekClass.grid[i][dayIndex])} id={`${i},${dayIndex}`} on:hourDrop={event => dropValue(i,dayIndex,event.detail)} subject={weekClass.grid[i][dayIndex]}></Hour>
                             </td>
                         {/each}
                     </tr>
