@@ -10,6 +10,8 @@ export const weightSchema = z.object({
 }).strict();
 
 export class Weight {
+    public static readonly schema = weightSchema;
+
     public readonly value: number;
 
     constructor(value: number) {

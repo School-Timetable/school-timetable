@@ -14,6 +14,7 @@ export const professorSchema = z.object({
 }).strict();
 
 export class Professor {
+    public static readonly schema = professorSchema;
 
     private _id: string;
     private _name: Name;

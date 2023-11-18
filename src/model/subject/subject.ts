@@ -21,7 +21,7 @@ const subjectSchema = z.object({
 }).strict();
 
 export class Subject {
-    public static schema = subjectSchema;
+    public static readonly schema = subjectSchema;
 
     private _id: string;
     private _schoolClass: SchoolClass;

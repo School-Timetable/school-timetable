@@ -11,6 +11,8 @@ export const hoursPerWeekSchema = z.object({
 }).strict();
 
 export class HoursPerWeek {
+    public static readonly schema = hoursPerWeekSchema;
+
     public readonly value: number;
 
     constructor(value: number) {

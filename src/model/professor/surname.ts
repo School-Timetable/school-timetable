@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
 const valueSchema = z.string()
-    .min(2,     "The surname is too short (min 2 characters)")
-    .max(20,    "The surname is too long (max 20 characters)")
-    .regex(/^[a-z]+( [a-z]+)*$/i,   "The surname is not valid");
+    .min(2, "The surname is too short (min 2 characters)")
+    .max(20, "The surname is too long (max 20 characters)")
+    .regex(/^[a-z]+( [a-z]+)*$/i, "The surname is not valid");
 
 export const surnameSchema = z.object({
     value: valueSchema,
@@ -11,6 +11,7 @@ export const surnameSchema = z.object({
 
 
 export class Surname {
+    public static readonly schema = surnameSchema;
 
     public readonly value: string;
 

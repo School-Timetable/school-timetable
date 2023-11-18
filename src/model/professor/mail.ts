@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
 const valueSchema = z.string()
-    .min(5,     "The mail is too short (min 5 characters)")
-    .max(30,    "The mail is too long (max 30 characters)")
+    .min(5, "The mail is too short (min 5 characters)")
+    .max(30, "The mail is too long (max 30 characters)")
     .email("The mail is not valid");
 
 export const mailSchema = z.object({
@@ -10,6 +10,7 @@ export const mailSchema = z.object({
 }).strict();
 
 export class Mail {
+    public static readonly schema = mailSchema;
 
     public readonly value: string;
 

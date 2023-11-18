@@ -7,10 +7,10 @@
 	}>();
 
 	let searchPrompt = "";
-	export let list: any[] = [];
+	export let items: any[] = [];
 	$: {
 		// to signal to svelte that the list is a dependency of the computed value
-		list;
+		items;
 		searchPrompt;
 		doSearch();
 	}
@@ -18,10 +18,11 @@
 	function doSearch() {
 		let searchResults;
 		if (searchPrompt == "") {
-			searchResults = [...list];
+			// defensive copy to avoid mutating the original list
+			searchResults = [...items];
 		} else {
 			searchResults =
-				list.filter((item) =>
+				items.filter((item) =>
 					item
 						.toFullString()
 						.toLowerCase()

@@ -11,6 +11,8 @@ export const nameSchema = z.object({
 }).strict();
 
 export class Name {
+    public static readonly schema = nameSchema;
+
     public readonly value: string;
 
     constructor(value: string) {

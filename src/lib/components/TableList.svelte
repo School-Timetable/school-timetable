@@ -88,7 +88,7 @@
 <div class="px-3 pb-3">
 	<div class="pb-3 mx-auto" style="max-width: 500px;">
 		<FormSearch
-			list={items}
+			{items}
 			on:search={(e) => {
 				onSearch(e.detail.searchResults);
 			}}

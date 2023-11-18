@@ -11,6 +11,8 @@ export const abbreviationSchema = z.object({
 }).strict();
 
 export class Abbreviation {
+    public static readonly schema = abbreviationSchema;
+
     public readonly value: string;
 
     constructor(value: string) {
