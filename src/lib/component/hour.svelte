@@ -56,7 +56,6 @@
 
 </script>
 
-<!--per avere le classi colorate con un colore diverso in base alla materia, elimina class:notNullHour="{subject}"-->
 <section class="hour text-wrap btn align-middle container-fluid" class:highlight="{highlight}" class:disabled="{!draggable}" style:background-color="{color}" on:dragleave={event => highlight = false}  on:dragenter={event => highlight = draggable} style="user-select: none;" id={id} on:dragstart={event => drag(event)} draggable={subject != null && draggable} on:dragover={event => allowDrop(event)} on:drop={event => drop(event)}>{set_cell_content(subject) || ""}</section>
 
 
@@ -66,72 +65,14 @@
         background-color: gainsboro;
     }
 
-    .notNullHour {
-        background-color: rgb(8, 144, 229);
-    }
-    
-    .notNullHour:hover {
-        background-color: rgb(17, 110, 197);
-    }
-
     .hour {
         min-width: 50px;
         min-height: 50px;
         border: transparent;
     }
 
-    
-
     .disabled {
         background-color: rgb(178, 177, 177) !important; 
     }
 
-    .ENG {
-        background-color: rgb(252, 229, 138);
-    }
-
-    .ENG:hover {
-        background-color: rgb(245, 202, 117);
-    }
-
-    .MAT {
-        background-color: rgb(195, 79, 79);
-    }
-
-    .MAT:hover {
-        background-color: rgb(184, 55, 87);
-    }
-
-    .GEO {
-        background-color: rgb(88, 175, 88);
-    }
-
-    .GEO:hover {
-        background-color: rgb(61, 134, 90);
-    }
-
-    .STO {
-        background-color: rgb(182, 143, 199);
-    }
-
-    .STO:hover {
-        background-color: rgb(151, 116, 165);
-    }
-
-    .ITA {
-        background-color: rgb(136, 177, 242);
-    }
-
-    .ITA:hover {
-        background-color: rgb(78, 123, 235);
-    }
-
-    .ECO {
-        background-color: rgb(238, 170, 150);
-    }
-
-    .ECO:hover {
-        background-color: rgb(238, 146, 110);
-    }
-    
 </style>
