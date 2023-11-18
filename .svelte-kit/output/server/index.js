@@ -1,6 +1,6 @@
 import { b as base, a as assets, r as reset, p as public_env, o as options, s as set_private_env, c as set_public_env, g as get_hooks } from "./chunks/internal.js";
 import * as devalue from "devalue";
-import { n as noop, s as safe_not_equal } from "./chunks/ssr.js";
+import { n as noop, s as safe_not_equal } from "./chunks/index.js";
 import { parse, serialize } from "cookie";
 import * as set_cookie_parser from "set-cookie-parser";
 const DEV = false;
@@ -877,7 +877,7 @@ function writable(value, start = noop) {
     const subscriber = [run, invalidate];
     subscribers.add(subscriber);
     if (subscribers.size === 1) {
-      stop = start(set, update) || noop;
+      stop = start(set) || noop;
     }
     run(value);
     return () => {
@@ -2585,7 +2585,7 @@ async function respond(request, options2, manifest, state) {
     fetch: null,
     getClientAddress: state.getClientAddress || (() => {
       throw new Error(
-        `${"@sveltejs/adapter-auto"} does not specify getClientAddress. Please raise an issue`
+        `${"@sveltejs/adapter-node"} does not specify getClientAddress. Please raise an issue`
       );
     }),
     locals: {},

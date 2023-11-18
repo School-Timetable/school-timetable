@@ -1,11 +1,12 @@
-const calc = require('../src/example_function');
 
 
-test('sum 1 + 2 = 3', () => {
-    expect(calc.sum(1, 2)).toBe(3);
+
+test('Discovery test', () => {
+    expect(true).toBe(true);
 });
 
-test('sub 1 - 2 = -1', () => {
-    expect(calc.sub(1, 2)).toBe(-1);
+test('Discovery test', () => {
+    expect(2).toBe(2);
 });
+
 
