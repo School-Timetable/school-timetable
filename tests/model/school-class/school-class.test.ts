@@ -10,37 +10,37 @@ const track = "Informatica"
 const schoolClassWithTrack = SchoolClass.of("abc", year, section, track)
 const schoolClassWithoutTrack = SchoolClass.of("abc", year, section)
 
-test('test_school_class_fixture_test', () => {
+test('School class fixture object with track created', () => {
     expect(schoolClassWithTrack.year.value).toStrictEqual(year)
     expect(schoolClassWithTrack.section.value).toStrictEqual(section)
     expect(schoolClassWithTrack.track?.value).toStrictEqual(track)
 })
 
-test('test_school_class_fixture_test_without_track', () => {
+test('School class fixture object without track created', () => {
     expect(schoolClassWithoutTrack.year.value).toStrictEqual(year)
     expect(schoolClassWithoutTrack.section.value).toStrictEqual(section)
     expect(schoolClassWithoutTrack.track?.value).toStrictEqual(undefined)
 })
 
-test('test_school_class_without_track_to_string', () => {
+test('School class to string without track', () => {
     expect(schoolClassWithoutTrack.toString()).toEqual("5A")
 })
 
-test('test_school_class_with_track_to_string', () => {
+test('School class to string with track', () => {
     expect(schoolClassWithTrack.toString()).toMatch("5A Informatica")
 })
 
-test('test_school_class_number_change', () => {
+test('Year changes', () => {
     schoolClassWithTrack.year = new Year(3);
     expect(schoolClassWithTrack.year.value).toBe(3);
 });
 
-test('test_school_class_section_change', () => {
+test('Section changes', () => {
     schoolClassWithTrack.section = new Section("C");
     expect(schoolClassWithTrack.section.value).toBe("C");
 });
 
-test('test_school_class_without_track_change', () => {
+test('Track changes', () => {
     schoolClassWithoutTrack.track = new Track("Inf.");
     expect(schoolClassWithoutTrack.track.value).toBe("Inf.");
 });
