@@ -7,7 +7,7 @@
 	} from "$lib/stores/global_store";
 	import { generateCookieFile } from "$lib/utils/cookie_file_writer";
 	import { onMount } from "svelte";
-	import { Container } from "sveltestrap";
+	import { Container, Styles } from "sveltestrap";
 
 	onMount(() => {
 		const generate_file = () =>
@@ -22,6 +22,7 @@
 	});
 </script>
 
+<Styles theme={$theme} />
 <Container xxl class="bg-body rounded shadow">
 	<slot />
 </Container>

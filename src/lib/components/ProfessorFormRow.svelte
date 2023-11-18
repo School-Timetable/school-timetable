@@ -1,6 +1,14 @@
 <script lang="ts">
 	import { Professor } from "$model/professor/professor";
-	import { Button, Col, FormGroup, Icon, Input, Label } from "sveltestrap";
+	import {
+		Button,
+		Col,
+		FormGroup,
+		Icon,
+		Input,
+		Label,
+		Row,
+	} from "sveltestrap";
 	import { createEventDispatcher } from "svelte";
 	import { ZodError } from "zod";
 	import { nameSchema } from "$model/professor/name";
@@ -8,7 +16,10 @@
 	import { mailSchema } from "$model/professor/mail";
 	import { cellPhoneSchema } from "$model/professor/cellphone";
 
-	const eventDispatcher = createEventDispatcher();
+	const eventDispatcher = createEventDispatcher<{
+		save: { professor: Professor };
+		cancel: void;
+	}>();
 
 	export let professor: Professor | null = null;
 
@@ -135,71 +146,73 @@
 	}
 </script>
 
-<Col sm={{ size: 2 }}>
-	<FormGroup floating label="Name" style="color: grey;">
-		<Input
-			type="text"
-			label="name"
-			name="name"
-			id="name"
-			bind:value={editingProfessor._name.value}
-			on:keyup={validateName}
-			bind:feedback={nameValidation.errorMessage}
-			bind:valid={nameValidation.valid}
-			bind:invalid={nameValidation.invalid}
-		/>
-	</FormGroup>
-</Col>
-<Col sm={{ size: 2 }}>
-	<FormGroup floating label="Surname" style="color: grey;">
-		<Input
-			type="text"
-			label="surname"
-			name="surname"
-			id="surname"
-			bind:value={editingProfessor._surname.value}
-			on:keyup={validateSurname}
-			bind:feedback={surnameValidation.errorMessage}
-			bind:valid={surnameValidation.valid}
-			bind:invalid={surnameValidation.invalid}
-		/>
-	</FormGroup>
-</Col>
-<Col sm={{ size: 3 }}>
-	<FormGroup floating label="Email" style="color: grey;">
-		<Input
-			type="email"
-			label="email"
-			name="email"
-			id="email"
-			bind:value={editingProfessor._email.value}
-			on:keyup={validateEmail}
-			bind:feedback={emailValidation.errorMessage}
-			bind:valid={emailValidation.valid}
-			bind:invalid={emailValidation.invalid}
-		/>
-	</FormGroup>
-</Col>
-<Col sm={{ size: 2 }}>
-	<FormGroup floating label="Phone number" style="color: grey;">
-		<Input
-			type="text"
-			label="cellPhone"
-			name="cellPhone"
-			id="cellPhone"
-			bind:value={editingProfessor._cellPhone.value}
-			on:keyup={validateCellPhone}
-			bind:feedback={cellPhoneValidation.errorMessage}
-			bind:valid={cellPhoneValidation.valid}
-			bind:invalid={cellPhoneValidation.invalid}
-		/>
-	</FormGroup>
-</Col>
-<Col class="text-end pe-3">
-	<Button color="primary" on:click={save}>
-		<Icon name="check" /> Save</Button
-	>
-	<Button color="danger" on:click={() => eventDispatcher("cancel")}>
-		<Icon name="x" /> Cancel</Button
-	>
-</Col>
+<Row>
+	<Col sm={{ size: 2 }}>
+		<FormGroup floating label="Name" style="color: grey;">
+			<Input
+				type="text"
+				label="name"
+				name="name"
+				id="name"
+				bind:value={editingProfessor._name.value}
+				on:keyup={validateName}
+				bind:feedback={nameValidation.errorMessage}
+				bind:valid={nameValidation.valid}
+				bind:invalid={nameValidation.invalid}
+			/>
+		</FormGroup>
+	</Col>
+	<Col sm={{ size: 2 }}>
+		<FormGroup floating label="Surname" style="color: grey;">
+			<Input
+				type="text"
+				label="surname"
+				name="surname"
+				id="surname"
+				bind:value={editingProfessor._surname.value}
+				on:keyup={validateSurname}
+				bind:feedback={surnameValidation.errorMessage}
+				bind:valid={surnameValidation.valid}
+				bind:invalid={surnameValidation.invalid}
+			/>
+		</FormGroup>
+	</Col>
+	<Col sm={{ size: 3 }}>
+		<FormGroup floating label="Email" style="color: grey;">
+			<Input
+				type="email"
+				label="email"
+				name="email"
+				id="email"
+				bind:value={editingProfessor._email.value}
+				on:keyup={validateEmail}
+				bind:feedback={emailValidation.errorMessage}
+				bind:valid={emailValidation.valid}
+				bind:invalid={emailValidation.invalid}
+			/>
+		</FormGroup>
+	</Col>
+	<Col sm={{ size: 2 }}>
+		<FormGroup floating label="Phone number" style="color: grey;">
+			<Input
+				type="text"
+				label="cellPhone"
+				name="cellPhone"
+				id="cellPhone"
+				bind:value={editingProfessor._cellPhone.value}
+				on:keyup={validateCellPhone}
+				bind:feedback={cellPhoneValidation.errorMessage}
+				bind:valid={cellPhoneValidation.valid}
+				bind:invalid={cellPhoneValidation.invalid}
+			/>
+		</FormGroup>
+	</Col>
+	<Col class="text-end pe-3">
+		<Button color="primary" on:click={save}>
+			<Icon name="check" /> Save</Button
+		>
+		<Button color="danger" on:click={() => eventDispatcher("cancel")}>
+			<Icon name="x" /> Cancel</Button
+		>
+	</Col>
+</Row>
