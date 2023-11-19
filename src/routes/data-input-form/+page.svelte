@@ -35,7 +35,7 @@
 			<NavLink href="/">Home</NavLink>
 		</Nav>
 	</Col>
-	<Col>
+	<Col xs="auto">
 		<Tabs
 			{tabItems}
 			activeItem={activeTab}

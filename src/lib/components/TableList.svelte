@@ -61,13 +61,20 @@
 	}
 
 	function sortItems(list: AcceptedTypes[]) {
+		if (sortByField == null) {
+			console.error("sortByField is null");
+			return;
+		}
+
 		list.sort((a: AcceptedTypes, b: AcceptedTypes) => {
 			// @ts-ignore
-			let aField = a[sortByField].value;
+			let aField = a[sortByField]?.value;
 			// @ts-ignore
-			let bField = b[sortByField].value;
+			let bField = b[sortByField]?.value;
 
-			if (aField < bField) return sortAsc ? -1 : 1;
+			if (aField == null) return sortAsc ? -1 : 1;
+			else if (bField == null) return sortAsc ? 1 : -1;
+			else if (aField < bField) return sortAsc ? -1 : 1;
 			else if (aField > bField) return sortAsc ? 1 : -1;
 			else return 0;
 		});
@@ -95,14 +102,14 @@
 		/>
 	</div>
 
-	<Row class="fw-bold mb-2 text-body h5">
+	<Row noGutters class="fw-bold mb-2 text-body h5">
 		{#each fieldsInfo as headerElement}
 			<Col sm={{ size: headerElement.columns }}>
 				<button
 					class=""
 					on:click={() => sortBy(headerElement.fieldName)}
 				>
-					<span class="text-hover-light">
+					<span class="text-hover-highlight">
 						{#if sortByField == headerElement.fieldName}
 							{headerElement.label}
 							{#if sortAsc}
@@ -141,7 +148,7 @@
 							<Col>
 								<Button
 									color="primary"
-									class="w-100"
+									class="w-100 px-1 my-1 text-nowrap"
 									on:click={() => editItem(item)}
 								>
 									<Icon name="pencil-square" /> Edit
@@ -150,7 +157,7 @@
 							<Col>
 								<Button
 									color="danger"
-									class="w-100"
+									class="w-100 px-1 my-1 text-nowrap"
 									on:click={() => removeItem(item)}
 								>
 									<Icon name="trash-fill" /> Delete
@@ -217,7 +224,7 @@
 		font-weight: bold;
 	}
 
-	.text-hover-light:hover {
-		color: #ffffff;
+	.text-hover-highlight:hover {
+		color: var(--bs-primary);
 	}
 </style>
