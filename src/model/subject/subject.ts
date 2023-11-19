@@ -92,6 +92,10 @@ export class Subject {
         return `S:${this.id};${this.schoolClass.id};${this.professor.id};${this.name};${this.abbreviation};${this.weight};${this.hoursPerWeek}`
     }
 
+    public toFullString() {
+        return `${this.schoolClass} ${this.professor} ${this.name} ${this.abbreviation} ${this.weight} ${this.hoursPerWeek}}`
+    }
+
     get id() { return this._id; }
     get schoolClass() { return this._schoolClass; }
     get professor() { return this._professor; }

@@ -148,7 +148,7 @@
 
 <Row class="align-items-top g-1 mt-1">
 	<Col sm={{ size: 2 }}>
-		<FormGroup floating label="Name" style="color: grey;">
+		<FormGroup floating label="Name" class="text-muted">
 			<Input
 				type="text"
 				label="name"
@@ -164,7 +164,7 @@
 		</FormGroup>
 	</Col>
 	<Col sm={{ size: 2 }}>
-		<FormGroup floating label="Surname" style="color: grey;">
+		<FormGroup floating label="Surname" class="text-muted">
 			<Input
 				type="text"
 				label="surname"
@@ -180,7 +180,7 @@
 		</FormGroup>
 	</Col>
 	<Col sm={{ size: 3 }}>
-		<FormGroup floating label="Email" style="color: grey;">
+		<FormGroup floating label="Email" class="text-muted">
 			<Input
 				type="email"
 				label="email"
@@ -196,7 +196,7 @@
 		</FormGroup>
 	</Col>
 	<Col sm={{ size: 2 }}>
-		<FormGroup floating label="Phone number" style="color: grey;">
+		<FormGroup floating label="Phone number" class="text-muted">
 			<Input
 				type="text"
 				label="cellPhone"
@@ -214,15 +214,22 @@
 	<Col sm={{ size: 2 }} class="ms-auto ps-0">
 		<Row class="g-1">
 			<Col>
-				<Button color="primary" class="w-100" on:click={save}>
-					<Icon name="check" /> Save</Button>
+				<Button
+					color="primary"
+					class="w-100 text-nowrap"
+					on:click={save}
+				>
+					<Icon name="check" /> Save</Button
+				>
 			</Col>
 			<Col>
 				<Button
 					color="danger"
-					class="w-100"
-					on:click={() => eventDispatcher("cancel")}>
-					<Icon name="x" /> Cancel</Button>
+					class="w-100 text-nowrap"
+					on:click={() => eventDispatcher("cancel")}
+				>
+					<Icon name="x" /> Cancel</Button
+				>
 			</Col>
 		</Row>
 	</Col>

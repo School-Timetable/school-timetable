@@ -139,7 +139,7 @@
 							sm={{ size: fieldInfo.columns }}
 							class="text-truncate"
 						>
-							{item[fieldInfo.fieldName]?.value || item[fieldInfo.fieldName]?.toString() || "-"}
+							{item[fieldInfo.fieldName]?.toString() || "-"}
 						</Col>
 					{/each}
 
