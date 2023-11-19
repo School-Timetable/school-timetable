@@ -119,6 +119,11 @@
 			}
 		}
 	}
+	function handleKeydown(event: KeyboardEvent) {
+        if (event.key === 'Enter') {
+			save();
+        }
+    }
 </script>
 
 <Row class="align-items-top g-1 mt-1">
@@ -168,6 +173,7 @@
 			bind:valid={formValidationFeedback[0].valid}
 			bind:invalid={formValidationFeedback[0].invalid}
 			bind:feedback={formValidationFeedback[0].feedback}
+			on:keydown={(e) => {handleKeydown(e)}}
 			on:keyup={() =>
 				validateWithSchema(
 					editingSubject._abbreviation,
@@ -189,6 +195,7 @@
 			bind:valid={formValidationFeedback[1].valid}
 			bind:invalid={formValidationFeedback[1].invalid}
 			bind:feedback={formValidationFeedback[1].feedback}
+			on:keydown={(e) => {handleKeydown(e)}}
 			on:keyup={() =>
 				validateWithSchema(editingSubject._name, 1, nameSchema)}
 		/>
@@ -206,6 +213,7 @@
 			bind:valid={formValidationFeedback[2].valid}
 			bind:invalid={formValidationFeedback[2].invalid}
 			bind:feedback={formValidationFeedback[2].feedback}
+			on:keydown={(e) => {handleKeydown(e)}}
 			on:keyup={() =>
 				validateWithSchema(editingSubject._weight, 2, weightSchema)}
 			min="1"
@@ -225,6 +233,7 @@
 			bind:valid={formValidationFeedback[3].valid}
 			bind:invalid={formValidationFeedback[3].invalid}
 			bind:feedback={formValidationFeedback[3].feedback}
+			on:keydown={(e) => {handleKeydown(e)}}
 			on:keyup={() =>
 				validateWithSchema(
 					editingSubject._hoursPerWeek,

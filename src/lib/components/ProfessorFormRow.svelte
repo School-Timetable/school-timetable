@@ -144,6 +144,11 @@
 			}
 		}
 	}
+	function handleKeydown(event: KeyboardEvent) {
+        if (event.key === 'Enter') {
+			save();
+        }
+    }
 </script>
 
 <Row class="align-items-top g-1 mt-1">
@@ -155,7 +160,7 @@
 				name="name"
 				id="name"
 				bind:value={editingProfessor._name.value}
-				on:keydown={validateName}
+				on:keydown={(e) => {handleKeydown(e)}}
 				on:keyup={validateName}
 				on:change={validateName}
 				bind:feedback={nameValidation.errorMessage}
@@ -173,7 +178,7 @@
 				id="surname"
 				bind:value={editingProfessor._surname.value}
 				on:keyup={validateSurname}
-				on:keydown={validateSurname}
+				on:keydown={(e) => {handleKeydown(e)}}
 				on:change={validateSurname}
 				bind:feedback={surnameValidation.errorMessage}
 				bind:valid={surnameValidation.valid}
@@ -190,7 +195,7 @@
 				id="email"
 				bind:value={editingProfessor._email.value}
 				on:keyup={validateEmail}
-				on:keydown={validateEmail}
+				on:keydown={(e) => {handleKeydown(e)}}
 				on:change={validateEmail}
 				bind:feedback={emailValidation.errorMessage}
 				bind:valid={emailValidation.valid}
@@ -207,7 +212,7 @@
 				id="cellPhone"
 				bind:value={editingProfessor._cellPhone.value}
 				on:keyup={validateCellPhone}
-				on:keydown={validateCellPhone}
+				on:keydown={(e) => {handleKeydown(e)}}
 				on:change={validateCellPhone}
 				bind:feedback={cellPhoneValidation.errorMessage}
 				bind:valid={cellPhoneValidation.valid}

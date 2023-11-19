@@ -125,6 +125,11 @@
 			trackValidation.errorMessage = correctFeedback;
 		}
 	}
+	function handleKeydown(event: KeyboardEvent) {
+        if (event.key === 'Enter') {
+			save();
+        }
+    }
 </script>
 
 <Row class="align-items-top g-1 mt-1">
@@ -135,7 +140,7 @@
 				name="year"
 				id="year"
 				on:keyup={validateYear}
-				on:keydown={validateYear}
+				on:keydown={(e) => {handleKeydown(e)}}
 				bind:value={tmpSchoolClass._year.value}
 				bind:feedback={yearValidation.errorMessage}
 				bind:valid={yearValidation.valid}
@@ -154,7 +159,7 @@
 				name="section"
 				id="section"
 				on:keyup={validateSection}
-				on:keydown={validateSection}
+				on:keydown={(e) => {handleKeydown(e)}}
 				bind:value={tmpSchoolClass._section.value}
 				bind:feedback={sectionValidation.errorMessage}
 				bind:valid={sectionValidation.valid}
@@ -176,7 +181,7 @@
 				id="email"
 				bind:value={tmpSchoolClass._track.value}
 				on:keyup={validateTrack}
-				on:keydown={validateTrack}
+				on:keydown={(e) => {handleKeydown(e)}}
 				on:change={validateTrack}
 				bind:feedback={trackValidation.errorMessage}
 				bind:valid={trackValidation.valid}
