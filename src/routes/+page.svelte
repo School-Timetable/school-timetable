@@ -1,14 +1,44 @@
 <script lang="ts">
+    import { goto } from "$app/navigation";
 	import ThemeSwitcher from "$lib/components/ThemeSwitcher.svelte";
+    import { Navbar, NavbarBrand } from "sveltestrap";
 </script>
 
-<h1>School Timetable</h1>
-<p>
-	Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation
-</p>
+<Navbar expand="md">
+	<div class="left-group">
+        <!-- svelte-ignore a11y-click-events-have-key-events -->
+        <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+        <p id="title" class="zoom-hover" on:click={() => {goto("/")}} >SCHOOL TIMETABLE</p>
+        
+        <div class="vl"></div>
+        <div class="zoom-hover">
+            <NavbarBrand style="margin-left: 20px;" href="/data-input-form"> Input Form </NavbarBrand>
+        </div>
+        
+    </div>
 
-<ul>
-	<li><a href="/subjects">subjects</a></li>
-	<li><a href="/data-input-form">forms</a></li>
-	Theme: <ThemeSwitcher />
-</ul>
+	<ThemeSwitcher />
+
+</Navbar>
+
+<style>
+    p {
+        font-size: 23px;
+        font-weight: bold;
+        cursor: pointer;
+        margin: 0 0 0 30px;
+        padding: 0;
+    }
+
+    .left-group {
+        display: flex;
+        align-items: center;
+    }
+
+    .vl {
+        border-left: 1px solid white;
+        height: 30px;
+        margin-left: 20px;
+    }
+        
+</style>
