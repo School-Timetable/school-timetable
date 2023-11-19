@@ -70,7 +70,7 @@
 
 	let formValidationFeedback: FormValidationResult[] = new Array(4).fill({
 		valid: false,
-		invalid: true,
+		invalid: false,
 		feedback: "",
 	});
 
