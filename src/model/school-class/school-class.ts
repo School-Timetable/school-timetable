@@ -92,7 +92,7 @@ export class SchoolClass {
         let res = `${this._year.value}${this._section.value}`;
 
         if (this._track)
-            res += ` ${this._track.value}`;
+            res += ` ${this._track}`;
         return res;
     }
 

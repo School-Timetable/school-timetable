@@ -5,16 +5,16 @@ import { Weight } from '../../../src/model/subject/weight';
 import { HoursPerWeek } from '../../../src/model/subject/hours-per-week';
 
 describe('Name tests', () => {
-    test.each(["matematica", "Storia dell'arte"])('Name %p creates object', (value) => {
+    test.each(["matematica", "Storia dell'arte", "Matematica per l'analisi dei dati", "A long name with strange chars like this ' under 60 charsxd"])('Name %p creates object', (value) => {
         const name = new Name(value);
         expect(name.value).toMatch(value);
     });
 
-    test.each(["", "a", "a".repeat(31)])('Name %p throws too short error', (value) => {
+    test.each(["", "a", "k"])('Name %p throws too short error', (value) => {
         expect(() => new Name(value)).toThrowError();
     });
 
-    test.each(["a".repeat(31)])('Name %p throws too long error', (value) => {
+    test.each(["a".repeat(61)])('Name %p throws too long error', (value) => {
         expect(() => new Name(value)).toThrowError();
     });
 

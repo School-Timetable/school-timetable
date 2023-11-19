@@ -101,7 +101,7 @@ describe('Cellphone tests', () => {
 
 
 describe('Mail tests', () => {
-    test.each(["scrumdamn@gmail.com", "schoolTimeTable@yahoo.it"])('Mail %p creates object', (value) => {
+    test.each(["scrumdamn@gmail.com", "schoolTimeTable@yahoo.it", "scrummdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamnscrummdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamnscrummdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamnscrummdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamn@gmail.it"])('Mail %p creates object', (value) => {
         const mail = new Mail(value);
         expect(mail.value).toBe(value);
     });
@@ -124,9 +124,9 @@ describe('Mail tests', () => {
         }).toThrowError("The mail is too short (min 5 characters)");
     });
     
-    test.each(["scrummdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamn@gmail.it"])('Mail %p throws too long error', (value) => {
+    test.each(["scrummdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamnscrummdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamnscrummdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamnscrummdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamnscrumdamnsc@gmail.it"])('Mail %p throws too long error', (value) => {
         expect(() => {
             new Mail(value);
-        }).toThrowError("The mail is too long (max 30 characters)");
+        }).toThrowError("The mail is too long (max 320 characters)");
     });
 });

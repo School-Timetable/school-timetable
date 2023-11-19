@@ -15,7 +15,7 @@
 	import { Subject } from "$model/subject/subject";
 	import type { Professor } from "$model/professor/professor";
 	import { abbreviationSchema } from "$model/subject/abbreviation";
-	import { nameSchema } from "$model/professor/name";
+	import { nameSchema } from "$model/subject/name";
 	import { weightSchema } from "$model/subject/weight";
 	import { hoursPerWeekSchema } from "$model/subject/hours-per-week";
 	import { allClassrooms, allProfessors } from "$lib/stores/global_store";

@@ -27,7 +27,7 @@ test('School class to string without track', () => {
 })
 
 test('School class to string with track', () => {
-    expect(schoolClassWithTrack.toString()).toMatch("5A Informatica")
+    expect(schoolClassWithTrack.toString()).toMatch("5A INFORMATICA")
 })
 
 test('Year changes', () => {

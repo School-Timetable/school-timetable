@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 const valueSchema = z.string()
     .min(5, "The mail is too short (min 5 characters)")
-    .max(30, "The mail is too long (max 30 characters)")
+    .max(320, "The mail is too long (max 320 characters)")
     .email("The mail is not valid");
 
 export const mailSchema = z.object({

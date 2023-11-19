@@ -32,19 +32,11 @@
 </script>
 
 <Row>
-	<Col>
-		<Nav>
-			<NavLink href="/">Home</NavLink>
-		</Nav>
-	</Col>
-	<Col xs="auto">
-		<Tabs
-			{tabItems}
-			activeItem={activeTab}
-			on:tabChange={triggerTabChange}
-		/>
-	</Col>
-	<Col />
+	<Tabs
+		{tabItems}
+		activeItem={activeTab}
+		on:tabChange={triggerTabChange}
+	/>
 </Row>
 
 {#if activeTab === "Professor"}
