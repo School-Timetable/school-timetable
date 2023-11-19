@@ -8,6 +8,7 @@
 	import { backOut, cubicIn, cubicOut, linear, quadOut } from "svelte/easing";
 	import Classes from "$lib/components/Classes.svelte";
 	import { Col, Nav, NavLink, Row } from "sveltestrap";
+    import { editingId } from "$lib/stores/global_store";
 
 	onMount(async () => {
 		document
@@ -24,6 +25,7 @@
 
 	const triggerTabChange = (event: { detail: string }) => {
 		activeTab = event.detail;
+		editingId.set(null);
 	};
 
 	let options = { duration: 300, easing: quadOut };
