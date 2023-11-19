@@ -134,7 +134,8 @@
 				type="select"
 				name="year"
 				id="year"
-				on:change={validateYear}
+				on:keyup={validateYear}
+				on:keydown={validateYear}
 				bind:value={tmpSchoolClass._year.value}
 				bind:feedback={yearValidation.errorMessage}
 				bind:valid={yearValidation.valid}
@@ -152,7 +153,8 @@
 				type="select"
 				name="section"
 				id="section"
-				on:change={validateSection}
+				on:keyup={validateSection}
+				on:keydown={validateSection}
 				bind:value={tmpSchoolClass._section.value}
 				bind:feedback={sectionValidation.errorMessage}
 				bind:valid={sectionValidation.valid}
@@ -174,6 +176,8 @@
 				id="email"
 				bind:value={tmpSchoolClass._track.value}
 				on:keyup={validateTrack}
+				on:keydown={validateTrack}
+				on:change={validateTrack}
 				bind:feedback={trackValidation.errorMessage}
 				bind:valid={trackValidation.valid}
 				bind:invalid={trackValidation.invalid}
