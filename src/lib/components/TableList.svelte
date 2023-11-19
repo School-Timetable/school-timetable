@@ -137,7 +137,9 @@
 					{#each fieldsInfo as fieldInfo}
 						<Col
 							sm={{ size: fieldInfo.columns }}
-							class="text-truncate"
+							class="text-truncate pe-1"
+							aria-label={fieldInfo.label}
+							title={item[fieldInfo.fieldName]?.toString()}
 						>
 							{item[fieldInfo.fieldName]?.toString() || "-"}
 						</Col>

@@ -1,14 +1,14 @@
 <script lang="ts">
 	import type { SchoolClass } from "$model/school-class/school-class";
-	import { editingId } from "$lib/stores/global_store";	
+	import { editingId } from "$lib/stores/global_store";
 	import { slide } from "svelte/transition";
 	import { linear } from "svelte/easing";
 	import ClassFormRow from "$lib/components/ClassFormRow.svelte";
 	import FormSearch from "$lib/components/FormSearch.svelte";
 	import { get } from "svelte/store";
 	import { allClassrooms } from "$lib/stores/global_store";
-    import type { FieldInfo } from "$model/model-generics";
-    import TableList from "./TableList.svelte";
+	import type { FieldInfo } from "$model/model-generics";
+	import TableList from "./TableList.svelte";
 
 	let options = { duration: 200, easing: linear };
 
@@ -17,7 +17,7 @@
 	let filteredList = schoolClasses;
 
 	function editSchoolClass(id: string) {
-		editingId.set(id)
+		editingId.set(id);
 	}
 
 	let fieldsInfo: FieldInfo[] = [
@@ -27,7 +27,7 @@
 	];
 
 	function addSchoolClass() {
-		editingId.set("")
+		editingId.set("");
 	}
 
 	const createSchoolClass = (event: { detail: any }) => {
@@ -38,7 +38,7 @@
 		}
 		schoolClasses = [...schoolClasses, newClass];
 		allClassrooms.set(schoolClasses);
-		editingId.set(null)
+		editingId.set(null);
 	};
 
 	function saveSchoolClass(newClass: SchoolClass) {
@@ -49,11 +49,10 @@
 		const indexInFullList = schoolClasses.findIndex(
 			(sc) => sc.id === newClass.id
 		);
-		if(indexInFullList != -1) {
+		if (indexInFullList != -1) {
 			schoolClasses.splice(indexInFullList, 1, newClass);
-		}
-		else schoolClasses = [...schoolClasses, newClass];
-		
+		} else schoolClasses = [...schoolClasses, newClass];
+
 		schoolClasses = schoolClasses;
 		allClassrooms.set(schoolClasses);
 		editingId.set(null);
@@ -94,7 +93,12 @@
 	}
 </script>
 
-<TableList items={schoolClasses} {fieldsInfo} itemsType="school class" on:delete={(e) => removeClass(e.detail.value)}>
+<TableList
+	items={schoolClasses}
+	{fieldsInfo}
+	itemsType="class"
+	on:delete={(e) => removeClass(e.detail.value)}
+>
 	<ClassFormRow
 		slot="edit"
 		let:item

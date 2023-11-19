@@ -1,13 +1,12 @@
 <script lang="ts">
 	import { theme } from "$lib/stores/global_store";
 	import {
+		ButtonDropdown,
 		Dropdown,
 		DropdownItem,
 		DropdownMenu,
 		DropdownToggle,
 		Icon,
-		Input,
-		Styles,
 	} from "sveltestrap";
 
 	type ThemeOption = {
@@ -26,17 +25,23 @@
 		options.find((option) => option.theme === $theme) || options[0];
 </script>
 
-<Dropdown>
-	<DropdownToggle caret>
+<ButtonDropdown class="text-primary">
+	<DropdownToggle
+		caret
+		color={currentOption.theme != "auto" ? currentOption.theme : "dark"}
+	>
 		{currentOption.displayName}
 		<Icon name={currentOption.icon} />
 	</DropdownToggle>
 	<DropdownMenu>
 		{#each options as option}
-			<DropdownItem on:click={() => (theme.set(option.theme))}>
+			<DropdownItem
+				on:click={() => theme.set(option.theme)}
+				class={option == currentOption ? "active" : ""}
+			>
 				{option.displayName}
 				<Icon name={option.icon} />
 			</DropdownItem>
 		{/each}
 	</DropdownMenu>
-</Dropdown>
+</ButtonDropdown>

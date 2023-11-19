@@ -126,21 +126,23 @@
 		}
 	}
 	function handleKeydown(event: KeyboardEvent) {
-        if (event.key === 'Enter') {
+		if (event.key === "Enter") {
 			save();
-        }
-    }
+		}
+	}
 </script>
 
 <Row class="align-items-top g-1 mt-1">
 	<Col sm={{ size: 3 }}>
-		<FormGroup floating label="Year" class="text-body">
+		<FormGroup floating label="Year" class="text-muted">
 			<Input
 				type="select"
 				name="year"
 				id="year"
 				on:keyup={validateYear}
-				on:keydown={(e) => {handleKeydown(e)}}
+				on:keydown={(e) => {
+					handleKeydown(e);
+				}}
 				bind:value={tmpSchoolClass._year.value}
 				bind:feedback={yearValidation.errorMessage}
 				bind:valid={yearValidation.valid}
@@ -153,13 +155,15 @@
 		</FormGroup>
 	</Col>
 	<Col sm={{ size: 3 }}>
-		<FormGroup floating inline label="Section" class="text-body">
+		<FormGroup floating inline label="Section" class="text-muted">
 			<Input
 				type="select"
 				name="section"
 				id="section"
 				on:keyup={validateSection}
-				on:keydown={(e) => {handleKeydown(e)}}
+				on:keydown={(e) => {
+					handleKeydown(e);
+				}}
 				bind:value={tmpSchoolClass._section.value}
 				bind:feedback={sectionValidation.errorMessage}
 				bind:valid={sectionValidation.valid}
@@ -172,16 +176,18 @@
 		</FormGroup>
 	</Col>
 	<Col sm={{ size: 3 }}>
-		<FormGroup floating label="Track" class="text-body">
+		<FormGroup floating label="Track" class="text-muted">
 			<Input
 				type="text"
-				label="email"
+				label="track"
 				placeholder="Enter a value"
-				name="email"
-				id="email"
+				name="track"
+				id="track"
 				bind:value={tmpSchoolClass._track.value}
 				on:keyup={validateTrack}
-				on:keydown={(e) => {handleKeydown(e)}}
+				on:keydown={(e) => {
+					handleKeydown(e);
+				}}
 				on:change={validateTrack}
 				bind:feedback={trackValidation.errorMessage}
 				bind:valid={trackValidation.valid}
