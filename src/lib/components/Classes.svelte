@@ -16,8 +16,6 @@
 
 	let filteredList = schoolClasses;
 
-	// let editingId: string | null;
-
 	function editSchoolClass(id: string) {
 		editingId.set(id)
 	}

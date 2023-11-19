@@ -18,6 +18,8 @@
     import { nameSchema } from "$model/professor/name";
     import { weightSchema } from "$model/subject/weight";
     import { hoursPerWeekSchema } from "$model/subject/hours-per-week";
+    import { allClassrooms, allProfessors } from "$lib/stores/global_store";
+    import { get } from "svelte/store";
 
 
 	const dispatch = createEventDispatcher<{
@@ -26,8 +28,8 @@
 	}>();
 
 	export let subject: Subject | null = null;
-	export let schoolClasses: SchoolClass[] = [];
-	export let professors: Professor[] = [];
+	export let schoolClasses: SchoolClass[] = get(allClassrooms);
+	export let professors: Professor[] = get(allProfessors);
 
 	type SubjectFormData = {
 		_id: string | null;
@@ -113,8 +115,8 @@
 	}
 </script>
 
-<Row>
-	<Col>
+<Row class="align-items-top g-1 mt-1">
+	<Col sm={{ size: 2 }}>
 		<Label for="schoolClass">Class</Label>
 		<Input
 			type="select"
@@ -131,7 +133,7 @@
 		</Input>
 	</Col>
 
-	<Col>
+	<Col sm={{ size: 2 }}>
 		<Label for="professor">Professor</Label>
 		<Input
 			type="select"
@@ -148,7 +150,7 @@
 		</Input>
 	</Col>
 
-	<Col>
+	<Col sm={{ size: 2 }}>
 		<Label for="abbreviation">Abbreviation</Label>
 		<Input
 			type="text"
@@ -164,7 +166,7 @@
 		/>
 	</Col>
 
-	<Col>
+	<Col sm={{ size: 2 }}>
 		<Label for="name">Name</Label>
 		<Input
 			type="text"
@@ -180,7 +182,7 @@
 		/>
 	</Col>
 
-	<Col>
+	<Col sm={{ size: 1 }}>
 		<Label for="weight">Weight</Label>
 		<Input
 			type="number"
@@ -198,8 +200,8 @@
 		/>
 	</Col>
 
-	<Col>
-		<Label for="hoursPerWeek">Hours per week</Label>
+	<Col sm={{ size: 1 }}>
+		<Label for="hoursPerWeek">Hours</Label>
 		<Input
 			type="number"
 			label="hoursPerWeek"
