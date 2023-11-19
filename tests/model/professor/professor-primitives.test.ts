@@ -22,10 +22,10 @@ describe('Name tests', () => {
         }).toThrowError("The name is too short (min 2 characters)");
     });
     
-    test.each(["John claire john claire john claire john claire john claire", "ThisNameIsTooLongggggg"])('Name %p throws too long error', (value) => {
+    test.each(["John claire john claire john claire john claire john claire john claire john claire john claire john claire john claire john claire john claire john claire john claire john claire john claire john claire", "ThisNameIsTooLonggggggggggggggggggggggggggggggggggg"])('Name %p throws too long error', (value) => {
         expect(() => {
             new Name(value);
-        }).toThrowError("The name is too long (max 20 characters)");
+        }).toThrowError("The name is too long (max 50 characters)");
     });
 
     test.each(["John 123", "Inv4l1d", "Tyler!!"])('Name %p throws invalid error', (value) => {
@@ -48,10 +48,10 @@ describe('Surname tests', () => {
         }).toThrowError("The surname is too short (min 2 characters)");
     });
     
-    test.each(["John claire john claire john claire john claire john claire", "ThisSurnameIsTooLongggg"])('Surname %p throws too long error', (value) => {
+    test.each(["John claire john claire john claire john claire john claire john claire john claire john claire john claire john claire john claire john claire john claire john claire john claire john claire john claire", "ThisSurnameIsTooLongggggggggggggggggggggggggggggggg"])('Surname %p throws too long error', (value) => {
         expect(() => {
             new Surname(value);
-        }).toThrowError("The surname is too long (max 20 characters)");
+        }).toThrowError("The surname is too long (max 50 characters)");
     });
     
     test.each(["John 123"])('Surname %p throws invalid error', (value) => {

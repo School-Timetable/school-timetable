@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 const valueSchema = z.string()
     .min(2, "The name is too short (min 2 characters)")
-    .max(20, "The name is too long (max 20 characters)")
+    .max(50, "The name is too long (max 50 characters)")
     .regex(/^[a-z]+( [a-z]+)*$/i, "The name is not valid");
 
 export const nameSchema = z.object({
