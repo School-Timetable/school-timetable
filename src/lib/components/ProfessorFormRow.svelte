@@ -155,7 +155,8 @@
 				name="name"
 				id="name"
 				bind:value={editingProfessor._name.value}
-				on:input={validateName}
+				on:keydown={validateName}
+				on:keyup={validateName}
 				on:change={validateName}
 				bind:feedback={nameValidation.errorMessage}
 				bind:valid={nameValidation.valid}
@@ -171,7 +172,8 @@
 				name="surname"
 				id="surname"
 				bind:value={editingProfessor._surname.value}
-				on:input={validateSurname}
+				on:keyup={validateSurname}
+				on:keydown={validateSurname}
 				on:change={validateSurname}
 				bind:feedback={surnameValidation.errorMessage}
 				bind:valid={surnameValidation.valid}
@@ -187,7 +189,8 @@
 				name="email"
 				id="email"
 				bind:value={editingProfessor._email.value}
-				on:input={validateEmail}
+				on:keyup={validateEmail}
+				on:keydown={validateEmail}
 				on:change={validateEmail}
 				bind:feedback={emailValidation.errorMessage}
 				bind:valid={emailValidation.valid}
@@ -203,7 +206,8 @@
 				name="cellPhone"
 				id="cellPhone"
 				bind:value={editingProfessor._cellPhone.value}
-				on:input={validateCellPhone}
+				on:keyup={validateCellPhone}
+				on:keydown={validateCellPhone}
 				on:change={validateCellPhone}
 				bind:feedback={cellPhoneValidation.errorMessage}
 				bind:valid={cellPhoneValidation.valid}
