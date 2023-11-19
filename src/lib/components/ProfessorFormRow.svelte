@@ -215,17 +215,14 @@
 		<Row class="g-1">
 			<Col>
 				<Button color="primary" class="w-100" on:click={save}>
-					<Icon name="check" /> Save</Button
-				>
+					<Icon name="check" /> Save</Button>
 			</Col>
 			<Col>
 				<Button
 					color="danger"
 					class="w-100"
-					on:click={() => eventDispatcher("cancel")}
-				>
-					<Icon name="x" /> Cancel</Button
-				>
+					on:click={() => eventDispatcher("cancel")}>
+					<Icon name="x" /> Cancel</Button>
 			</Col>
 		</Row>
 	</Col>

@@ -1,12 +1,14 @@
 <script lang="ts">
 	import type { SchoolClass } from "$model/school-class/school-class";
-	import { Button, Col, Container, Form, Icon, Row } from "sveltestrap";
+	import { editingId } from "$lib/stores/global_store";	
 	import { slide } from "svelte/transition";
 	import { linear } from "svelte/easing";
 	import ClassFormRow from "$lib/components/ClassFormRow.svelte";
 	import FormSearch from "$lib/components/FormSearch.svelte";
 	import { get } from "svelte/store";
 	import { allClassrooms } from "$lib/stores/global_store";
+    import type { FieldInfo } from "$model/model-generics";
+    import TableList from "./TableList.svelte";
 
 	let options = { duration: 200, easing: linear };
 
@@ -14,14 +16,22 @@
 
 	let filteredList = schoolClasses;
 
-	let editingId: string | null = null;
+	// let editingId: string | null;
+
 	function editSchoolClass(id: string) {
-		editingId = id;
+		editingId.set(id)
 	}
 
+	let fieldsInfo: FieldInfo[] = [
+		{ fieldName: "year", label: "Year", columns: 3 },
+		{ fieldName: "section", label: "Section", columns: 3 },
+		{ fieldName: "track", label: "Track", columns: 4 },
+	];
+
 	function addSchoolClass() {
-		editingId = "";
+		editingId.set("")
 	}
+
 	const createSchoolClass = (event: { detail: any }) => {
 		const newClass = event.detail.schoolClass;
 		if (classAlreadyExists(newClass, schoolClasses)) {
@@ -30,11 +40,10 @@
 		}
 		schoolClasses = [...schoolClasses, newClass];
 		allClassrooms.set(schoolClasses);
-		editingId = null;
+		editingId.set(null)
 	};
 
-	const saveSchoolClass = (event: { detail: any }) => {
-		const newClass = event.detail.schoolClass;
+	function saveSchoolClass(newClass: SchoolClass) {
 		if (classAlreadyExists(newClass, schoolClasses)) {
 			alert("Class already exists");
 			return;
@@ -42,11 +51,15 @@
 		const indexInFullList = schoolClasses.findIndex(
 			(sc) => sc.id === newClass.id
 		);
-		schoolClasses.splice(indexInFullList, 1, newClass);
+		if(indexInFullList != -1) {
+			schoolClasses.splice(indexInFullList, 1, newClass);
+		}
+		else schoolClasses = [...schoolClasses, newClass];
+		
 		schoolClasses = schoolClasses;
 		allClassrooms.set(schoolClasses);
-		editingId = null;
-	};
+		editingId.set(null);
+	}
 
 	function classAlreadyExists(
 		schoolClass: SchoolClass,
@@ -55,6 +68,7 @@
 		let exists = false;
 		schoolClasses.forEach((sc) => {
 			if (
+				sc.id !== schoolClass.id &&
 				sc.year.value === schoolClass.year.value &&
 				sc.section.value === schoolClass.section.value &&
 				sc.track?.value === schoolClass.track?.value
@@ -70,9 +84,8 @@
 		filteredList = event.detail.searchResults;
 	};
 
-	function removeClass(tmpId: string) {
-		const index = getIndexById(tmpId);
-		console.log(index);
+	function removeClass(schoolClass: SchoolClass) {
+		const index = getIndexById(schoolClass.id);
 		schoolClasses.splice(index, 1);
 		schoolClasses = schoolClasses;
 		allClassrooms.set(schoolClasses);
@@ -83,73 +96,22 @@
 	}
 </script>
 
-<Form>
-	<Container>
-		<Row>
-			<Col sm="12" md={{ size: 6, offset: 3 }}>
-				<FormSearch
-					bind:items={schoolClasses}
-					on:search={(event) => manageSearchResults(event)}
-				/>
-			</Col>
-		</Row>
-		<Row>
-			<Col sm={{ size: 2 }}>Year</Col>
-			<Col sm={{ size: 2 }}><strong>Section</strong></Col>
-			<Col sm={{ size: 8 }}><strong>Track</strong></Col>
-		</Row>
-		{#each filteredList as schoolClass}
-			<div class="row" transition:slide|local={{ ...options }}>
-				{#if editingId !== schoolClass.id}
-					<Col sm={{ size: 2 }}>{schoolClass.year.value}</Col>
-					<Col sm={{ size: 2 }}>{schoolClass.section.value}</Col>
-					<Col sm={{ size: 5 }}>{schoolClass.track?.value || "-"}</Col
-					>
-					<Col sm={{ size: 3 }}>
-						<Button
-							color="primary"
-							on:click={() => editSchoolClass(schoolClass.id)}
-						>
-							<Icon name="pencil-square" /> Edit
-						</Button>
-						<Button
-							color="danger"
-							on:click={() => {
-								removeClass(schoolClass.id);
-							}}
-						>
-							<Icon name="trash-fill" /> Delete
-						</Button>
-					</Col>
-				{:else}
-					<div class="row" transition:slide|local={{ ...options }}>
-						<ClassFormRow
-							{schoolClass}
-							on:cancel={() => (editingId = null)}
-							on:save={(e) => {
-								saveSchoolClass(e);
-							}}
-						/>
-					</div>
-				{/if}
-			</div>
-		{/each}
-		{#if editingId === ""}
-			<div class="row" transition:slide|local={{ ...options }}>
-				<ClassFormRow
-					on:cancel={() => {
-						editingId = null;
-					}}
-					on:save={createSchoolClass}
-				/>
-			</div>
-		{/if}
-		<Row>
-			<div class="col-12 text-center">
-				<Button color="primary" on:click={() => addSchoolClass()}
-					><Icon name="plus" />Add</Button
-				>
-			</div>
-		</Row>
-	</Container>
-</Form>
+<TableList items={schoolClasses} {fieldsInfo} itemsType="school class" on:delete={(e) => removeClass(e.detail.value)}>
+	<ClassFormRow
+		slot="edit"
+		let:item
+		let:index
+		schoolClass={item}
+		on:save={(e) => saveSchoolClass(e.detail.schoolClass)}
+		on:cancel={() => {
+			editingId.set(null);
+		}}
+	/>
+	<ClassFormRow
+		slot="create"
+		on:save={(e) => saveSchoolClass(e.detail.schoolClass)}
+		on:cancel={() => {
+			editingId.set(null);
+		}}
+	/>
+</TableList>

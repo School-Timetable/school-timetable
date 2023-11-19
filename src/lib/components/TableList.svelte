@@ -20,12 +20,12 @@
 	export let items: AcceptedTypes[] = [];
 	let filteredItems: AcceptedTypes[] = items;
 	let viewItems: AcceptedTypes[] = filteredItems;
+	export let itemsType: string = "items";
 
 	$: {
 		if (sortByField != null) sortItems(filteredItems);
 		viewItems = filteredItems;
 	}
-	// let editingId: string | null = null;
 
 	export let fieldsInfo: FieldInfo[] = [];
 
@@ -132,7 +132,7 @@
 							sm={{ size: fieldInfo.columns }}
 							class="text-truncate"
 						>
-							{item[fieldInfo.fieldName].value}
+							{item[fieldInfo.fieldName]?.value || "-"}
 						</Col>
 					{/each}
 
@@ -169,7 +169,7 @@
 		<div class="px-3 py-2" in:fade>
 			<slot name="empty">
 				<div class="col-12 text-center h3 text-body">
-					No items found
+					No {itemsType} found
 				</div>
 			</slot>
 		</div>
@@ -190,7 +190,7 @@
 						color="primary"
 						class="w-100"
 						on:click={() => createNew()}
-						><Icon name="plus" />New professor</Button
+						><Icon name="plus" />New {itemsType}</Button
 					>
 				</div>
 			</Row>

@@ -31,7 +31,7 @@
 	];
 </script>
 
-<TableList {items} {fieldsInfo} on:delete={(e) => removeItem(e.detail.value)}>
+<TableList {items} {fieldsInfo} itemsType="professor" on:delete={(e) => removeItem(e.detail.value)}>
 	<ProfessorFormRow
 		slot="edit"
 		let:item

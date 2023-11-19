@@ -6,9 +6,12 @@
     import {yearSchema} from "$model/school-class/year.js";
     import {sectionSchema} from "$model/school-class/section";
     import {Track, trackSchema} from "$model/school-class/track";
-    import {Button, Col, FormGroup, Icon, Input} from "sveltestrap";
+    import {Button, Col, FormGroup, Icon, Input, Row} from "sveltestrap";
 
-    const eventDispatcher = createEventDispatcher()
+    const eventDispatcher = createEventDispatcher<{
+		save: { schoolClass: SchoolClass };
+		cancel: void;
+	}>()
 
     const sections = [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"]
     const years = [1,2,3,4,5]
@@ -130,46 +133,54 @@
 
 </script>
 
-<Col sm={{size: 2}}>
-    <FormGroup floating label="Year" style="color: grey;">
-        <Input type="select" name="year" id="year"
-               on:change={validateYear}
-               bind:value={tmpSchoolClass._year.value}
-               bind:feedback={yearValidation.errorMessage}
-               bind:valid={yearValidation.valid}
-               bind:invalid={yearValidation.invalid}
-        >
-            {#each years as year}
-                <option>{year}</option>
-            {/each}
-        </Input>
-    </FormGroup>
-</Col>
-<Col sm={{size: 2}}>
-    <FormGroup floating label="Section" style="color: grey;">
-        <Input type="select" name="section" id="section"
-               on:change={validateSection}
-               bind:value={tmpSchoolClass._section.value}
-               bind:feedback={sectionValidation.errorMessage}
-               bind:valid={sectionValidation.valid}
-               bind:invalid={sectionValidation.invalid}
-        >
-            {#each sections as section}
-                <option>{section}</option>
-            {/each}
-        </Input>
-    </FormGroup>
-</Col>
-<Col sm={{size: 4}}>
-    <FormGroup floating label="Track" style="color: grey;">
-        <Input type="text" label="email" placeholder="Enter a value" name="email" id="email"
-               bind:value={tmpSchoolClass._track.value} on:keyup={validateTrack} bind:feedback={trackValidation.errorMessage}
-               bind:valid={trackValidation.valid} bind:invalid={trackValidation.invalid}/>
-    </FormGroup>
-</Col>
-<Col sm={{size: 4}} style="display: flex; align-items: center; margin-bottom: 13pt;">
-    <Button color="primary" on:click={save}>
-        <Icon name="check"/> Save</Button>
-    <Button color="danger" on:click={() => eventDispatcher('cancel')}>
-        <Icon name="x"/> Cancel</Button>
-</Col>
+<Row class="align-items-top g-1 mt-1">
+    <Col sm={{size: 2}}>
+        <FormGroup floating label="Year" style="color: grey;">
+            <Input type="select" name="year" id="year"
+                   on:change={validateYear}
+                   bind:value={tmpSchoolClass._year.value}
+                   bind:feedback={yearValidation.errorMessage}
+                   bind:valid={yearValidation.valid}
+                   bind:invalid={yearValidation.invalid}
+            >
+                {#each years as year}
+                    <option>{year}</option>
+                {/each}
+            </Input>
+        </FormGroup>
+    </Col>
+    <Col sm={{size: 2}}>
+        <FormGroup floating label="Section" style="color: grey;">
+            <Input type="select" name="section" id="section"
+                   on:change={validateSection}
+                   bind:value={tmpSchoolClass._section.value}
+                   bind:feedback={sectionValidation.errorMessage}
+                   bind:valid={sectionValidation.valid}
+                   bind:invalid={sectionValidation.invalid}
+            >
+                {#each sections as section}
+                    <option>{section}</option>
+                {/each}
+            </Input>
+        </FormGroup>
+    </Col>
+    <Col sm={{size: 4}}>
+        <FormGroup floating label="Track" style="color: grey;">
+            <Input type="text" label="email" placeholder="Enter a value" name="email" id="email"
+                   bind:value={tmpSchoolClass._track.value} on:keyup={validateTrack} bind:feedback={trackValidation.errorMessage}
+                   bind:valid={trackValidation.valid} bind:invalid={trackValidation.invalid}/>
+        </FormGroup>
+    </Col>
+	<Col sm={{ size: 2 }} class="ms-auto ps-0">
+        <Row class="g-1">
+            <Col>
+                <Button color="primary" on:click={save}>
+                    <Icon name="check"/> Save</Button>
+            </Col>
+            <Col>
+                <Button color="danger" on:click={() => eventDispatcher('cancel')}>
+                    <Icon name="x"/> Cancel</Button>
+            </Col>
+        </Row>
+    </Col>
+</Row>

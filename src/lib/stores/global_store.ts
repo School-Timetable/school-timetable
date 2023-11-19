@@ -24,6 +24,3 @@ export const allSubjects = writable(getExistingSubjectsFromFile(file_data, prof_
 
 export const theme = writable<"light" | "dark" | "auto">("auto");
 export const editingId = writable<string | null>(null);
-
-
-
