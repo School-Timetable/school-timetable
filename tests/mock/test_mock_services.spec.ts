@@ -1,6 +1,6 @@
-import { ProfessorService } from "../src/services/ProfessorService";
-import { ClassService } from "../src/services/ClassService";
-import { SubjectService } from "../src/services/SubjectService";
+import { ProfessorService } from "../../src/services/ProfessorService";
+import { ClassService } from "../../src/services/ClassService";
+import { SubjectService } from "../../src/services/SubjectService";
 
 
 jest.mock('../src/services/ProfessorService')

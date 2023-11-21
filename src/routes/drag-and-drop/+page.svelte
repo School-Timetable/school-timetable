@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Timetable from '$lib/component/timetable.svelte';
+    import Timetable from '$lib/components/timetable.svelte';
     import type { ClassSubject, WeekClass } from '$lib/model';
     import { SubjectService } from '../../services/__mocks__/SubjectService';
 

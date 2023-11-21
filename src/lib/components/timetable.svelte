@@ -4,7 +4,7 @@
 	// Inspired by https://svelte.dev/repl/810b0f1e16ac4bbd8af8ba25d5e0deff?version=3.4.2.
 	
 	import type { ClassSubject, WeekClass } from "$lib/model";
- 	import Hour from '$lib/component/hour.svelte';
+ 	import Hour from '$lib/components/hour.svelte';
 
 
 	export let weekNames = ["MON","TUE","WED","THU","FRI","SAT"]
