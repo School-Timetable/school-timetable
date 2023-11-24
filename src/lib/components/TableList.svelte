@@ -14,6 +14,7 @@
 	const eventDispatcher = createEventDispatcher<{
 		delete: { value: AcceptedTypes };
 		editStart: { value: AcceptedTypes };
+		deleteAll: void;
 	}>();
 
 	type AcceptedTypes = Professor | SchoolClass | Subject;
@@ -90,16 +91,32 @@
 		}
 		filteredItems = searchResults;
 	}
+
+	function removeAllItems() {
+		eventDispatcher("deleteAll");
+	}
+
 </script>
 
 <div class="px-3 pb-3">
 	<div class="pb-3 mx-auto" style="max-width: 500px;">
-		<FormSearch
-			{items}
-			on:search={(e) => {
-				onSearch(e.detail.searchResults);
-			}}
-		/>
+		<Row>
+			<Col sm={{size: 8}}>
+				<FormSearch
+					{items}
+					on:search={(e) => {
+						onSearch(e.detail.searchResults);
+					}}
+				/>
+			</Col>
+			
+			<Col sm={{size : 4}}>
+				<Button color="danger"
+				on:click={() => removeAllItems()}>
+					<Icon name="trash-fill" />Delete all
+				</Button>
+			</Col>
+		</Row>
 	</div>
 
 	<Row noGutters class="fw-bold mb-2 text-body h5">
