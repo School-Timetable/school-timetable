@@ -28,6 +28,7 @@
 	}>();
 
 	export let subject: Subject | null = null;
+	export let cloning: boolean = false;
 	export let schoolClasses: SchoolClass[] = get(allClassrooms);
 	export let professors: Professor[] = get(allProfessors);
 
@@ -49,25 +50,40 @@
 
 	let editingSubject: SubjectFormData;
 
-	if (subject == null) {
-		editingSubject = {
-			_id: null,
-			_name: { value: "" },
-			_abbreviation: { value: "" },
-			_weight: { value: 5 },
-			_hoursPerWeek: { value: 1 },
-		};
-	} else {
-		editingSubject = {
-			_id: subject.id,
-			_schoolClass: subject.schoolClass,
-			_professor: subject.professor,
-			_name: { value: subject.name.value },
-			_abbreviation: { value: subject.abbreviation.value },
-			_weight: { value: subject.weight.value },
-			_hoursPerWeek: { value: subject.hoursPerWeek.value },
-		};
+	{
+		if(subject && !cloning) {
+			editingSubject = {
+				_id: subject.id,
+				_schoolClass: subject.schoolClass,
+				_professor: subject.professor,
+				_name: { value: subject.name.value },
+				_abbreviation: { value: subject.abbreviation.value },
+				_weight: { value: subject.weight.value },
+				_hoursPerWeek: { value: subject.hoursPerWeek.value },
+			};
+		} else {
+			if(subject && cloning) {
+				editingSubject = {
+					_id: null,
+					_schoolClass: subject.schoolClass,
+					_professor: subject.professor,
+					_name: { value: subject.name.value },
+					_abbreviation: { value: subject.abbreviation.value },
+					_weight: { value: subject.weight.value },
+					_hoursPerWeek: { value: subject.hoursPerWeek.value },
+				};
+			} else {
+				editingSubject = {
+					_id: null,
+					_name: { value: "" },
+					_abbreviation: { value: "" },
+					_weight: { value: 5 },
+					_hoursPerWeek: { value: 1 },
+				};
+			}
+		}
 	}
+
 
 	let formValidationFeedback: FormValidationResult[] = new Array(4).fill({
 		valid: false,

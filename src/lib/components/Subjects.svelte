@@ -52,6 +52,10 @@
 	/>
 	<SubjectFormRow
 		slot="create"
+		let:item
+		let:cloning
+		subject={item}
+		cloning={cloning}
 		on:save={(e) => saveSubject(e.detail.subject)}
 		on:cancel={() => {
 			editingId.set(null);

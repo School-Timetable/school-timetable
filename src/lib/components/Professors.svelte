@@ -44,8 +44,10 @@
 	/>
 	<ProfessorFormRow
 		slot="create"
-		let:cloningItem
-		professor={cloningItem}
+		let:item
+		let:cloning
+		professor={item}
+		cloning={cloning}
 		on:save={(e) => save(e.detail.professor)}
 		on:cancel={() => {
 			editingId.set(null);

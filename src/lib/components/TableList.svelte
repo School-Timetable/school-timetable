@@ -31,15 +31,17 @@
 	
 	let sortByField: string | null = null;
 	let sortAsc: boolean = true;
-	let cloningItem: AcceptedTypes | null = null;
+	let item: AcceptedTypes | null = null;
+	let cloningItem: boolean = false;
 	
 	function editItem(item: AcceptedTypes) {
 		editingId.set(item.id);
 		eventDispatcher("editStart", { value: item });
 	}
 
-	function cloneItem(item: Professor | SchoolClass | Subject): void {
-		cloningItem = item;
+	function cloneItem(_item: Professor | SchoolClass | Subject): void {
+		item = _item
+		cloningItem = true;
 		editingId.set("");
 	}
 
@@ -49,7 +51,8 @@
 	}
 
 	function createNew() {
-		cloningItem = null;
+		cloningItem = false;
+		item = null;
 		editingId.set("");
 	}
 
@@ -221,7 +224,7 @@
 			class="px-2 rounded shadow {backgroundForIndex(viewItems.length)}"
 			in:fade
 		>
-			<slot name="create" {cloningItem}/>
+			<slot name="create" item={item} cloning={cloningItem}/>
 		</div>
 	{:else}
 		<div class="px-2" in:fade>
