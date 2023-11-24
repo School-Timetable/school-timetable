@@ -5,11 +5,16 @@
     import { allSubjects, editingId } from "$lib/stores/global_store";
     import { get } from "svelte/store";
     import type { FieldInfo } from "$model/model-generics";
-    import Modal from "./Modal.svelte";
+    import MyModal from "$lib/components/MyModal.svelte";
+	import {Alert} from "sveltestrap";
 	
 	let subjects = get(allSubjects)
 
 	let showModal: boolean = false
+	let showDuplicateAlert = false;
+	let toggle = () => {
+		showDuplicateAlert = !showDuplicateAlert;
+	}
 
 	let fieldsInfo: FieldInfo[] = [
 		{ fieldName: "schoolClass", label: "Class", columns: 2 },
@@ -21,11 +26,18 @@
 	];
 
 	function saveSubject(subject: Subject, index?: number) {
-		if (index != undefined && isIndexValid(index)) {
-			subjects[index] = subject;
-		} else {
-			subjects.push(subject);
+		if (subjectAlreadyExists(subject)) {
+			if (!showDuplicateAlert)
+				toggle()
+			return
 		}
+		else if (index != undefined && isIndexValid(index))
+			subjects[index] = subject;
+		else
+			subjects.push(subject);
+
+		if (showDuplicateAlert)
+			toggle()
 		editingId.set(null);
 		allSubjects.set(subjects);
 		subjects = subjects;
@@ -44,6 +56,18 @@
 	function removeAllItems() {
 		subjects = [];
 		allSubjects.set(subjects);
+	}
+
+	function subjectAlreadyExists(subject: Subject): boolean {
+		return subjects.some((s) => {
+			return (s.id !== subject.id &&
+					s.schoolClass.toString().toLowerCase() === subject.schoolClass.toString().toLowerCase() &&
+					s.professor.toString().toLowerCase() === subject.professor.toString().toLowerCase() &&
+					s.abbreviation.value.toLowerCase() === subject.abbreviation.value.toLowerCase() &&
+					s.name.value.toLowerCase() === subject.name.value.toLowerCase() &&
+					s.weight.value === subject.weight.value &&
+					s.hoursPerWeek.value === subject.hoursPerWeek.value)
+		})
 	}
 	
 </script>
@@ -76,10 +100,14 @@
 	/>
 </TableList>
 
-<Modal bind:showModal on:confirm={removeAllItems}>
+<MyModal bind:showModal on:confirm={removeAllItems}>
 	<h2 slot="header">
 		Delete all subjects
 	</h2>
 	<p slot="body">
 		Are you sure you want to delete all subjects?
-</Modal>
+	</p>
+</MyModal>
+<Alert color="warning" isOpen={showDuplicateAlert} toggle={toggle}>
+	You are trying to add a subject that already exists! Please check whether the fields are unique.
+</Alert>

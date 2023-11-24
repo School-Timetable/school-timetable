@@ -93,10 +93,10 @@
 					aField = a[sortByField]?.value;
 					// @ts-ignore
 					bField = b[sortByField]?.value;
-					if (typeof aField === "string") {
-						aField = aField.toLowerCase()
-						bField = bField.toLowerCase()
-					}
+					if (typeof aField === "string")
+						aField = aField.toLowerCase() || ""
+					if (typeof bField === "string")
+						bField = bField.toLowerCase() || ""
 
 					break
 			}

@@ -162,7 +162,7 @@
 	</Col>
 
 	<Col sm={{ size: 2 }}>
-		<FormGroup floating label="professor" class="text-muted">
+		<FormGroup floating label="Professor" class="text-muted">
 			<Input
 				type="select"
 				label="professor"
@@ -180,7 +180,7 @@
 	</Col>
 
 	<Col sm={{ size: 2 }}>
-		<FormGroup floating label="abbreviation" class="text-muted">
+		<FormGroup floating label="Abbreviation" class="text-muted">
 			<Input
 				type="text"
 				label="abbreviation"
@@ -205,7 +205,7 @@
 	</Col>
 
 	<Col sm={{ size: 2 }}>
-		<FormGroup floating label="name" class="text-muted">
+		<FormGroup floating label="Name" class="text-muted">
 			<Input
 				type="text"
 				label="name"
@@ -226,7 +226,7 @@
 	</Col>
 
 	<Col sm={{ size: 1 }}>
-		<FormGroup floating label="weight" class="text-muted">
+		<FormGroup floating label="Weight" class="text-muted">
 			<Input
 				type="number"
 				label="weight"
@@ -249,7 +249,7 @@
 	</Col>
 
 	<Col sm={{ size: 1 }}>
-		<FormGroup floating label="hours per Week" class="text-muted">
+		<FormGroup floating label="Hrs/Week" class="text-muted">
 			<Input
 				type="number"
 				label="hoursPerWeek"
