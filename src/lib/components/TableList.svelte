@@ -78,10 +78,23 @@
 		}
 
 		list.sort((a: AcceptedTypes, b: AcceptedTypes) => {
-			// @ts-ignore
-			let aField = a[sortByField]?.value;
-			// @ts-ignore
-			let bField = b[sortByField]?.value;
+			let aField, bField = undefined
+
+			switch (sortByField){
+				case "professor":
+				case "schoolClass":
+					// @ts-ignore
+					aField = a[sortByField]?.toString().toLowerCase();
+					// @ts-ignore
+					bField = b[sortByField]?.toString().toLowerCase();
+					break
+				default:
+					// @ts-ignore
+					aField = a[sortByField]?.value.toLowerCase();
+					// @ts-ignore
+					bField = b[sortByField]?.value.toLowerCase();
+					break
+			}
 
 			if (aField == null) return sortAsc ? -1 : 1;
 			else if (bField == null) return sortAsc ? 1 : -1;
@@ -140,9 +153,9 @@
 						{#if sortByField == headerElement.fieldName}
 							{headerElement.label}
 							{#if sortAsc}
-								<Icon name="caret-down-fill" />
-							{:else}
 								<Icon name="caret-up-fill" />
+							{:else}
+								<Icon name="caret-down-fill" />
 							{/if}
 						{:else}
 							{headerElement.label}
