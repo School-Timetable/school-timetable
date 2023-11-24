@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { SchoolClass } from "$model/school-class/school-class";
-	import { editingId } from "$lib/stores/global_store";
+	import { allSubjects, editingId } from "$lib/stores/global_store";
 	import { slide } from "svelte/transition";
 	import { linear } from "svelte/easing";
 	import ClassFormRow from "$lib/components/ClassFormRow.svelte";
@@ -9,12 +9,15 @@
 	import { allClassrooms } from "$lib/stores/global_store";
 	import type { FieldInfo } from "$model/model-generics";
 	import TableList from "./TableList.svelte";
+	import Modal from "./Modal.svelte";
 
 	let options = { duration: 200, easing: linear };
 
 	let schoolClasses = get(allClassrooms);
 
 	let filteredList = schoolClasses;
+
+	let showModal = false;
 
 	function editSchoolClass(id: string) {
 		editingId.set(id);
@@ -91,6 +94,13 @@
 	function getIndexById(id: string): number {
 		return schoolClasses.findIndex((sc) => sc.id === id);
 	}
+
+	function removeAllItems() {
+		schoolClasses = [];
+		allClassrooms.set(schoolClasses);
+		allSubjects.set([]);
+	}
+
 </script>
 
 <TableList
@@ -98,6 +108,7 @@
 	{fieldsInfo}
 	itemsType="class"
 	on:delete={(e) => removeClass(e.detail.value)}
+	on:deleteAll={() => { showModal = true }}
 >
 	<ClassFormRow
 		slot="edit"
@@ -121,3 +132,12 @@
 		}}
 	/>
 </TableList>
+
+<Modal bind:showModal on:confirm={removeAllItems}>
+	<h2 slot="header">
+		Delete all classes
+	</h2>
+	<p slot="body">
+		Are you sure you want to delete all classes? All subjects will be deleted too!
+
+</Modal>

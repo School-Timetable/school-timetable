@@ -5,7 +5,11 @@
     import { allSubjects, editingId } from "$lib/stores/global_store";
     import { get } from "svelte/store";
     import type { FieldInfo } from "$model/model-generics";
+    import Modal from "./Modal.svelte";
+	
 	let subjects = get(allSubjects)
+
+	let showModal: boolean = false
 
 	let fieldsInfo: FieldInfo[] = [
 		{ fieldName: "schoolClass", label: "Class", columns: 2 },
@@ -36,10 +40,19 @@
 	function isIndexValid(index: number): boolean {
 		return 0 <= index && index < subjects.length;
 	}
+
+	function removeAllItems() {
+		subjects = [];
+		allSubjects.set(subjects);
+	}
+	
 </script>
 
 <!-- svelte-ignore missing-declaration -->
-<TableList items={subjects} {fieldsInfo} itemsType="subject" on:delete={(e) => removeSubject(e.detail.value)}>
+<TableList items={subjects} {fieldsInfo} itemsType="subject" 
+	on:delete={(e) => removeSubject(e.detail.value)}
+	on:deleteAll={() => { showModal = true }}
+>
 	<SubjectFormRow
 		slot="edit"
 		let:item
@@ -62,3 +75,11 @@
 		}}
 	/>
 </TableList>
+
+<Modal bind:showModal on:confirm={removeAllItems}>
+	<h2 slot="header">
+		Delete all subjects
+	</h2>
+	<p slot="body">
+		Are you sure you want to delete all subjects?
+</Modal>
