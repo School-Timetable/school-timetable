@@ -90,9 +90,14 @@
 					break
 				default:
 					// @ts-ignore
-					aField = a[sortByField]?.value.toLowerCase();
+					aField = a[sortByField]?.value;
 					// @ts-ignore
-					bField = b[sortByField]?.value.toLowerCase();
+					bField = b[sortByField]?.value;
+					if (typeof aField === "string") {
+						aField = aField.toLowerCase()
+						bField = bField.toLowerCase()
+					}
+
 					break
 			}
 
