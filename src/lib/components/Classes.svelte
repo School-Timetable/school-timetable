@@ -111,6 +111,8 @@
 	/>
 	<ClassFormRow
 		slot="create"
+		let:cloningItem
+		schoolClass={cloningItem}
 		on:save={(e) => saveSchoolClass(e.detail.schoolClass)}
 		on:cancel={() => {
 			editingId.set(null);

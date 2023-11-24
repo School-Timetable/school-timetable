@@ -35,6 +35,7 @@
 	const correctFeedback = "";
 
 	type ProfessorFormData = {
+		_id?: { value: string };
 		_name: { value: string };
 		_surname: { value: string };
 		_email: { value: string };

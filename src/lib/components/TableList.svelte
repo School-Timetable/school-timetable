@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Col, Icon, Row } from "sveltestrap";
+	import { Button, Col, Icon, Row, Tooltip } from "sveltestrap";
 	import { fade } from "svelte/transition";
 	import { cubicOut, sineOut } from "svelte/easing";
 	import { flip } from "svelte/animate";
@@ -26,15 +26,21 @@
 		if (sortByField != null) sortItems(filteredItems);
 		viewItems = filteredItems;
 	}
-
+	
 	export let fieldsInfo: FieldInfo[] = [];
-
+	
 	let sortByField: string | null = null;
 	let sortAsc: boolean = true;
-
+	let cloningItem: AcceptedTypes | null = null;
+	
 	function editItem(item: AcceptedTypes) {
 		editingId.set(item.id);
 		eventDispatcher("editStart", { value: item });
+	}
+
+	function cloneItem(item: Professor | SchoolClass | Subject): void {
+		cloningItem = item;
+		editingId.set("");
 	}
 
 	function removeItem(item: AcceptedTypes): void {
@@ -43,6 +49,7 @@
 	}
 
 	function createNew() {
+		cloningItem = null;
 		editingId.set("");
 	}
 
@@ -90,6 +97,8 @@
 		}
 		filteredItems = searchResults;
 	}
+
+
 </script>
 
 <div class="px-3 pb-3">
@@ -150,20 +159,44 @@
 							<Col>
 								<Button
 									color="primary"
+									id="btn-edit"
 									class="w-100 px-1 my-1 text-nowrap"
 									on:click={() => editItem(item)}
 								>
-									<Icon name="pencil-square" /> Edit
+									<Icon name="pencil-square" />
 								</Button>
+								<Tooltip
+									target="btn-edit"
+									placement="top"
+								>Edit</Tooltip>
 							</Col>
 							<Col>
 								<Button
+									id="btn-clone"
+									color="secondary"
+									class="w-100 px-1 my-1 text-nowrap"
+									on:click={() => cloneItem(item)}
+								>
+									<Icon name="files" />
+								</Button>
+								<Tooltip
+									target="btn-clone"
+									placement="top"
+								>Clone</Tooltip>
+							</Col>
+							<Col>
+								<Button
+									id="btn-delete"
 									color="danger"
 									class="w-100 px-1 my-1 text-nowrap"
 									on:click={() => removeItem(item)}
 								>
-									<Icon name="trash-fill" /> Delete
+									<Icon name="trash-fill" />
 								</Button>
+								<Tooltip
+									target="btn-delete"
+									placement="top"
+								>Delete</Tooltip>
 							</Col>
 						</Row>
 					</Col>
@@ -188,7 +221,7 @@
 			class="px-2 rounded shadow {backgroundForIndex(viewItems.length)}"
 			in:fade
 		>
-			<slot name="create" />
+			<slot name="create" {cloningItem}/>
 		</div>
 	{:else}
 		<div class="px-2" in:fade>
