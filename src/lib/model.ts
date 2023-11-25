@@ -1,3 +1,5 @@
+import type { TimeTable } from "$model/TimeTable"
+
 export interface Professor
 {
     id: number
@@ -18,7 +20,7 @@ export interface Class
 export interface WeekClass
 {
     className: string            // nome classe (1A)
-    grid: (ClassSubject | null)[][]
+    grid: TimeTable
     sidebar: ClassSubject[]
 }
 

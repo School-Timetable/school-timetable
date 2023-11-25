@@ -1,115 +1,84 @@
 <script lang="ts">
     import Timetable from '$lib/components/timetable.svelte';
-    import type { ClassSubject, WeekClass } from '$lib/model';
-    import { SubjectService } from '../../services/__mocks__/SubjectService';
+  import { allClassrooms, allProfessors, allSubjects } from '$lib/stores/global_store';
+  import { classTimetableMap, professorTimetableMap, setSubject, type TimeTable } from '$model/TimeTable';
+  import { Professor } from '$model/professor/professor';
+  import type { SchoolClass } from '$model/school-class/school-class';
+  import type { Subject } from '$model/subject/subject';
 
     // prova
     
 
-    export let subjects1A: ClassSubject[] = new SubjectService().getSubjects(5, 1)
-    export let subjects2A: ClassSubject[] = new SubjectService().getSubjects(5, 1)
-    export let subjects3A: ClassSubject[] = new SubjectService().getSubjects(5, 1)
+    let subjects: Subject[] = []
+    let classes: SchoolClass[] = []
+    let professors: Professor[] = []
+    let currentSidebar: Subject[] = []
 
 
+    allClassrooms.subscribe(c => classes = c)
+    allSubjects.subscribe(s => {
+        subjects = s
+        subjects.forEach(sub =>  setSubject(sub,0,0))
+        
+    })
+
+    export let professorView : boolean = false
+   
+
+   
+    export let selectedItem: Professor | SchoolClass | null = null
+
+    export let currentTimeTable : TimeTable | null = null
+
+     allProfessors.subscribe(profs =>{
+        professors = profs
+    })
     
-    console.log(subjects1A)
-    /*
-    [
-        {class: "1A", professor: {id: 1, name: "Mario", surname: "Rossi"}, subject: "MAT", remainingHours: 5},
-        {class: "1A", professor: {id: 2, name: "Luigi", surname: "Rossi"}, subject: "GEO", remainingHours: 6},
-        {class: "1A", professor: {id: 3, name: "Elisa", surname: "Rossi"}, subject: "STO", remainingHours: 3},
-        {class: "1A", professor: {id: 4, name: "Michele", surname: "Rossi"}, subject: "ITA", remainingHours: 10},
-        {class: "1A", professor: {id: 5, name: "Giulia", surname: "Aranci"}, subject: "ECO", remainingHours: 3},
-        {class: "1A", professor: {id: 6, name: "Filomena", surname: "Gialli"}, subject: "ENG", remainingHours: 3},
-        {class: "1A", professor: {id: 1, name: "Mario", surname: "Rossi"}, subject: "MAT", remainingHours: 5},
-        {class: "1A", professor: {id: 2, name: "Luigi", surname: "Rossi"}, subject: "GEO", remainingHours: 6},
-        {class: "1A", professor: {id: 3, name: "Elisa", surname: "Rossi"}, subject: "STO", remainingHours: 3},
-        {class: "1A", professor: {id: 4, name: "Michele", surname: "Rossi"}, subject: "ITA", remainingHours: 10},
-        {class: "1A", professor: {id: 5, name: "Giulia", surname: "Aranci"}, subject: "ECO", remainingHours: 3},
-        {class: "1A", professor: {id: 6, name: "Filomena", surname: "Gialli"}, subject: "ENG", remainingHours: 3},
-        {class: "1A", professor: {id: 1, name: "Mario", surname: "Rossi"}, subject: "MAT", remainingHours: 5},
-        {class: "1A", professor: {id: 2, name: "Luigi", surname: "Rossi"}, subject: "GEO", remainingHours: 6},
-        {class: "1A", professor: {id: 3, name: "Elisa", surname: "Rossi"}, subject: "STO", remainingHours: 3},
-        {class: "1A", professor: {id: 4, name: "Michele", surname: "Rossi"}, subject: "ITA", remainingHours: 10},
-        {class: "1A", professor: {id: 5, name: "Giulia", surname: "Aranci"}, subject: "ECO", remainingHours: 3},
-        {class: "1A", professor: {id: 6, name: "Filomena", surname: "Gialli"}, subject: "ENG", remainingHours: 3},
-        {class: "1A", professor: {id: 1, name: "Mario", surname: "Rossi"}, subject: "MAT", remainingHours: 5},
-        {class: "1A", professor: {id: 2, name: "Luigi", surname: "Rossi"}, subject: "GEO", remainingHours: 6},
-        {class: "1A", professor: {id: 3, name: "Elisa", surname: "Rossi"}, subject: "STO", remainingHours: 3},
-        {class: "1A", professor: {id: 4, name: "Michele", surname: "Rossi"}, subject: "ITA", remainingHours: 10},
-        {class: "1A", professor: {id: 5, name: "Giulia", surname: "Aranci"}, subject: "ECO", remainingHours: 3},
-        {class: "1A", professor: {id: 6, name: "Filomena", surname: "Gialli"}, subject: "ENG", remainingHours: 3},   
-        {class: "1A", professor: {id: 1, name: "Mario", surname: "Rossi"}, subject: "MAT", remainingHours: 5},
-        {class: "1A", professor: {id: 2, name: "Luigi", surname: "Rossi"}, subject: "GEO", remainingHours: 6},
-        {class: "1A", professor: {id: 3, name: "Elisa", surname: "Rossi"}, subject: "STO", remainingHours: 3},
-        {class: "1A", professor: {id: 4, name: "Michele", surname: "Rossi"}, subject: "ITA", remainingHours: 10},
-        {class: "1A", professor: {id: 5, name: "Giulia", surname: "Aranci"}, subject: "ECO", remainingHours: 3},
-        {class: "1A", professor: {id: 6, name: "Filomena", surname: "Gialli"}, subject: "ENG", remainingHours: 3},
-    ]
-    
+    function setCurrentView(item: Professor | SchoolClass) {
+        
+        const timetableMap : ReadonlyMap<string,TimeTable> = item instanceof Professor ? professorTimetableMap : classTimetableMap
+        
+        let timetable = timetableMap.get(item.id)!
+        currentTimeTable = timetable
 
-    export let subjects2A: ClassSubject[] = [
-        {class: "2A", professor: {id: 3, name: "Elisa", surname: "Rossi"}, subject: "STO", remainingHours: 3},
-        {class: "2A", professor: {id: 6, name: "Filomena", surname: "Gialli"}, subject: "ENG", remainingHours: 3},
-        {class: "2A", professor: {id: 4, name: "Michele", surname: "Rossi"}, subject: "ITA", remainingHours: 10},
-        {class: "2A", professor: {id: 5, name: "Giulia", surname: "Aranci"}, subject: "ECO", remainingHours: 3},
-    ]
 
-    export let subjects3A: ClassSubject[] = [
-        {class: "3A", professor: {id: 1, name: "Mario", surname: "Rossi"}, subject: "MAT", remainingHours: 5},
-        {class: "3A", professor: {id: 2, name: "Luigi", surname: "Rossi"}, subject: "GEO", remainingHours: 6},
-        {class: "3A", professor: {id: 5, name: "Giulia", surname: "Aranci"}, subject: "ECO", remainingHours: 3},
-
-    ]
-    */
-
-    export let weekClass1: WeekClass = {
-        className: subjects1A[0].class.name,
-        grid: [],
-        sidebar: subjects1A
-    }
-
-    export let weekClass2: WeekClass = {
-        className: subjects2A[0].class.name,
-        grid: [],
-        sidebar: subjects2A
-    }
-
-    export let weekClass3: WeekClass = {
-        className: subjects3A[0].class.name,
-        grid: [],
-        sidebar: subjects3A
+        if(item instanceof Professor)
+            currentSidebar = subjects.filter(subject => subject.professor.id == item.id)
+        else
+            currentSidebar = subjects.filter(subject => subject.schoolClass.id == item.id)
     }
     
+    function getItems(): (Professor | SchoolClass)[]
+    {
+        return professorView ? professors : classes
+    }
 
-    for(let i = 0;i < 6; i++)
-        weekClass1.grid.push([null,null,null,null,null])
-
-    for(let i = 0;i < 6; i++)
-        weekClass2.grid.push([null,null,null,null,null])
-    
-    for(let i = 0;i < 6; i++)
-        weekClass3.grid.push([null,null,null,null,null])
- 
-
-    export let classes: WeekClass[]
-    classes = [weekClass1, weekClass2, weekClass3]
-
-    export let currentWeekClass = weekClass1
-
-    function setCurrentClass(classTab: WeekClass) {
-        currentWeekClass = classTab
+    function onViewSwitchClick()
+    {
+        professorView = !professorView
+        if(professorView) 
+            setCurrentView(professors[0])
+        else
+            setCurrentView(classes[0])
     }
 </script>
 
 <div class="m-3">
+
+    <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" on:click={onViewSwitchClick}>
+        <label class="form-check-label" for="flexSwitchCheckChecked">Professor View</label>
+    </div>
+
     <ul class="nav nav-tabs">
-        {#each classes as classTab}
+        {#each professorView ? professors : classes as item}
             <li class="nav-item">
-                <a class="nav-link" class:active={classTab == currentWeekClass} href="#" on:click={() => setCurrentClass(classTab)}>{classTab.className}</a>
+                <a class="nav-link" class:active={item == selectedItem} href="#" on:click={() => setCurrentView(item)}>{item.toString()}</a>
             </li>
         {/each}
     </ul>
     
-    <Timetable weekClass={currentWeekClass}></Timetable>
+    {#if currentTimeTable}
+        <Timetable grid={currentTimeTable} sidebar={currentSidebar}></Timetable>
+    {/if}
 </div>

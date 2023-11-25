@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { ClassSubject } from "$lib/model";
+    import type { Subject } from "$model/subject/subject";
     import { createEventDispatcher } from "svelte";
 
     const dispatch = createEventDispatcher();
@@ -13,7 +13,7 @@
     export let highlight: Boolean = false
 
 
-    export let subject: ClassSubject | null
+    export let subject: Subject | null
 
     export let color: string
 
@@ -26,6 +26,8 @@
 
     function drag(ev:any) {
         //ev.dataTransfer.setData("text", ev.target.id);
+
+        console.log(JSON.stringify(subject))
         ev.dataTransfer.setData("subject", JSON.stringify(subject));
         ev.dataTransfer.setData("id", ev.target.id);
         
@@ -38,7 +40,7 @@
         ev.preventDefault();
         console.log("ciao")
         //var data = ev.dataTransfer.getData("text");
-        let draggedSubject : ClassSubject | null = JSON.parse(ev.dataTransfer.getData("subject"))
+        let draggedSubject : Subject | null = JSON.parse(ev.dataTransfer.getData("subject"))
 
         dispatch("hourDrop", {subject: draggedSubject, id: ev.dataTransfer.getData("id")})
         highlight = false
@@ -47,11 +49,11 @@
     }
 
 
-    function set_cell_content(subject: ClassSubject | null) {
+    function set_cell_content(subject: Subject | null) {
         if (!subject) {
             return undefined;
         }
-        return `${subject.professor.name} ${subject.professor.surname} - ${subject.subject}`
+        return `${subject.professor.name} ${subject.professor.surname} - ${subject.abbreviation}`
     }
 
 </script>

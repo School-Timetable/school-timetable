@@ -1,4 +1,4 @@
-import { log } from "console";
+
 import { Professor } from "./professor/professor";
 import { SchoolClass } from "./school-class/school-class";
 import { Subject } from "./subject/subject";
@@ -11,7 +11,7 @@ const _professorTimetableMap: Map<string, TimeTable> = new Map();
 export const classTimetableMap: ReadonlyMap<string, TimeTable> = _classTimetableMap;
 export const professorTimetableMap: ReadonlyMap<string, TimeTable> = _professorTimetableMap;
 
-class TimeTable {
+export class TimeTable {
     // first list is day of week, second is time of day
     // null means no subject
     values: (Subject | null)[][] = [];
@@ -28,8 +28,8 @@ class TimeTable {
 }
 
 // TODO: remove
-const daysPerWeek = 6;
-const hoursPerDay = 8;
+export const daysPerWeek = 6;
+export const hoursPerDay = 8;
 
 const mockClass = SchoolClass.of("class-mock", 1, "A");
 const mockProfessor = Professor.of("professor-mock", "mock", "mock", "fake@ema.il", "0000000000");
