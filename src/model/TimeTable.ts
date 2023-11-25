@@ -1,4 +1,3 @@
-import { log } from "console";
 import { Professor } from "./professor/professor";
 import { SchoolClass } from "./school-class/school-class";
 import { Subject } from "./subject/subject";
@@ -31,6 +30,8 @@ class TimeTable {
     readonly daysPerWeek: number;
     readonly hoursPerDay: number;
 
+    private readonly subjectsMap: Map<string, { dayOfWeek: number, timeOfDay: number }[]> = new Map();
+
     constructor(daysPerWeek: number, hoursPerDay: number) {
         this.daysPerWeek = daysPerWeek;
         this.hoursPerDay = hoursPerDay;
@@ -54,9 +55,73 @@ class TimeTable {
         if (!this.isValidTimeslot(dayOfWeek, timeOfDay)) {
             throw new Error("Invalid timeslot");
         }
+        const oldSubject = this.values[dayOfWeek][timeOfDay];
 
         this.values[dayOfWeek][timeOfDay] = subject;
+
+        this.updateSubjectsMap(dayOfWeek, timeOfDay, subject, oldSubject);
     }
+
+
+    private updateSubjectsMap(dayOfWeek: number, timeOfDay: number, subject: Subject | null, oldSubject: Subject | null) {
+        // remove the old subject's time slot from the map
+        if (oldSubject != null) {
+            const subjectList = this.subjectsMap.get(oldSubject.id)!;
+            const index = subjectList.findIndex((value) => value.dayOfWeek == dayOfWeek && value.timeOfDay == timeOfDay);
+            subjectList.splice(index, 1);
+
+            // remove the subject from the map if it has no more timeslots
+            if (subjectList.length == 0) {
+                this.subjectsMap.delete(oldSubject.id);
+            }
+        }
+
+        // add the subject to the map
+        if (subject != null) {
+            if (!this.subjectsMap.has(subject.id)) {
+                this.subjectsMap.set(subject.id, []);
+            }
+            const subjectList = this.subjectsMap.get(subject.id)!;
+            subjectList.push({ dayOfWeek, timeOfDay });
+            this.sortTimeSlots(subjectList);
+        }
+    }
+
+    computeSubjectMap(): Map<string, { dayOfWeek: number, timeOfDay: number }[]> {
+        const subjectMap: Map<string, { dayOfWeek: number, timeOfDay: number }[]> = new Map();
+
+        for (let i = 0; i < this.daysPerWeek; i++) {
+            for (let j = 0; j < this.hoursPerDay; j++) {
+                const subject = this.getSubjectOn(i, j);
+                if (subject == null)
+                    continue;
+
+                if (!subjectMap.has(subject.id)) {
+                    subjectMap.set(subject.id, []);
+                }
+                const subjectList = subjectMap.get(subject.id)!;
+                subjectList.push({ dayOfWeek: i, timeOfDay: j });
+            }
+        }
+
+        for (const [key, value] of subjectMap) {
+            this.sortTimeSlots(value);
+        }
+
+        return subjectMap;
+    }
+
+    private sortTimeSlots(timeslots: { dayOfWeek: number, timeOfDay: number }[]): void {
+        timeslots.sort((a, b) => {
+            if (a.dayOfWeek != b.dayOfWeek) {
+                return a.dayOfWeek - b.dayOfWeek;
+            }
+            else {
+                return a.timeOfDay - b.timeOfDay;
+            }
+        });
+    }
+
 
     /**
      * @returns true if and only if the timeslot is not marked as unavailable
@@ -101,6 +166,32 @@ class TimeTable {
                 this.values[i][j] = null;
             }
         }
+
+        this.subjectsMap.clear();
+    }
+
+    getTimeSlotsOf(subject: Subject): { dayOfWeek: number, timeOfDay: number }[] {
+        return this.subjectsMap.get(subject.id) ?? [];
+    }
+
+    getCountOf(subject: Subject): number {
+        return this.getTimeSlotsOf(subject).length;
+    }
+
+    getUnavailableTimeslots(): { dayOfWeek: number, timeOfDay: number }[] {
+        return this.getTimeSlotsOf(unavailableSubject);
+    }
+
+    getUnassignedTimeslots(): { dayOfWeek: number, timeOfDay: number }[] {
+        const unassigned: { dayOfWeek: number, timeOfDay: number }[] = [];
+        for (let i = 0; i < this.daysPerWeek; i++) {
+            for (let j = 0; j < this.hoursPerDay; j++) {
+                if (this.isUnassignedOn(i, j)) {
+                    unassigned.push({ dayOfWeek: i, timeOfDay: j });
+                }
+            }
+        }
+        return unassigned;
     }
 }
 
@@ -207,10 +298,5 @@ export function clearAll(): void {
     _classTimetableMap.clear();
     _professorTimetableMap.clear();
 }
-
-
-// export function isValidTimeslot(dayOfWeek: number, timeOfDay: number): boolean {
-//     return dayOfWeek >= 0 && dayOfWeek < daysPerWeek && timeOfDay >= 0 && timeOfDay < hoursPerDay;
-// }
 
 

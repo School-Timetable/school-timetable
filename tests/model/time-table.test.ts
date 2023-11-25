@@ -183,5 +183,100 @@ describe("Timetable", () => {
     });
 
 
+    describe("Subject map", () => {
 
+        it("should update on setting subject", () => {
+
+            const tt = getTimetableOf(classes[0]);
+
+            expect(tt.getCountOf(subjects[0])).toBe(0);
+            setSubject(0, 0, subjects[0]);
+
+            expect(tt.getCountOf(subjects[0])).toBe(1);
+            expect(tt.getTimeSlotsOf(subjects[0])).toEqual([{ dayOfWeek: 0, timeOfDay: 0 }]);
+
+            setSubject(3, 1, subjects[0]);
+            expect(tt.getTimeSlotsOf(subjects[0])).toEqual([
+                { dayOfWeek: 0, timeOfDay: 0 },
+                { dayOfWeek: 3, timeOfDay: 1 }]);
+
+            setSubject(2, 4, subjects[0]);
+            expect(tt.getTimeSlotsOf(subjects[0])).toEqual([
+                { dayOfWeek: 0, timeOfDay: 0 },
+                { dayOfWeek: 2, timeOfDay: 4 },
+                { dayOfWeek: 3, timeOfDay: 1 }]);
+
+
+            removeSubject(0, 0, subjects[0]);
+            expect(tt.getTimeSlotsOf(subjects[0])).toEqual([
+                { dayOfWeek: 2, timeOfDay: 4 },
+                { dayOfWeek: 3, timeOfDay: 1 }]);
+
+        });
+
+
+        it("unavailability", () => {
+            const tt = getTimetableOf(classes[0]);
+
+            setSubject(0, 1, subjects[0]);
+            setSubject(1, 2, subjects[0]);
+
+            setUnavailable(0, 0, classes[0]);
+            setUnavailable(1, 3, classes[0]);
+            setUnavailable(1, 1, classes[0]);
+            setUnavailable(0, 5, classes[0]);
+            setUnavailable(0, 4, classes[0]);
+
+
+            expect(tt.getUnavailableTimeslots()).toEqual([
+                { dayOfWeek: 0, timeOfDay: 0 },
+                { dayOfWeek: 0, timeOfDay: 4 },
+                { dayOfWeek: 0, timeOfDay: 5 },
+                { dayOfWeek: 1, timeOfDay: 1 },
+                { dayOfWeek: 1, timeOfDay: 3 },
+            ]);
+
+            setAvailable(0, 0, classes[0]);
+            setAvailable(1, 3, classes[0]);
+            setAvailable(1, 1, classes[0]);
+
+            expect(tt.getUnavailableTimeslots()).toEqual([
+                { dayOfWeek: 0, timeOfDay: 4 },
+                { dayOfWeek: 0, timeOfDay: 5 },
+            ]);
+        });
+
+        it("get Unassigned Timeslots returns all the right time slots", () => {
+
+            const tt = getTimetableOf(classes[0]);
+
+            const days = tt.daysPerWeek;
+            const hours = tt.hoursPerDay;
+
+            setSubject(0, 1, subjects[0]);
+            setSubject(0, 2, subjects[0]);
+            setSubject(1, 2, subjects[1]);
+            setSubject(1, 3, subjects[1]);
+            setUnavailable(0, 0, classes[0]);
+            setUnavailable(1, 4, classes[0]);
+
+            const unassigned = tt.getUnassignedTimeslots();
+
+            expect(unassigned.length).toBe(days * hours - 6);
+        });
+
+        it("should reset on clear", () => {
+            const tt = getTimetableOf(classes[0]);
+
+            setSubject(0, 1, subjects[0]);
+            setSubject(0, 2, subjects[0]);
+            setSubject(1, 2, subjects[1]);
+            setSubject(1, 3, subjects[1]);
+            expect(tt.getCountOf(subjects[0])).toBe(2);
+
+            tt.clear();
+            expect(tt.getCountOf(subjects[0])).toBe(0);
+        });
+
+    });
 });
