@@ -50,40 +50,26 @@
 
 	let editingSubject: SubjectFormData;
 
-	{
-		if(subject && !cloning) {
-			editingSubject = {
-				_id: subject.id,
-				_schoolClass: subject.schoolClass,
-				_professor: subject.professor,
-				_name: { value: subject.name.value },
-				_abbreviation: { value: subject.abbreviation.value },
-				_weight: { value: subject.weight.value },
-				_hoursPerWeek: { value: subject.hoursPerWeek.value },
-			};
-		} else {
-			if(subject && cloning) {
-				editingSubject = {
-					_id: null,
-					_schoolClass: subject.schoolClass,
-					_professor: subject.professor,
-					_name: { value: subject.name.value },
-					_abbreviation: { value: subject.abbreviation.value },
-					_weight: { value: subject.weight.value },
-					_hoursPerWeek: { value: subject.hoursPerWeek.value },
-				};
-			} else {
-				editingSubject = {
-					_id: null,
-					_name: { value: "" },
-					_abbreviation: { value: "" },
-					_weight: { value: 5 },
-					_hoursPerWeek: { value: 1 },
-				};
-			}
-		}
+	if (subject) {
+		editingSubject = {
+			_id: subject.id,
+			_schoolClass: subject.schoolClass,
+			_professor: subject.professor,
+			_name: { value: subject.name.value },
+			_abbreviation: { value: subject.abbreviation.value },
+			_weight: { value: subject.weight.value },
+			_hoursPerWeek: { value: subject.hoursPerWeek.value },
+		};
+		if (cloning) editingSubject._id = null;
+	} else {
+		editingSubject = {
+			_id: null,
+			_name: { value: "" },
+			_abbreviation: { value: "" },
+			_weight: { value: 5 },
+			_hoursPerWeek: { value: 1 },
+		};
 	}
-
 
 	let formValidationFeedback: FormValidationResult[] = new Array(4).fill({
 		valid: false,
@@ -100,7 +86,7 @@
 				editingSubject._name.value,
 				editingSubject._abbreviation.value,
 				editingSubject._weight.value,
-				editingSubject._hoursPerWeek.value
+				editingSubject._hoursPerWeek.value,
 			);
 
 			dispatch("save", { subject: savedSubject });
@@ -117,7 +103,7 @@
 	function validateWithSchema(
 		value: object | undefined,
 		fieldIdx: number,
-		schema: any
+		schema: any,
 	) {
 		try {
 			schema.parse(value);
@@ -194,11 +180,11 @@
 				on:keydown={(e) => {
 					handleKeydown(e);
 				}}
-				on:keyup={() =>
+				on:input={() =>
 					validateWithSchema(
 						editingSubject._abbreviation,
 						0,
-						abbreviationSchema
+						abbreviationSchema,
 					)}
 			/>
 		</FormGroup>
@@ -219,7 +205,7 @@
 				on:keydown={(e) => {
 					handleKeydown(e);
 				}}
-				on:keyup={() =>
+				on:input={() =>
 					validateWithSchema(editingSubject._name, 1, nameSchema)}
 			/>
 		</FormGroup>
@@ -240,7 +226,7 @@
 				on:keydown={(e) => {
 					handleKeydown(e);
 				}}
-				on:keyup={() =>
+				on:input={() =>
 					validateWithSchema(editingSubject._weight, 2, weightSchema)}
 				min="1"
 				max="10"
@@ -263,11 +249,11 @@
 				on:keydown={(e) => {
 					handleKeydown(e);
 				}}
-				on:keyup={() =>
+				on:input={() =>
 					validateWithSchema(
 						editingSubject._hoursPerWeek,
 						3,
-						hoursPerWeekSchema
+						hoursPerWeekSchema,
 					)}
 				min="1"
 				max="30"

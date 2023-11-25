@@ -45,39 +45,31 @@
 
 	let editingProfessor: ProfessorFormData;
 
-	{
-		if (professor && !cloning) {
-			editingProfessor = {
-				_id: professor.id,
-				_name: { value: professor.name.value },
-				_surname: { value: professor.surname.value },
-				_email: { value: professor.email.value },
-				_cellPhone: { value: professor.cellPhone.value },
-			};
-			validateName();
-			validateSurname();
-			validateEmail();
-			validateCellPhone();
-		} else 
-			{
-				if (professor && cloning) {
-					editingProfessor = {
-						_id: null,
-						_name: { value: professor.name.value },
-						_surname: { value: professor.surname.value },
-						_email: { value: professor.email.value },
-						_cellPhone: { value: professor.cellPhone.value },
-					};
-			} else {
-				editingProfessor = {
-					_id: null,
-					_name: { value: "" },
-					_surname: { value: "" },
-					_email: { value: "" },
-					_cellPhone: { value: "" },
-				};
-			}
+	if (professor) {
+		editingProfessor = {
+			_id: professor.id,
+			_name: { value: professor.name.value },
+			_surname: { value: professor.surname.value },
+			_email: { value: professor.email.value },
+			_cellPhone: { value: professor.cellPhone.value },
+		};
+
+		if (cloning) {
+			editingProfessor._id = null;
 		}
+
+		validateName();
+		validateSurname();
+		validateEmail();
+		validateCellPhone();
+	} else {
+		editingProfessor = {
+			_id: null,
+			_name: { value: "" },
+			_surname: { value: "" },
+			_email: { value: "" },
+			_cellPhone: { value: "" },
+		};
 	}
 
 	function save() {
@@ -91,7 +83,7 @@
 				editingProfessor._name.value,
 				editingProfessor._surname.value,
 				editingProfessor._email.value,
-				editingProfessor._cellPhone.value
+				editingProfessor._cellPhone.value,
 			);
 			eventDispatcher("save", { professor: savedProfessor });
 		} catch (e) {
@@ -160,10 +152,10 @@
 		}
 	}
 	function handleKeydown(event: KeyboardEvent) {
-        if (event.key === 'Enter') {
+		if (event.key === "Enter") {
 			save();
-        }
-    }
+		}
+	}
 </script>
 
 <Row class="align-items-top g-1 mt-1">
@@ -175,7 +167,9 @@
 				name="name"
 				id="name"
 				bind:value={editingProfessor._name.value}
-				on:keydown={(e) => {handleKeydown(e)}}
+				on:keydown={(e) => {
+					handleKeydown(e);
+				}}
 				on:keyup={validateName}
 				on:change={validateName}
 				bind:feedback={nameValidation.errorMessage}
@@ -193,7 +187,9 @@
 				id="surname"
 				bind:value={editingProfessor._surname.value}
 				on:keyup={validateSurname}
-				on:keydown={(e) => {handleKeydown(e)}}
+				on:keydown={(e) => {
+					handleKeydown(e);
+				}}
 				on:change={validateSurname}
 				bind:feedback={surnameValidation.errorMessage}
 				bind:valid={surnameValidation.valid}
@@ -210,7 +206,9 @@
 				id="email"
 				bind:value={editingProfessor._email.value}
 				on:keyup={validateEmail}
-				on:keydown={(e) => {handleKeydown(e)}}
+				on:keydown={(e) => {
+					handleKeydown(e);
+				}}
 				on:change={validateEmail}
 				bind:feedback={emailValidation.errorMessage}
 				bind:valid={emailValidation.valid}
@@ -227,7 +225,9 @@
 				id="cellPhone"
 				bind:value={editingProfessor._cellPhone.value}
 				on:keyup={validateCellPhone}
-				on:keydown={(e) => {handleKeydown(e)}}
+				on:keydown={(e) => {
+					handleKeydown(e);
+				}}
 				on:change={validateCellPhone}
 				bind:feedback={cellPhoneValidation.errorMessage}
 				bind:valid={cellPhoneValidation.valid}

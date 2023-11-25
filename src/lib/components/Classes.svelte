@@ -10,7 +10,7 @@
 	import type { FieldInfo } from "$model/model-generics";
 	import TableList from "./TableList.svelte";
 	import MyModal from "$lib/components/MyModal.svelte";
-	import {Alert} from "sveltestrap";
+	import { Alert } from "sveltestrap";
 
 	let options = { duration: 200, easing: linear };
 
@@ -22,7 +22,7 @@
 	let showDuplicateAlert = false;
 	let toggle = () => {
 		showDuplicateAlert = !showDuplicateAlert;
-	}
+	};
 
 	function editSchoolClass(id: string) {
 		editingId.set(id);
@@ -51,18 +51,16 @@
 
 	function saveSchoolClass(newClass: SchoolClass) {
 		if (classAlreadyExists(newClass, schoolClasses)) {
-			if (!showDuplicateAlert)
-				toggle()
-			return
+			if (!showDuplicateAlert) toggle();
+			return;
 		}
 		const indexInFullList = schoolClasses.findIndex(
-			(sc) => sc.id === newClass.id
+			(sc) => sc.id === newClass.id,
 		);
 		if (indexInFullList != -1) {
 			schoolClasses.splice(indexInFullList, 1, newClass);
 		} else schoolClasses = [...schoolClasses, newClass];
-		if (showDuplicateAlert)
-			toggle()
+		if (showDuplicateAlert) toggle();
 		schoolClasses = schoolClasses;
 		allClassrooms.set(schoolClasses);
 		editingId.set(null);
@@ -70,15 +68,17 @@
 
 	function classAlreadyExists(
 		schoolClass: SchoolClass,
-		schoolClasses: SchoolClass[]
+		schoolClasses: SchoolClass[],
 	): boolean {
 		return schoolClasses.some((old) => {
-			return (old.id !== schoolClass.id &&
-					old.year.value === schoolClass.year.value &&
-					old.section.value === schoolClass.section.value &&
-					old.track?.value.toLocaleUpperCase() === schoolClass.track?.value.toUpperCase()
-			)
-		})
+			return (
+				old.id !== schoolClass.id &&
+				old.year.value === schoolClass.year.value &&
+				old.section.value === schoolClass.section.value &&
+				old.track?.value.toLocaleUpperCase() ===
+					schoolClass.track?.value.toLocaleUpperCase()
+			);
+		});
 	}
 
 	const manageSearchResults = (event: { detail: any }) => {
@@ -101,7 +101,6 @@
 		allClassrooms.set(schoolClasses);
 		allSubjects.set([]);
 	}
-
 </script>
 
 <TableList
@@ -109,7 +108,9 @@
 	{fieldsInfo}
 	itemsType="class"
 	on:delete={(e) => removeClass(e.detail.value)}
-	on:deleteAll={() => { showModal = true }}
+	on:deleteAll={() => {
+		showModal = true;
+	}}
 >
 	<ClassFormRow
 		slot="edit"
@@ -126,7 +127,7 @@
 		let:item
 		let:cloning
 		schoolClass={item}
-		cloning={cloning}
+		{cloning}
 		on:save={(e) => saveSchoolClass(e.detail.schoolClass)}
 		on:cancel={() => {
 			editingId.set(null);
@@ -135,13 +136,13 @@
 </TableList>
 
 <MyModal bind:showModal on:confirm={removeAllItems}>
-	<h2 slot="header">
-		Delete all classes
-	</h2>
+	<h2 slot="header">Delete all classes</h2>
 	<p slot="body">
-		Are you sure you want to delete all classes? All subjects will be deleted too!
+		Are you sure you want to delete all classes? All subjects will be
+		deleted too!
 	</p>
 </MyModal>
-<Alert color="warning" isOpen={showDuplicateAlert} toggle={toggle}>
-	You are trying to add a class that already exists! Please check whether the fields are unique.
+<Alert color="warning" isOpen={showDuplicateAlert} {toggle}>
+	You are trying to add a class that already exists! Please check whether the
+	fields are unique.
 </Alert>
