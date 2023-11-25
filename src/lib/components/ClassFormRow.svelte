@@ -34,32 +34,26 @@
 	};
 
 	{
-		if (schoolClass && !cloning) {
+		if (schoolClass) {
 			tmpSchoolClass = {
 				_id: schoolClass.id,
 				_year: { value: schoolClass.year.value },
 				_section: { value: schoolClass.section.value },
 				_track: { value: schoolClass.track?.value || "" },
 			};
+			if (cloning) {
+				tmpSchoolClass._id = null;
+			}
 			validateYear();
 			validateSection();
 			validateTrack();
 		} else {
-			if(schoolClass && cloning) {
-				tmpSchoolClass = {
-					_id: null,
-					_year: { value: schoolClass.year.value },
-					_section: { value: schoolClass.section.value },
-					_track: { value: schoolClass.track?.value || "" },
-				};
-			} else {
-				tmpSchoolClass = {
-					_id: null,
-					_year: { value: 1 },
-					_section: { value: "A" },
-					_track: { value: "" },
-				};
-			}
+			tmpSchoolClass = {
+				_id: null,
+				_year: { value: 1 },
+				_section: { value: "A" },
+				_track: { value: "" },
+			};
 		}
 	}
 
@@ -76,7 +70,7 @@
 				tmpSchoolClass._id,
 				tmpSchoolClass._year.value,
 				tmpSchoolClass._section.value,
-				track?.value
+				track?.value,
 			);
 			eventDispatcher("save", { schoolClass: savedSchoolClass });
 		} catch (e) {
