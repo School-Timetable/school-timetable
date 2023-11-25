@@ -1,17 +1,34 @@
 <script lang="ts">
-	import { allProfessors, editingId } from "$lib/stores/global_store";
+	import { allProfessors, allSubjects, editingId } from "$lib/stores/global_store";
 	import type { Professor } from "$model/professor/professor";
 	import { get } from "svelte/store";
 	import TableList from "./TableList.svelte";
 	import ProfessorFormRow from "./ProfessorFormRow.svelte";
 	import type { FieldInfo } from "$model/model-generics";
+    import MyModal from "$lib/components/MyModal.svelte";
+	import {Alert, Modal, ModalBody, ModalFooter, ModalHeader} from "sveltestrap";
+
 
 	let items = get(allProfessors);
 
+	let showModal = false;
+	let showDuplicateAlert = false;
+	let toggle = () => {
+		showDuplicateAlert = !showDuplicateAlert;
+	}
+
 	function save(item: Professor, index?: number) {
-		if (index != undefined && index >= 0 && index < items.length)
+		if (professorAlreadyExists(item)){
+			if (!showDuplicateAlert)
+				toggle()
+			return
+		}
+		else if (index != undefined && index >= 0 && index < items.length)
 			items[index] = item;
 		else items.push(item);
+
+		if (showDuplicateAlert)
+			toggle()
 		editingId.set(null);
 		allProfessors.set(items);
 		items = items;
@@ -29,9 +46,29 @@
 		{ fieldName: "email", label: "Email", columns: 3 },
 		{ fieldName: "cellPhone", label: "Cell Phone", columns: 3 },
 	];
+
+	function removeAllItems() {
+		items = [];
+		allProfessors.set(items);
+		allSubjects.set([]);
+	}
+
+	function professorAlreadyExists(professor: Professor): boolean {
+		return items.some((old) => {
+			return (
+					old.id !== professor.id &&
+					old.name.valueUppercase === professor.name.valueUppercase &&
+					old.surname.valueUppercase === professor.surname.valueUppercase &&
+					old.email.value === professor.email.value
+			)
+		})
+	}
 </script>
 
-<TableList {items} {fieldsInfo} itemsType="professor" on:delete={(e) => removeItem(e.detail.value)}>
+<TableList {items} {fieldsInfo} itemsType="professor" 
+	on:delete={(e) => removeItem(e.detail.value)}
+	on:deleteAll={() => { showModal = true }}
+>
 	<ProfessorFormRow
 		slot="edit"
 		let:item
@@ -44,9 +81,25 @@
 	/>
 	<ProfessorFormRow
 		slot="create"
+		let:item
+		let:cloning
+		professor={item}
+		cloning={cloning}
 		on:save={(e) => save(e.detail.professor)}
 		on:cancel={() => {
 			editingId.set(null);
 		}}
 	/>
 </TableList>
+
+<MyModal bind:showModal on:confirm={removeAllItems}>
+	<h2 slot="header">
+		Delete all professors
+	</h2>
+	<p slot="body">
+		Are you sure you want to delete all professors? All subjects will be deleted too!
+	</p>
+</MyModal>
+<Alert color="warning" isOpen={showDuplicateAlert} toggle={toggle}>
+	You are trying to add a professor that already exists! Please check the name, surname and email.
+</Alert>

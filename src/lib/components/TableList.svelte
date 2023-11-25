@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Col, Icon, Row } from "sveltestrap";
+	import { Button, Col, Icon, Row, Tooltip } from "sveltestrap";
 	import { fade } from "svelte/transition";
 	import { cubicOut, sineOut } from "svelte/easing";
 	import { flip } from "svelte/animate";
@@ -14,6 +14,7 @@
 	const eventDispatcher = createEventDispatcher<{
 		delete: { value: AcceptedTypes };
 		editStart: { value: AcceptedTypes };
+		deleteAll: void;
 	}>();
 
 	type AcceptedTypes = Professor | SchoolClass | Subject;
@@ -26,15 +27,23 @@
 		if (sortByField != null) sortItems(filteredItems);
 		viewItems = filteredItems;
 	}
-
+	
 	export let fieldsInfo: FieldInfo[] = [];
-
+	
 	let sortByField: string | null = null;
 	let sortAsc: boolean = true;
-
+	let item: AcceptedTypes | null = null;
+	let cloningItem: boolean = false;
+	
 	function editItem(item: AcceptedTypes) {
 		editingId.set(item.id);
 		eventDispatcher("editStart", { value: item });
+	}
+
+	function cloneItem(_item: Professor | SchoolClass | Subject): void {
+		item = _item
+		cloningItem = true;
+		editingId.set("");
 	}
 
 	function removeItem(item: AcceptedTypes): void {
@@ -43,6 +52,8 @@
 	}
 
 	function createNew() {
+		cloningItem = false;
+		item = null;
 		editingId.set("");
 	}
 
@@ -67,10 +78,28 @@
 		}
 
 		list.sort((a: AcceptedTypes, b: AcceptedTypes) => {
-			// @ts-ignore
-			let aField = a[sortByField]?.value;
-			// @ts-ignore
-			let bField = b[sortByField]?.value;
+			let aField, bField = undefined
+
+			switch (sortByField){
+				case "professor":
+				case "schoolClass":
+					// @ts-ignore
+					aField = a[sortByField]?.toString().toLowerCase();
+					// @ts-ignore
+					bField = b[sortByField]?.toString().toLowerCase();
+					break
+				default:
+					// @ts-ignore
+					aField = a[sortByField]?.value;
+					// @ts-ignore
+					bField = b[sortByField]?.value;
+					if (typeof aField === "string")
+						aField = aField.toLowerCase() || ""
+					if (typeof bField === "string")
+						bField = bField.toLowerCase() || ""
+
+					break
+			}
 
 			if (aField == null) return sortAsc ? -1 : 1;
 			else if (bField == null) return sortAsc ? 1 : -1;
@@ -90,16 +119,32 @@
 		}
 		filteredItems = searchResults;
 	}
+
+	function removeAllItems() {
+		eventDispatcher("deleteAll");
+	}
+
 </script>
 
 <div class="px-3 pb-3">
 	<div class="pb-3 mx-auto" style="max-width: 500px;">
-		<FormSearch
-			{items}
-			on:search={(e) => {
-				onSearch(e.detail.searchResults);
-			}}
-		/>
+		<Row>
+			<Col sm={{size: 8}}>
+				<FormSearch
+					{items}
+					on:search={(e) => {
+						onSearch(e.detail.searchResults);
+					}}
+				/>
+			</Col>
+			
+			<Col sm={{size : 4}}>
+				<Button color="danger"
+				on:click={() => removeAllItems()}>
+					<Icon name="trash-fill" />Delete all
+				</Button>
+			</Col>
+		</Row>
 	</div>
 
 	<Row noGutters class="fw-bold mb-2 text-body h5">
@@ -113,9 +158,9 @@
 						{#if sortByField == headerElement.fieldName}
 							{headerElement.label}
 							{#if sortAsc}
-								<Icon name="caret-down-fill" />
-							{:else}
 								<Icon name="caret-up-fill" />
+							{:else}
+								<Icon name="caret-down-fill" />
 							{/if}
 						{:else}
 							{headerElement.label}
@@ -150,20 +195,44 @@
 							<Col>
 								<Button
 									color="primary"
+									id="btn-edit"
 									class="w-100 px-1 my-1 text-nowrap"
 									on:click={() => editItem(item)}
 								>
-									<Icon name="pencil-square" /> Edit
+									<Icon name="pencil-square" />
 								</Button>
+								<Tooltip
+									target="btn-edit"
+									placement="top"
+								>Edit</Tooltip>
 							</Col>
 							<Col>
 								<Button
+									id="btn-clone"
+									color="secondary"
+									class="w-100 px-1 my-1 text-nowrap"
+									on:click={() => cloneItem(item)}
+								>
+									<Icon name="files" />
+								</Button>
+								<Tooltip
+									target="btn-clone"
+									placement="top"
+								>Clone</Tooltip>
+							</Col>
+							<Col>
+								<Button
+									id="btn-delete"
 									color="danger"
 									class="w-100 px-1 my-1 text-nowrap"
 									on:click={() => removeItem(item)}
 								>
-									<Icon name="trash-fill" /> Delete
+									<Icon name="trash-fill" />
 								</Button>
+								<Tooltip
+									target="btn-delete"
+									placement="top"
+								>Delete</Tooltip>
 							</Col>
 						</Row>
 					</Col>
@@ -188,7 +257,7 @@
 			class="px-2 rounded shadow {backgroundForIndex(viewItems.length)}"
 			in:fade
 		>
-			<slot name="create" />
+			<slot name="create" item={item} cloning={cloningItem}/>
 		</div>
 	{:else}
 		<div class="px-2" in:fade>

@@ -22,6 +22,7 @@
 	}>();
 
 	export let professor: Professor | null = null;
+	export let cloning: boolean = false;
 
 	let nameValidation = { errorMessage: "", valid: false, invalid: false };
 	let surnameValidation = { errorMessage: "", valid: false, invalid: false };
@@ -35,6 +36,7 @@
 	const correctFeedback = "";
 
 	type ProfessorFormData = {
+		_id: string | null;
 		_name: { value: string };
 		_surname: { value: string };
 		_email: { value: string };
@@ -44,8 +46,9 @@
 	let editingProfessor: ProfessorFormData;
 
 	{
-		if (professor) {
+		if (professor && !cloning) {
 			editingProfessor = {
+				_id: professor.id,
 				_name: { value: professor.name.value },
 				_surname: { value: professor.surname.value },
 				_email: { value: professor.email.value },
@@ -55,13 +58,25 @@
 			validateSurname();
 			validateEmail();
 			validateCellPhone();
-		} else {
-			editingProfessor = {
-				_name: { value: "" },
-				_surname: { value: "" },
-				_email: { value: "" },
-				_cellPhone: { value: "" },
-			};
+		} else 
+			{
+				if (professor && cloning) {
+					editingProfessor = {
+						_id: null,
+						_name: { value: professor.name.value },
+						_surname: { value: professor.surname.value },
+						_email: { value: professor.email.value },
+						_cellPhone: { value: professor.cellPhone.value },
+					};
+			} else {
+				editingProfessor = {
+					_id: null,
+					_name: { value: "" },
+					_surname: { value: "" },
+					_email: { value: "" },
+					_cellPhone: { value: "" },
+				};
+			}
 		}
 	}
 
@@ -72,7 +87,7 @@
 		validateCellPhone();
 		try {
 			let savedProfessor: Professor = Professor.of(
-				null,
+				editingProfessor._id,
 				editingProfessor._name.value,
 				editingProfessor._surname.value,
 				editingProfessor._email.value,

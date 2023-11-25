@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon, Input, InputGroup, InputGroupText } from "sveltestrap";
+	import { Button, Col, Icon, Input, InputGroup, InputGroupText, Row } from "sveltestrap";
 	import { createEventDispatcher } from "svelte";
 
 	const eventDispatcher = createEventDispatcher<{
