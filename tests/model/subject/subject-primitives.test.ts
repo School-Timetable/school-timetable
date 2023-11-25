@@ -59,7 +59,7 @@ describe('Weight tests', () => {
         expect(weight.value).toBe(value);
     });
 
-    test.each([-1, 0, 11])('Weight throws invalid error', (value) => {
+    test.each([-1, 0, 11, 2.1, -5.71])('Weight throws invalid error', (value) => {
         expect(() => new Weight(value)).toThrowError();
     });
 
@@ -76,6 +76,10 @@ describe('HoursPerWeek tests', () => {
     });
 
     test.each([-1, 0])('HoursPerWeek %p throws too short error', (value) => {
+        expect(() => new HoursPerWeek(value)).toThrowError();
+    });
+
+    test.each([4.2, 6.21837])('HoursPerWeek %p throws invalid error', (value) => {
         expect(() => new HoursPerWeek(value)).toThrowError();
     });
 
