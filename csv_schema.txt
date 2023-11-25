@@ -1,0 +1,6 @@
+P:professor
+C:classroom
+S:subject
+H:hourOfDay
+D:dayOfWeek
+
