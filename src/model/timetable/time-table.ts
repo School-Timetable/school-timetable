@@ -1,6 +1,6 @@
-import { Professor } from "./professor/professor";
-import { SchoolClass } from "./school-class/school-class";
-import { Subject } from "./subject/subject";
+import { Professor } from "../professor/professor";
+import { SchoolClass } from "../school-class/school-class";
+import { Subject } from "../subject/subject";
 
 
 
@@ -104,9 +104,10 @@ class TimeTable {
             }
         }
 
-        for (const [key, value] of subjectMap) {
-            this.sortTimeSlots(value);
-        }
+        // not needed because the subjects are added in order
+        // for (const [key, value] of subjectMap) {
+        //     this.sortTimeSlots(value);
+        // }
 
         return subjectMap;
     }
@@ -168,6 +169,20 @@ class TimeTable {
         }
 
         this.subjectsMap.clear();
+    }
+
+
+    removeAllOf(subject: Subject): void {
+        const subjectList = this.subjectsMap.get(subject.id);
+        if (subjectList == null) {
+            return;
+        }
+
+        for (const { dayOfWeek, timeOfDay } of subjectList) {
+            this.values[dayOfWeek][timeOfDay] = null;
+        }
+
+        this.subjectsMap.delete(subject.id);
     }
 
     getTimeSlotsOf(subject: Subject): { dayOfWeek: number, timeOfDay: number }[] {
@@ -297,6 +312,12 @@ export function getTimetableOf(entity: SchoolClass | Professor): TimeTable {
 export function clearAll(): void {
     _classTimetableMap.clear();
     _professorTimetableMap.clear();
+}
+
+
+export function removeAllOf(subject: Subject): void {
+    getClassTimetableOf(subject.schoolClass).removeAllOf(subject);
+    getProfessorTimetableOf(subject.professor).removeAllOf(subject);
 }
 
 

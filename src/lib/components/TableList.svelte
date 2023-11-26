@@ -157,9 +157,9 @@
 						{#if sortByField == headerElement.fieldName}
 							{headerElement.label}
 							{#if sortAsc}
-								<Icon name="caret-up-fill" />
+								<Icon name="sort-down" />
 							{:else}
-								<Icon name="caret-down-fill" />
+								<Icon name="sort-up" />
 							{/if}
 						{:else}
 							{headerElement.label}
@@ -241,7 +241,7 @@
 				</Row>
 			{:else}
 				<div in:fade>
-					<slot name="edit" {item} {index} />
+					<slot name="edit" {item} />
 				</div>
 			{/if}
 		</div>

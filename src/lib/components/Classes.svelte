@@ -58,9 +58,11 @@
 			(sc) => sc.id === newClass.id,
 		);
 		if (indexInFullList != -1) {
-			schoolClasses.splice(indexInFullList, 1, newClass);
-		} else schoolClasses = [...schoolClasses, newClass];
+			schoolClasses[indexInFullList] = newClass;
+		} else schoolClasses.push(newClass);
+
 		if (showDuplicateAlert) toggle();
+
 		schoolClasses = schoolClasses;
 		allClassrooms.set(schoolClasses);
 		editingId.set(null);
@@ -115,7 +117,6 @@
 	<ClassFormRow
 		slot="edit"
 		let:item
-		let:index
 		schoolClass={item}
 		on:save={(e) => saveSchoolClass(e.detail.schoolClass)}
 		on:cancel={() => {

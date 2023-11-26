@@ -64,18 +64,18 @@ test("read-file-unsuccessfull-test", () => {
 })
 
 test("write-file-test", () => {
-    let expected_file_str = 
+    let expected_file_str =
         "P:prof-1;Mario oiram;Rossi;test@mail.com;+393331122444\n" +
         "P:prof-2;Mario oiram ross;De Rossi;test.mail@mail.com;3331122444\n" +
         "C:class-1;5;A;Inf\n" +
-        "C:class-2;1;Z;\n" + 
+        "C:class-2;1;Z;\n" +
         "S:subj-1;class-1;prof-1;Matematica;MAT;5;20\n" +
         "S:subj-2;class-1;prof-2;Italiano;ITA;6;18\n" +
         "H:10;09:00\n" +
         "H:23;23 00\n" +
         "D:20;Monday\n" +
         "D:1;Mon day";
-    
+
 
     let professors = [
         Professor.of("prof-1", "Mario oiram", "Rossi", "test@mail.com", "+393331122444"),
