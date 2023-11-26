@@ -1,11 +1,13 @@
 <script lang="ts">
 	import {
 		allClassrooms,
+		allDaysOfWeek,
+		allHoursOfDay,
 		allProfessors,
 		allSubjects,
 		theme,
 	} from "$lib/stores/global_store";
-	import { generateCookieFile } from "$lib/utils/cookie_file_writer";
+	import { generateCookieFile } from "$lib/stores/utils/cookie_file_writer";
 	import { onMount } from "svelte";
 	import { Container, Styles } from "sveltestrap";
 	import { goto } from "$app/navigation";
@@ -16,7 +18,7 @@
 		const generate_file = () =>
 			localStorage.setItem(
 				"data.tdf",
-				generateCookieFile($allProfessors, $allClassrooms, $allSubjects)
+				generateCookieFile($allProfessors, $allClassrooms, $allSubjects, $allHoursOfDay, $allDaysOfWeek)
 			);
 
 		allProfessors.subscribe(generate_file);

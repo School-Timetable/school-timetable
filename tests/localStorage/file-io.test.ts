@@ -1,5 +1,5 @@
-import { getExistingClassroomsFromFile, getExistingDaysOfWeekFromFile, getExistingHoursOfDayFromFile, getExistingProfessorFromFile, getExistingSubjectsFromFile } from "$lib/utils/cookie_file_reader";
-import { generateCookieFile } from "$lib/utils/cookie_file_writer";
+import { getExistingClassroomsFromFile, getExistingDaysOfWeekFromFile, getExistingHoursOfDayFromFile, getExistingProfessorFromFile, getExistingSubjectsFromFile } from "$lib/stores/utils/cookie_file_reader";
+import { generateCookieFile } from "$lib/stores/utils/cookie_file_writer";
 import { Professor } from "$model/professor/professor";
 import { SchoolClass } from "$model/school-class/school-class";
 import { Subject } from "$model/subject/subject";
