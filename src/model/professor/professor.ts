@@ -2,7 +2,7 @@ import { Name, nameSchema } from '$model/professor/name';
 import { Surname, surnameSchema } from '$model/professor/surname';
 import { Cellphone, cellPhoneSchema } from '$model/professor/cellphone';
 import { Mail, mailSchema } from '$model/professor/mail';
-import { string, z } from 'zod';
+import { z } from 'zod';
 import { v4 as uuid } from "uuid"
 
 export const professorSchema = z.object({

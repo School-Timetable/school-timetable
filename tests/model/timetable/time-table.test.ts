@@ -1,4 +1,4 @@
-import { classTimetableMap, professorTimetableMap, setSubject, getClassTimetableOf, getProfessorTimetableOf, getTimetableOf, removeSubject, setUnavailable, setAvailable, clearAll } from "$model/TimeTable";
+import { classTimetableMap, professorTimetableMap, setSubject, getClassTimetableOf, getProfessorTimetableOf, getTimetableOf, removeSubject, setUnavailable, setAvailable, clearAll, removeAllOf } from "$model/timetable/TimeTable";
 import { Professor } from "$model/professor/professor";
 import { SchoolClass } from "$model/school-class/school-class";
 import { Subject } from "$model/subject/subject";
@@ -180,6 +180,58 @@ describe("Timetable", () => {
 
     test.each([-123, -1, 2.1, 13, 1234356])('throws on invalid timeOfDay %p', (value) => {
         expect(() => setSubject(0, value, subjects[0])).toThrow();
+    });
+
+
+    it("should remove all time slots of a subject", () => {
+        const c0tt = getTimetableOf(classes[0]);
+        const p0tt = getTimetableOf(professors[0]);
+        const c1tt = getTimetableOf(classes[1]);
+        const p1tt = getTimetableOf(professors[1]);
+
+        setSubject(0, 0, subjects[0]);
+        setSubject(1, 1, subjects[0]);
+
+        setSubject(2, 2, subjects[1]);
+        setSubject(3, 3, subjects[1]);
+        setSubject(3, 4, subjects[1]);
+        setSubject(4, 0, subjects[1]);
+
+        setSubject(0, 1, subjects[2]);
+        setSubject(0, 2, subjects[2]);
+
+        expect(c0tt.getCountOf(subjects[0])).toBe(2);
+        expect(p0tt.getCountOf(subjects[0])).toBe(2);
+        expect(c1tt.getCountOf(subjects[0])).toBe(0);
+        expect(p1tt.getCountOf(subjects[0])).toBe(0);
+
+        expect(c0tt.getCountOf(subjects[1])).toBe(4);
+        expect(p0tt.getCountOf(subjects[1])).toBe(0);
+        expect(c1tt.getCountOf(subjects[1])).toBe(0);
+        expect(p1tt.getCountOf(subjects[1])).toBe(4);
+
+        expect(c0tt.getCountOf(subjects[2])).toBe(0);
+        expect(p0tt.getCountOf(subjects[2])).toBe(2);
+        expect(c1tt.getCountOf(subjects[2])).toBe(2);
+        expect(p1tt.getCountOf(subjects[2])).toBe(0);
+
+        removeAllOf(subjects[1]);
+
+        expect(c0tt.getCountOf(subjects[0])).toBe(2);
+        expect(p0tt.getCountOf(subjects[0])).toBe(2);
+        expect(c1tt.getCountOf(subjects[0])).toBe(0);
+        expect(p1tt.getCountOf(subjects[0])).toBe(0);
+
+        expect(c0tt.getCountOf(subjects[1])).toBe(0);
+        expect(p0tt.getCountOf(subjects[1])).toBe(0);
+        expect(c1tt.getCountOf(subjects[1])).toBe(0);
+        expect(p1tt.getCountOf(subjects[1])).toBe(0);
+
+        expect(c0tt.getCountOf(subjects[2])).toBe(0);
+        expect(p0tt.getCountOf(subjects[2])).toBe(2);
+        expect(c1tt.getCountOf(subjects[2])).toBe(2);
+        expect(p1tt.getCountOf(subjects[2])).toBe(0);
+
     });
 
 
