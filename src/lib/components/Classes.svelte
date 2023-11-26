@@ -1,10 +1,9 @@
 <script lang="ts">
 	import type { SchoolClass } from "$model/school-class/school-class";
-	import { allSubjects, editingId } from "$lib/stores/global_store";
+	import { editingId, removeAllClassesFromStorage, removeSchoolClassFromStorage, saveObjectToStorage } from "$lib/stores/global_store";
 	import { slide } from "svelte/transition";
 	import { linear } from "svelte/easing";
 	import ClassFormRow from "$lib/components/ClassFormRow.svelte";
-	import FormSearch from "$lib/components/FormSearch.svelte";
 	import { get } from "svelte/store";
 	import { allClassrooms } from "$lib/stores/global_store";
 	import type { FieldInfo } from "$model/model-generics";
@@ -14,19 +13,11 @@
 
 	let options = { duration: 200, easing: linear };
 
-	let schoolClasses = get(allClassrooms);
-
-	let filteredList = schoolClasses;
-
 	let showModal = false;
 	let showDuplicateAlert = false;
 	let toggle = () => {
 		showDuplicateAlert = !showDuplicateAlert;
 	};
-
-	function editSchoolClass(id: string) {
-		editingId.set(id);
-	}
 
 	let fieldsInfo: FieldInfo[] = [
 		{ fieldName: "year", label: "Year", columns: 3 },
@@ -34,45 +25,29 @@
 		{ fieldName: "track", label: "Track", columns: 4 },
 	];
 
-	function addSchoolClass() {
-		editingId.set("");
-	}
-
-	const createSchoolClass = (event: { detail: any }) => {
-		const newClass = event.detail.schoolClass;
-		if (classAlreadyExists(newClass, schoolClasses)) {
-			alert("Class already exists");
-			return;
-		}
-		schoolClasses = [...schoolClasses, newClass];
-		allClassrooms.set(schoolClasses);
-		editingId.set(null);
-	};
-
 	function saveSchoolClass(newClass: SchoolClass) {
-		if (classAlreadyExists(newClass, schoolClasses)) {
-			if (!showDuplicateAlert) toggle();
+		if (classAlreadyExists(newClass)) {
+			if (!showDuplicateAlert) 
+				toggle();
 			return;
 		}
-		const indexInFullList = schoolClasses.findIndex(
-			(sc) => sc.id === newClass.id,
-		);
-		if (indexInFullList != -1) {
-			schoolClasses[indexInFullList] = newClass;
-		} else schoolClasses.push(newClass);
+
+		const indexInFullList = get(allClassrooms).findIndex((sc) => sc.id === newClass.id);
+
+		if (indexInFullList != -1)
+			saveObjectToStorage(newClass, indexInFullList);
+		else 
+			saveObjectToStorage(newClass);
 
 		if (showDuplicateAlert) toggle();
 
-		schoolClasses = schoolClasses;
-		allClassrooms.set(schoolClasses);
 		editingId.set(null);
 	}
 
 	function classAlreadyExists(
-		schoolClass: SchoolClass,
-		schoolClasses: SchoolClass[],
+		schoolClass: SchoolClass
 	): boolean {
-		return schoolClasses.some((old) => {
+		return get(allClassrooms).some((old) => {
 			return (
 				old.id !== schoolClass.id &&
 				old.year.value === schoolClass.year.value &&
@@ -83,30 +58,22 @@
 		});
 	}
 
-	const manageSearchResults = (event: { detail: any }) => {
-		filteredList = event.detail.searchResults;
-	};
-
 	function removeClass(schoolClass: SchoolClass) {
-		const index = getIndexById(schoolClass.id);
-		schoolClasses.splice(index, 1);
-		schoolClasses = schoolClasses;
-		allClassrooms.set(schoolClasses);
-	}
-
-	function getIndexById(id: string): number {
-		return schoolClasses.findIndex((sc) => sc.id === id);
+		if(!removeSchoolClassFromStorage(schoolClass)) {
+			alert("classroom cannot be removed");
+			// TODO Improve alert
+			// Avoid deleting of row when it is not confirmed
+		}
 	}
 
 	function removeAllItems() {
-		schoolClasses = [];
-		allClassrooms.set(schoolClasses);
-		allSubjects.set([]);
+		removeAllClassesFromStorage();
 	}
+
 </script>
 
 <TableList
-	items={schoolClasses}
+	items={$allClassrooms}
 	{fieldsInfo}
 	itemsType="class"
 	on:delete={(e) => removeClass(e.detail.value)}

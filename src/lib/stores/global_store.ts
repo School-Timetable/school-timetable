@@ -39,25 +39,21 @@ function getCorrectList(item: AcceptedTypes) {
 }
 
 /**
- * Insert a new Professor inside the storage, or replace an existing one
+ * Insert a new Professor | Subject | Classroom inside the storage, or replace an existing one
  * 
- * @param {AcceptedTypes} item - The professor to be inserted
- * @param {number} index - If it is specified, then the professor will replace whatever is inserted at [index] position
+ * @param {AcceptedTypes} item - The object to be inserted
+ * @param {number} index - If it is specified, then the ibject will replace whatever is inserted at [index] position
  */
-export function addObjectToStorage(item: AcceptedTypes, index?: number) {
+export function saveObjectToStorage(item: AcceptedTypes, index?: number) {
     let generic_store = getCorrectList(item)!; 
     // @ts-ignore
     let generic_data = get(generic_store);
 
-    console.log("Adding prof ", item, " with index ", index);
-
     if(index === undefined) {
-        console.log("New add");
         // @ts-ignore 
         generic_store.set([...generic_data, item]);
     }
     else {
-        console.log("edit");
         // @ts-ignore
         generic_data[index] = item
         // @ts-ignore
@@ -66,12 +62,46 @@ export function addObjectToStorage(item: AcceptedTypes, index?: number) {
 }
 
 /**
- * Removes the specified professor from the storage. The selection is based on the prof id
+ * Removes the specified Subject from the storage. The selection is based on the item id
  * 
- * @param {Professor} prof 
+ * @param {Subject} subject 
  */
-export function removeProfessorFromStorage(prof: Professor) {
+export function removeSubjectFromStorage(subject: Subject) {
+    allSubjects.set(get(allSubjects).filter((sub) => sub.id !== subject.id));
+}
+
+/**
+ * Attempts to remove a Professor from the storage.
+ * 
+ * @param {Professor} prof - The prof to be removed
+ *  
+ * @returns {boolean} Whether the prof can actually be removed or not.
+ * 
+ *  return false -> there is a dependency and the prof cannot be removed
+ */
+export function removeProfessorFromStorage(prof: Professor): boolean {
+    if(get(allSubjects).findIndex((sub) => sub.professor.id === prof.id) !== -1)
+        return false;
+
     allProfessors.set(get(allProfessors).filter((item) => item.id !== prof.id));
+    return true;
+}
+
+/**
+ * Attempts to remove a SchoolClass from the storage.
+ * 
+ * @param {SchoolClass} classroom - The class to be removed
+ *  
+ * @returns {boolean} Whether the prof can actually be removed or not.
+ * 
+ *  return false -> there is a dependency and the prof cannot be removed
+ */
+export function removeSchoolClassFromStorage(classroom: SchoolClass): boolean {
+    if(get(allSubjects).findIndex((sub) => sub.schoolClass.id === classroom.id) !== -1)
+        return false;
+
+    allClassrooms.set(get(allClassrooms).filter((item) => item.id !== classroom.id));
+    return true;
 }
 
 /**
@@ -79,6 +109,21 @@ export function removeProfessorFromStorage(prof: Professor) {
  */
 export function removeAllProfessorsFromStorage() {
     allProfessors.set([]);
+    allSubjects.set([]);
+}
+
+/**
+ * Removes all the classes and subjects from the storage
+ */
+export function removeAllClassesFromStorage() {
+    allClassrooms.set([]);
+    allSubjects.set([]);
+}
+
+/**
+ * Removes all the subjects from the storage
+ */
+export function removeAllSubjectsFromStorage() {
     allSubjects.set([]);
 }
 

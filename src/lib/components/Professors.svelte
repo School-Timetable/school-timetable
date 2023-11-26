@@ -1,8 +1,10 @@
 <script lang="ts">
 	import {
 		allProfessors,
-		allSubjects,
 		editingId,
+        removeAllProfessorsFromStorage,
+        removeProfessorFromStorage,
+        saveObjectToStorage,
 	} from "$lib/stores/global_store";
 	import type { Professor } from "$model/professor/professor";
 	import { get } from "svelte/store";
@@ -18,8 +20,6 @@
 		ModalHeader,
 	} from "sveltestrap";
 
-	let items = get(allProfessors);
-
 	let showModal = false;
 	let showDuplicateAlert = false;
 	let toggle = () => {
@@ -32,20 +32,23 @@
 			return;
 		}
 
-		const index = items.findIndex((i) => i.id === item.id);
-		if (index != -1) items[index] = item;
-		else items.push(item);
+		const index = get(allProfessors).findIndex((i) => i.id === item.id);
+		if (index != -1) 
+			saveObjectToStorage(item, index);
+		else 
+			saveObjectToStorage(item);
 
-		if (showDuplicateAlert) toggle();
+		if (showDuplicateAlert) 
+			toggle();
+
 		editingId.set(null);
-		allProfessors.set(items);
-		items = items;
 	}
 
 	function removeItem(item: Professor): void {
-		let tmp = items.filter((i) => i.id != item.id);
-		allProfessors.set(tmp);
-		items = tmp;
+		if(!removeProfessorFromStorage(item)) {
+			// TODO Improve message
+			alert("prof cannot be removed");
+		}
 	}
 
 	let fieldsInfo: FieldInfo[] = [
@@ -56,18 +59,15 @@
 	];
 
 	function removeAllItems() {
-		items = [];
-		allProfessors.set(items);
-		allSubjects.set([]);
+		removeAllProfessorsFromStorage();
 	}
 
 	function professorAlreadyExists(professor: Professor): boolean {
-		return items.some((old) => {
+		return get(allProfessors).some((old) => {
 			return (
 				old.id !== professor.id &&
 				old.name.valueUppercase === professor.name.valueUppercase &&
-				old.surname.valueUppercase ===
-					professor.surname.valueUppercase &&
+				old.surname.valueUppercase === professor.surname.valueUppercase &&
 				old.email.value === professor.email.value
 			);
 		});
@@ -75,7 +75,7 @@
 </script>
 
 <TableList
-	{items}
+	items={$allProfessors}
 	{fieldsInfo}
 	itemsType="professor"
 	on:delete={(e) => removeItem(e.detail.value)}
@@ -88,7 +88,7 @@
 		let:item
 		let:index
 		professor={item}
-		on:save={(e) => save(e.detail.professor, index)}
+		on:save={(e) => save(e.detail.professor)}
 		on:cancel={() => {
 			editingId.set(null);
 		}}
