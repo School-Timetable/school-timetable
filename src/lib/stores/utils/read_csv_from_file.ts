@@ -6,7 +6,6 @@ import { Subject } from '$model/subject/subject';
 
 
 export function readCsv(file: File, type: string, existing_prof?: Professor[], existing_class?: SchoolClass[]){
-    
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
 
@@ -50,11 +49,21 @@ export function readCsvProfessor(data: any){
 }
 
 function readCsvClass(data: any){
+    const results: any[] = [];
     const classes: SchoolClass[] = [];
+    const errors: string[] = [];
+    results.push(classes);
+    results.push(errors);
     data.forEach((row: string) => {
-        classes.push(SchoolClass.of(null,parseInt(row[0]), row[1], row[2]));
+        try{
+            const schoolClass = SchoolClass.of(null,parseInt(row[0]), row[1], row[2]);
+            classes.push(schoolClass);
+        } catch (error) {
+            const failedClass = `Year: ${row[0]}, Section: ${row[1]}, Name: ${row[2]}`;
+            errors.push(failedClass);
+        }
     });
-    return classes;
+    return results;
 }
 
 function readCsvSubject(data: any, existing_prof: Professor[], existing_class: SchoolClass[]){

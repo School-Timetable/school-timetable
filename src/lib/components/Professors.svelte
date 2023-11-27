@@ -83,7 +83,7 @@
 			failedProfessors = result[1] as string[];
 			professors.forEach((professor) => {
 				if (!professorAlreadyExists(professor)) {
-					addProfessor(professor);
+					save(professor);
 				}
 			});
 		});
@@ -138,7 +138,6 @@
 		deleted too!
 	</p>
 </MyModal>
-
 <MyCsvModal bind:showCsvModal on:confirmCsvSubmission={handleConfirmCsvSubmission}>
 	<h2 slot="header">Import professors from CSV</h2>
 	<p slot="body">Please select a CSV file with the following columns: <br> Name, Surname, Email, and Cellphone.</p>
