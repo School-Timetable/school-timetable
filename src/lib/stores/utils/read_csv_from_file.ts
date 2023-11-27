@@ -61,7 +61,7 @@ function readCsvClass(data: any){
             const schoolClass = SchoolClass.of(null,parseInt(row[0]), row[1], row[2]);
             classes.push(schoolClass);
         } catch (error) {
-            const failedClass = `Year: ${row[0]}, Section: ${row[1]}, Name: ${row[2]}`;
+            const failedClass = `Year: ${row[0]}, Section: ${row[1]}, Academic Track: ${row[2] || "-"}`;
             errors.push(failedClass);
         }
     });

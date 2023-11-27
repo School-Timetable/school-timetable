@@ -24,13 +24,35 @@
 	let showModal = false;
 	let showCsvModal = false; 
 	let showDuplicateAlert = false;
-	let toggle = () => {
-		showDuplicateAlert = !showDuplicateAlert;
+	let failedProfessors: string[] = []
+	let showCsvImportAlert = false
+
+	$: if(failedProfessors.length > 0) {
+		showCsvImportAlert = true
+	}
+
+	$: if (showCsvImportAlert) {
+		setTimeout(() => {
+			resetCsvImportAlert()
+		}, failedProfessors.length*10000)
+	}
+	function resetCsvImportAlert() {
+		showCsvImportAlert = false
+		failedProfessors.length = 0
+	}
+
+
+	const toggleDuplicateAlert = () => {
+		showDuplicateAlert = !showDuplicateAlert
 	};
+
+	const toggleCsvImportAlert = () => {
+		showCsvImportAlert = !showCsvImportAlert
+	}
 
 	function save(item: Professor) {
 		if (professorAlreadyExists(item)) {
-			if (!showDuplicateAlert) toggle();
+			if (!showDuplicateAlert) toggleDuplicateAlert();
 			return;
 		}
 
@@ -40,8 +62,7 @@
 		else 
 			saveObjectToStorage(item);
 
-		if (showDuplicateAlert) 
-			toggle();
+		if (showDuplicateAlert) toggleDuplicateAlert();
 
 		editingId.set(null);
 	}
@@ -77,7 +98,7 @@
 
 	function handleConfirmCsvSubmission(event: { detail: any; }) {
         const file = event.detail;
-		let failedProfessors: string[] = [];
+		resetCsvImportAlert()
 		readCsv(file, 'professor').then((result) => {
 			const professors = result[0] as Professor[];
 			failedProfessors = result[1] as string[];
@@ -142,7 +163,12 @@
 	<h2 slot="header">Import professors from CSV</h2>
 	<p slot="body">Please select a CSV file with the following columns: <br> Name, Surname, Email, and Cellphone.</p>
 </MyCsvModal>
-<Alert color="warning" isOpen={showDuplicateAlert} {toggle}>
+<Alert color="warning" isOpen={showDuplicateAlert} toggle={toggleDuplicateAlert}>
 	You are trying to add a professor that already exists! Please check the
 	name, surname and email.
+</Alert>
+<Alert color="warning" isOpen={showCsvImportAlert} toggle="{toggleCsvImportAlert}" style="white-space: pre-line">
+	{failedProfessors.length} professors failed to import. Please check the CSV file.
+	The failed entries are:
+	{failedProfessors.join("\n")}
 </Alert>

@@ -47,7 +47,7 @@
 	let fieldsInfo: FieldInfo[] = [
 		{ fieldName: "year", label: "Year", columns: 3 },
 		{ fieldName: "section", label: "Section", columns: 3 },
-		{ fieldName: "track", label: "Track", columns: 4 },
+		{ fieldName: "track", label: "Academic Track", columns: 4 },
 	];
 
 	function saveSchoolClass(newClass: SchoolClass) {
@@ -154,7 +154,7 @@
 </MyModal>
 <MyCsvModal bind:showCsvModal on:confirmCsvSubmission={handleConfirmCsvSubmission}>
 	<h2 slot="header">Import class from CSV</h2>
-	<p slot="body">Please select a CSV file with the following columns: <br> Year, Section, and Track.</p>
+	<p slot="body">Please select a CSV file with the following columns: <br> Year, Section, and Academic Track.</p>
 </MyCsvModal>
 <Alert color="warning" isOpen={showDuplicateAlert} toggle={toggleDuplicateAlert}>
 	You are trying to add a class that already exists! Please check whether the
@@ -162,5 +162,6 @@
 </Alert>
 <Alert color="warning" isOpen={showCsvImportAlert} toggle={toggleCsvImportAlert} style="white-space: pre-line">
 	{failedClasses.length} classes failed to import. Please check the CSV file.
-	The classes are:{"\n"+failedClasses.join("\n")}
+	The failed entries are:
+	{failedClasses.join("\n")}
 </Alert>
