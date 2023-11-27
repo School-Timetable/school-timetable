@@ -32,7 +32,7 @@
 	<div class="left-group">
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-		<p id="title" class="zoom-hover" on:click={() => {goto("/")}} >SCHOOL TIMETABLE</p>
+		<p id="title" class="zoom-hover" on:click={() => {goto("/drag-and-drop")}} >SCHOOL TIMETABLE</p>
 		
 		<div class="vl"></div>
 		<div class="zoom-hover">

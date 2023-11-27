@@ -16,7 +16,7 @@
     export let subject: Subject | null
 
     export let color: string
-
+    export let isProfessorView: boolean
 
 
     function allowDrop(ev:any) {
@@ -50,10 +50,14 @@
 
 
     function set_cell_content(subject: Subject | null) {
+        console.log("isProfessorView = ", isProfessorView)
         if (!subject) {
             return undefined;
         }
-        return `${subject.professor.name} ${subject.professor.surname} - ${subject.abbreviation}`
+        if (isProfessorView)
+            return `${subject.schoolClass} - ${subject.abbreviation}`
+        else
+            return `${subject.professor.name} ${subject.professor.surname} - ${subject.abbreviation}`
     }
 
 </script>
