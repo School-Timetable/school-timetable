@@ -14,13 +14,35 @@
 	import { Alert } from "sveltestrap";
 
 	let options = { duration: 200, easing: linear };
+	let failedClasses: string[] = []
 
 	let showModal = false;
 	let showCsvModal = false; 
 	let showDuplicateAlert = false;
-	let toggle = () => {
-		showDuplicateAlert = !showDuplicateAlert;
+	let showCsvImportAlert = false;
+
+	$: if(failedClasses.length > 0) {
+		showCsvImportAlert = true
+	}
+
+	$: if (showCsvImportAlert) {
+		setTimeout(() => {
+			resetCsvImportAlert()
+		}, failedClasses.length*10000)
+	}
+	function resetCsvImportAlert() {
+		showCsvImportAlert = false
+		failedClasses.length = 0
+	}
+
+
+	const toggleDuplicateAlert = () => {
+		showDuplicateAlert = !showDuplicateAlert
 	};
+
+	const toggleCsvImportAlert = () => {
+		showCsvImportAlert = !showCsvImportAlert
+	}
 
 	let fieldsInfo: FieldInfo[] = [
 		{ fieldName: "year", label: "Year", columns: 3 },
@@ -31,7 +53,7 @@
 	function saveSchoolClass(newClass: SchoolClass) {
 		if (classAlreadyExists(newClass)) {
 			if (!showDuplicateAlert) 
-				toggle();
+				toggleDuplicateAlert();
 			return;
 		}
 
@@ -42,7 +64,7 @@
 		else 
 			saveObjectToStorage(newClass);
 
-		if (showDuplicateAlert) toggle();
+		if (showDuplicateAlert) toggleDuplicateAlert();
 
 		editingId.set(null);
 	}
@@ -75,7 +97,7 @@
 
 	function handleConfirmCsvSubmission(event: { detail: any; }) {
         const file = event.detail;
-		let failedClasses: string[] = [];
+		resetCsvImportAlert()
 		readCsv(file, 'class').then((result) => {
 			const classes = result[0] as SchoolClass[];
 			failedClasses = result[1] as string[];
@@ -134,7 +156,11 @@
 	<h2 slot="header">Import class from CSV</h2>
 	<p slot="body">Please select a CSV file with the following columns: <br> Year, Section, and Track.</p>
 </MyCsvModal>
-<Alert color="warning" isOpen={showDuplicateAlert} {toggle}>
+<Alert color="warning" isOpen={showDuplicateAlert} toggle={toggleDuplicateAlert}>
 	You are trying to add a class that already exists! Please check whether the
 	fields are unique.
+</Alert>
+<Alert color="warning" isOpen={showCsvImportAlert} toggle={toggleCsvImportAlert} style="white-space: pre-line">
+	{failedClasses.length} classes failed to import. Please check the CSV file.
+	The classes are:{"\n"+failedClasses.join("\n")}
 </Alert>
