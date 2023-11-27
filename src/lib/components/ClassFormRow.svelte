@@ -16,6 +16,7 @@
 	const years = [1, 2, 3, 4, 5];
 
 	export let schoolClass: SchoolClass | null = null;
+	export let cloning: boolean = false;
 
 	let yearValidation = { errorMessage: "", valid: false, invalid: false };
 	let sectionValidation = { errorMessage: "", valid: false, invalid: false };
@@ -26,7 +27,7 @@
 	let tmpSchoolClass: SchoolClassFormData;
 
 	type SchoolClassFormData = {
-		_id: { value: string | null };
+		_id: string | null;
 		_year: { value: number };
 		_section: { value: string };
 		_track: { value: string };
@@ -35,14 +36,20 @@
 	{
 		if (schoolClass) {
 			tmpSchoolClass = {
-				_id: { value: schoolClass.id },
+				_id: schoolClass.id,
 				_year: { value: schoolClass.year.value },
 				_section: { value: schoolClass.section.value },
 				_track: { value: schoolClass.track?.value || "" },
 			};
+			if (cloning) {
+				tmpSchoolClass._id = null;
+			}
+			validateYear();
+			validateSection();
+			validateTrack();
 		} else {
 			tmpSchoolClass = {
-				_id: { value: null },
+				_id: null,
 				_year: { value: 1 },
 				_section: { value: "A" },
 				_track: { value: "" },
@@ -60,10 +67,10 @@
 					? undefined
 					: new Track(tmpSchoolClass!._track.value);
 			let savedSchoolClass: SchoolClass = SchoolClass.of(
-				tmpSchoolClass._id.value,
+				tmpSchoolClass._id,
 				tmpSchoolClass._year.value,
 				tmpSchoolClass._section.value,
-				track?.value
+				track?.value,
 			);
 			eventDispatcher("save", { schoolClass: savedSchoolClass });
 		} catch (e) {
