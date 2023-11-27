@@ -1,7 +1,7 @@
 import { Professor } from "../professor/professor";
 import { SchoolClass } from "../school-class/school-class";
-import { Subject } from "../subject/subject";
-
+import type { Subject } from "../subject/subject";
+import { Unavailable } from "./unavailable";
 
 
 const _classTimetableMap: Map<string, TimeTable> = new Map();
@@ -10,23 +10,16 @@ const _professorTimetableMap: Map<string, TimeTable> = new Map();
 export const classTimetableMap: ReadonlyMap<string, TimeTable> = _classTimetableMap;
 export const professorTimetableMap: ReadonlyMap<string, TimeTable> = _professorTimetableMap;
 
-
 // TODO: remove
 const daysPerWeek = 6;
 const hoursPerDay = 8;
 
-const mockClass = SchoolClass.of("class-mock", 1, "A");
-const mockProfessor = Professor.of("professor-mock", "mock", "mock", "fake@ema.il", "0000000000");
 
-// TODO: Create a more elegant solution
-export const unavailableSubject = Subject.of("unavailable", mockClass, mockProfessor, "unavailable", "X", 1, 10);
-
-
-class TimeTable {
+export class TimeTable {
 
     // first list is day of week, second is time of day
     // null means no subject
-    readonly values: (Subject | null)[][] = [];
+    readonly values: (Subject | Unavailable | null)[][] = [];
     readonly daysPerWeek: number;
     readonly hoursPerDay: number;
 
@@ -43,7 +36,10 @@ class TimeTable {
         }
     }
 
-    getSubjectOn(dayOfWeek: number, timeOfDay: number): Subject | null {
+    /**
+     * Returns the subject that has been assigned in the choosen time slot
+     */
+    getSubjectOn(dayOfWeek: number, timeOfDay: number): Subject | Unavailable | null {
         if (!this.isValidTimeslot(dayOfWeek, timeOfDay)) {
             throw new Error("Invalid timeslot");
         }
@@ -51,19 +47,19 @@ class TimeTable {
         return this.values[dayOfWeek][timeOfDay];
     }
 
-    setSubjectOn(dayOfWeek: number, timeOfDay: number, subject: Subject | null): void {
+    setSubjectOn(dayOfWeek: number, timeOfDay: number, subject: Subject | Unavailable | null): void {
         if (!this.isValidTimeslot(dayOfWeek, timeOfDay)) {
             throw new Error("Invalid timeslot");
         }
-        const oldSubject = this.values[dayOfWeek][timeOfDay];
 
+        const oldSubject = this.values[dayOfWeek][timeOfDay];
         this.values[dayOfWeek][timeOfDay] = subject;
 
         this.updateSubjectsMap(dayOfWeek, timeOfDay, subject, oldSubject);
     }
 
 
-    private updateSubjectsMap(dayOfWeek: number, timeOfDay: number, subject: Subject | null, oldSubject: Subject | null) {
+    private updateSubjectsMap(dayOfWeek: number, timeOfDay: number, subject: Subject | Unavailable | null, oldSubject: Subject | Unavailable | null) {
         // remove the old subject's time slot from the map
         if (oldSubject != null) {
             const subjectList = this.subjectsMap.get(oldSubject.id)!;
@@ -71,9 +67,9 @@ class TimeTable {
             subjectList.splice(index, 1);
 
             // remove the subject from the map if it has no more timeslots
-            if (subjectList.length == 0) {
+            /*if (subjectList.length == 0) {
                 this.subjectsMap.delete(oldSubject.id);
-            }
+            }*/
         }
 
         // add the subject to the map
@@ -81,26 +77,27 @@ class TimeTable {
             if (!this.subjectsMap.has(subject.id)) {
                 this.subjectsMap.set(subject.id, []);
             }
-            const subjectList = this.subjectsMap.get(subject.id)!;
-            subjectList.push({ dayOfWeek, timeOfDay });
-            this.sortTimeSlots(subjectList);
+
+            const subjectTimeslotList = this.subjectsMap.get(subject.id)!;
+            subjectTimeslotList.push({ dayOfWeek, timeOfDay });
+            this.sortTimeSlots(subjectTimeslotList);
         }
     }
 
     computeSubjectMap(): Map<string, { dayOfWeek: number, timeOfDay: number }[]> {
-        const subjectMap: Map<string, { dayOfWeek: number, timeOfDay: number }[]> = new Map();
+        /*const subjectMap: Map<string, { dayOfWeek: number, timeOfDay: number }[]> = new Map();
 
         for (let i = 0; i < this.daysPerWeek; i++) {
             for (let j = 0; j < this.hoursPerDay; j++) {
                 const subject = this.getSubjectOn(i, j);
-                if (subject == null)
+                if (subject == null || subject.constructor.name == Unavailable.name)
                     continue;
 
                 if (!subjectMap.has(subject.id)) {
                     subjectMap.set(subject.id, []);
                 }
-                const subjectList = subjectMap.get(subject.id)!;
-                subjectList.push({ dayOfWeek: i, timeOfDay: j });
+
+                subjectMap.get(subject.id)!.push({ dayOfWeek: i, timeOfDay: j });
             }
         }
 
@@ -108,8 +105,9 @@ class TimeTable {
         // for (const [key, value] of subjectMap) {
         //     this.sortTimeSlots(value);
         // }
+        */
 
-        return subjectMap;
+        return this.subjectsMap;
     }
 
     private sortTimeSlots(timeslots: { dayOfWeek: number, timeOfDay: number }[]): void {
@@ -128,14 +126,15 @@ class TimeTable {
      * @returns true if and only if the timeslot is not marked as unavailable
      */
     isAvailableOn(dayOfWeek: number, timeOfDay: number): boolean {
-        return this.getSubjectOn(dayOfWeek, timeOfDay) != unavailableSubject;
+        let className = this.getSubjectOn(dayOfWeek, timeOfDay)?.constructor.name ?? "";
+        return className != Unavailable.name;
     }
 
     /**
      * @returns true if and only if the timeslot is marked as unavailable
      */
     isUnavailableOn(dayOfWeek: number, timeOfDay: number): boolean {
-        return this.getSubjectOn(dayOfWeek, timeOfDay) == unavailableSubject;
+        return !this.isAvailableOn(dayOfWeek, timeOfDay);
     }
 
     /**
@@ -143,7 +142,7 @@ class TimeTable {
      */
     isAssignedOn(dayOfWeek: number, timeOfDay: number): boolean {
         const sub = this.getSubjectOn(dayOfWeek, timeOfDay);
-        return sub != null && sub != unavailableSubject;
+        return sub != null && sub.constructor.name !== Unavailable.name;
     }
 
 
@@ -185,7 +184,7 @@ class TimeTable {
         this.subjectsMap.delete(subject.id);
     }
 
-    getTimeSlotsOf(subject: Subject): { dayOfWeek: number, timeOfDay: number }[] {
+    getTimeSlotsOf(subject: Subject | Unavailable): { dayOfWeek: number, timeOfDay: number }[] {
         return this.subjectsMap.get(subject.id) ?? [];
     }
 
@@ -194,7 +193,7 @@ class TimeTable {
     }
 
     getUnavailableTimeslots(): { dayOfWeek: number, timeOfDay: number }[] {
-        return this.getTimeSlotsOf(unavailableSubject);
+        return this.getTimeSlotsOf(new Unavailable());
     }
 
     getUnassignedTimeslots(): { dayOfWeek: number, timeOfDay: number }[] {
@@ -224,7 +223,7 @@ export function setSubject(dayOfWeek: number, timeOfDay: number, subject: Subjec
 function setSubjectOnTimeTable(dayOfWeek: number, timeOfDay: number, subject: Subject, timeTable: TimeTable) {
     const oldSubject = timeTable.getSubjectOn(dayOfWeek, timeOfDay);
 
-    if (oldSubject == unavailableSubject) {
+    if (oldSubject?.constructor.name == Unavailable.name) {
         throw new Error("Trying to assign a subject on an unavailable timeslot");
     }
     else if (oldSubject != null) {
@@ -235,12 +234,14 @@ function setSubjectOnTimeTable(dayOfWeek: number, timeOfDay: number, subject: Su
     timeTable.setSubjectOn(dayOfWeek, timeOfDay, subject);
 }
 
-export function removeSubject(dayOfWeek: number, timeOfDay: number, subject: Subject) {
-    if (subject == unavailableSubject) {
+export function removeSubject(dayOfWeek: number, timeOfDay: number, subject: Subject | Unavailable) {
+    if (subject.constructor.name == Unavailable.name) {
         throw new Error("Trying to remove an unavailable subject");
     }
 
+    // @ts-ignore
     const ctt = getClassTimetableOf(subject.schoolClass);
+    // @ts-ignore
     const ptt = getProfessorTimetableOf(subject.professor);
 
     if (ctt.getSubjectOn(dayOfWeek, timeOfDay) != subject || ptt.getSubjectOn(dayOfWeek, timeOfDay) != subject) {
@@ -257,9 +258,8 @@ export function setUnavailable(dayOfWeek: number, timeOfDay: number, entity: Sch
     const oldSubject = timeTable.getSubjectOn(dayOfWeek, timeOfDay);
 
 
-
     if (available) {
-        if (oldSubject != unavailableSubject) {
+        if (oldSubject?.constructor.name != Unavailable.name) {
             // throw new Error("Trying to remove a subject from an available timeslot");
             return; // nothing to do
         }
@@ -270,7 +270,7 @@ export function setUnavailable(dayOfWeek: number, timeOfDay: number, entity: Sch
         }
     }
 
-    const newSubject = available ? null : unavailableSubject;
+    const newSubject = available ? null : new Unavailable();
     timeTable.setSubjectOn(dayOfWeek, timeOfDay, newSubject);
 }
 
