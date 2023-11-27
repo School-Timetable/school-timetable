@@ -28,6 +28,7 @@
 	}>();
 
 	export let subject: Subject | null = null;
+	export let cloning: boolean = false;
 	export let schoolClasses: SchoolClass[] = get(allClassrooms);
 	export let professors: Professor[] = get(allProfessors);
 
@@ -49,15 +50,7 @@
 
 	let editingSubject: SubjectFormData;
 
-	if (subject == null) {
-		editingSubject = {
-			_id: null,
-			_name: { value: "" },
-			_abbreviation: { value: "" },
-			_weight: { value: 5 },
-			_hoursPerWeek: { value: 1 },
-		};
-	} else {
+	if (subject) {
 		editingSubject = {
 			_id: subject.id,
 			_schoolClass: subject.schoolClass,
@@ -66,6 +59,15 @@
 			_abbreviation: { value: subject.abbreviation.value },
 			_weight: { value: subject.weight.value },
 			_hoursPerWeek: { value: subject.hoursPerWeek.value },
+		};
+		if (cloning) editingSubject._id = null;
+	} else {
+		editingSubject = {
+			_id: null,
+			_name: { value: "" },
+			_abbreviation: { value: "" },
+			_weight: { value: 5 },
+			_hoursPerWeek: { value: 1 },
 		};
 	}
 
@@ -84,7 +86,7 @@
 				editingSubject._name.value,
 				editingSubject._abbreviation.value,
 				editingSubject._weight.value,
-				editingSubject._hoursPerWeek.value
+				editingSubject._hoursPerWeek.value,
 			);
 
 			dispatch("save", { subject: savedSubject });
@@ -101,7 +103,7 @@
 	function validateWithSchema(
 		value: object | undefined,
 		fieldIdx: number,
-		schema: any
+		schema: any,
 	) {
 		try {
 			schema.parse(value);
@@ -146,7 +148,7 @@
 	</Col>
 
 	<Col sm={{ size: 2 }}>
-		<FormGroup floating label="professor" class="text-muted">
+		<FormGroup floating label="Professor" class="text-muted">
 			<Input
 				type="select"
 				label="professor"
@@ -164,7 +166,7 @@
 	</Col>
 
 	<Col sm={{ size: 2 }}>
-		<FormGroup floating label="abbreviation" class="text-muted">
+		<FormGroup floating label="Abbreviation" class="text-muted">
 			<Input
 				type="text"
 				label="abbreviation"
@@ -178,18 +180,18 @@
 				on:keydown={(e) => {
 					handleKeydown(e);
 				}}
-				on:keyup={() =>
+				on:input={() =>
 					validateWithSchema(
 						editingSubject._abbreviation,
 						0,
-						abbreviationSchema
+						abbreviationSchema,
 					)}
 			/>
 		</FormGroup>
 	</Col>
 
 	<Col sm={{ size: 2 }}>
-		<FormGroup floating label="name" class="text-muted">
+		<FormGroup floating label="Name" class="text-muted">
 			<Input
 				type="text"
 				label="name"
@@ -203,14 +205,14 @@
 				on:keydown={(e) => {
 					handleKeydown(e);
 				}}
-				on:keyup={() =>
+				on:input={() =>
 					validateWithSchema(editingSubject._name, 1, nameSchema)}
 			/>
 		</FormGroup>
 	</Col>
 
 	<Col sm={{ size: 1 }}>
-		<FormGroup floating label="weight" class="text-muted">
+		<FormGroup floating label="Weight" class="text-muted">
 			<Input
 				type="number"
 				label="weight"
@@ -224,7 +226,7 @@
 				on:keydown={(e) => {
 					handleKeydown(e);
 				}}
-				on:keyup={() =>
+				on:input={() =>
 					validateWithSchema(editingSubject._weight, 2, weightSchema)}
 				min="1"
 				max="10"
@@ -233,7 +235,7 @@
 	</Col>
 
 	<Col sm={{ size: 1 }}>
-		<FormGroup floating label="hours per Week" class="text-muted">
+		<FormGroup floating label="Hrs/Week" class="text-muted">
 			<Input
 				type="number"
 				label="hoursPerWeek"
@@ -247,11 +249,11 @@
 				on:keydown={(e) => {
 					handleKeydown(e);
 				}}
-				on:keyup={() =>
+				on:input={() =>
 					validateWithSchema(
 						editingSubject._hoursPerWeek,
 						3,
-						hoursPerWeekSchema
+						hoursPerWeekSchema,
 					)}
 				min="1"
 				max="30"
