@@ -81,7 +81,7 @@ function readCsvSubject(data: any){
             const professor = findProfessor(row[3],row[4],row[5]);
 
             if(professor && schoolClass){
-                const subject = Subject.of(null,schoolClass, professor, row[6], row[7], Number(row[8]), Number(row[9]));
+                const subject = Subject.of(null,schoolClass, professor, row[7], row[6], Number(row[8]), Number(row[9]));
                 subjects.push(subject);
             }else{
                 const failedSubject = `Class: ${row[0]}, ${row[1]}, ${row[2]}, Professor: ${row[3]}, ${row[4]}, ${row[5]}, Name: ${row[6]}, Abbreviation: ${row[7]}, Weight: ${row[8]}, Weekly Hours: ${row[9]}`;
@@ -102,11 +102,18 @@ function findClass(
     track: string
 ) {
     return get(allClassrooms).find((old) => {
-        return (
-            old.year.value === year &&
-            old.section.value === section &&
-            old.track?.value.toLocaleUpperCase() === track.toLocaleUpperCase()
-        );
+        if(!track){
+            return (
+                old.year.value === year &&
+                old.section.value === section
+            );
+        }else{
+            return (
+                old.year.value === year &&
+                old.section.value === section &&
+                old.track?.value.toLocaleUpperCase() === track?.toLocaleUpperCase()
+            );
+        }
     });
 }
 
