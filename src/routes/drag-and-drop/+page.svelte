@@ -48,11 +48,6 @@
             currentSidebar = subjects.filter(subject => subject.schoolClass.id == item.id)
     }
     
-    function getItems(): (Professor | SchoolClass)[]
-    {
-        return professorView ? professors : classes
-    }
-
     function onViewSwitchClick()
     {
         professorView = !professorView

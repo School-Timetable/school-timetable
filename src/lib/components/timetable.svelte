@@ -4,7 +4,7 @@
 	// Inspired by https://svelte.dev/repl/810b0f1e16ac4bbd8af8ba25d5e0deff?version=3.4.2.
 	
 	import type { Professor } from "$model/professor/professor";
-    import type { Subject } from "$model/subject/subject";
+    import { stringToSubject, type Subject } from "$model/subject/subject";
     import type { SchoolClass } from "$model/school-class/school-class";
  	import Hour from '$lib/components/hour.svelte';
   import { TimeTable, classTimetableMap, daysPerWeek, hoursPerDay, professorTimetableMap, removeSubject, setSubject } from '$model/TimeTable';
@@ -56,35 +56,45 @@
 		setSubject(info.subject,day,hour)
         
 		const pos = info.id.split(",")
+        console.log(info.id)
 		if(pos.length == 2)
-            if(oldValue)
+        {
+            if(!oldValue)
+                removeSubject(info.subject,pos[0],pos[1])
+            else
                 setSubject(oldValue,pos[0],pos[1])
+        }
 		else
 		{
+            
 			if(oldValue)
             {
                 const oldSubject = sidebar.find(val => val.professor.id == oldValue.professor.id)!
                 oldSubject.hoursPerWeek = new HoursPerWeek(oldSubject.hoursPerWeek.value + 1)
             }
-
             
-			//weekClass.sidebar.find(val => val.professor.id == info.subject.professor.id)!.remainingHours -= 1
 			
-            grid.values = grid.values
+            const subject = sidebar.find(val => val.professor.id == info.subject.professor.id)!
+            subject.hoursPerWeek = new HoursPerWeek(subject.hoursPerWeek.value - 1)
+            sidebar = sidebar
 		}
+        
+        grid.values = grid.values
 	}
 
 	function sideBarDrop(event: any)
 	{
-        /*
-		const subject : Subject = JSON.parse(event.dataTransfer.getData("subject"))
+
+        const subject = stringToSubject(event.dataTransfer.getData("subject"))
+        
 		const id = event.dataTransfer.getData("id")
 		const coord = id.split(",")
-        removeSubject()
+        removeSubject(subject,coord[0],coord[1])
 		grid.values[coord[0]][coord[1]] = null
-		weekClass.sidebar.find(val => val.professor.id == subject.professor.id)!.remainingHours += 1
-		weekClass.sidebar = weekClass.sidebar
-        */
+
+		const currentSubjectSidebar = sidebar.find(val => val.professor.id == subject.professor.id)!
+		currentSubjectSidebar.hoursPerWeek = new HoursPerWeek(currentSubjectSidebar.hoursPerWeek.value + 1)
+        sidebar = sidebar
 	
 	}
 
@@ -162,7 +172,7 @@
                     <tr>
                         {#each {length: daysPerWeek} as _, dayIndex}
                             <td>
-                                <Hour color={getSubjectColor(grid.values[dayIndex][hourIndex])} id={`${hourIndex},${dayIndex}`} on:hourDrop={event => dropValue(hourIndex,dayIndex,event.detail)} subject={grid.values[dayIndex][hourIndex]}></Hour>
+                                <Hour color={getSubjectColor(grid.values[dayIndex][hourIndex])} id={`${dayIndex},${hourIndex}`} on:hourDrop={event => dropValue(hourIndex,dayIndex,event.detail)} subject={grid.values[dayIndex][hourIndex]}></Hour>
                             </td>
                         {/each}
                     </tr>

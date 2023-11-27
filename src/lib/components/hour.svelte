@@ -1,5 +1,8 @@
 <script lang="ts">
-    import type { Subject } from "$model/subject/subject";
+  import { Professor } from "$model/professor/professor";
+  import { SchoolClass } from "$model/school-class/school-class";
+  import { HoursPerWeek } from "$model/subject/hours-per-week";
+    import { Subject, stringToSubject, subjectToString } from "$model/subject/subject";
     import { createEventDispatcher } from "svelte";
 
     const dispatch = createEventDispatcher();
@@ -28,7 +31,7 @@
         //ev.dataTransfer.setData("text", ev.target.id);
 
         console.log(JSON.stringify(subject))
-        ev.dataTransfer.setData("subject", JSON.stringify(subject));
+        ev.dataTransfer.setData("subject", subjectToString(subject))
         ev.dataTransfer.setData("id", ev.target.id);
         
 
@@ -40,7 +43,12 @@
         ev.preventDefault();
         console.log("ciao")
         //var data = ev.dataTransfer.getData("text");
-        let draggedSubject : Subject | null = JSON.parse(ev.dataTransfer.getData("subject"))
+
+        let draggedSubject : Subject | null = stringToSubject(ev.dataTransfer.getData("subject"))
+
+        
+
+
 
         dispatch("hourDrop", {subject: draggedSubject, id: ev.dataTransfer.getData("id")})
         highlight = false
@@ -56,6 +64,7 @@
         return `${subject.professor.name} ${subject.professor.surname} - ${subject.abbreviation}`
     }
 
+   
 </script>
 
 <section class="hour text-wrap btn align-middle container-fluid" class:highlight="{highlight}" class:disabled="{!draggable}" style:background-color="{color}" on:dragleave={event => highlight = false}  on:dragenter={event => highlight = draggable} style="user-select: none;" id={id} on:dragstart={event => drag(event)} draggable={subject != null && draggable} on:dragover={event => allowDrop(event)} on:drop={event => drop(event)}>{set_cell_content(subject) || ""}</section>
