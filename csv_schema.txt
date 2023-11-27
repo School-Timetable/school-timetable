@@ -3,4 +3,4 @@ C:classroom
 S:subject
 H:hourOfDay
 D:dayOfWeek
-
+SM:class-id;subj-id;[dayOfWeek:hoursOfDay]

@@ -1,8 +1,9 @@
-import { getExistingClassroomsFromFile, getExistingDaysOfWeekFromFile, getExistingHoursOfDayFromFile, getExistingProfessorFromFile, getExistingSubjectsFromFile, readCookieFile } from "$lib/stores/utils/cookie_file_reader";
+import { getExistingClassroomsFromFile, getExistingDaysOfWeekFromFile, getExistingHoursOfDayFromFile, getExistingProfessorFromFile, getExistingSubjectsFromFile } from "$lib/stores/utils/cookie_file_parser";
 import type { Professor } from "$model/professor/professor";
 import type { SchoolClass } from "$model/school-class/school-class";
 import type { Subject } from "$model/subject/subject";
 import { get, writable } from "svelte/store";
+import { readCookieFile } from "./utils/cookie_file_reader";
 
 // Read the whole file and store the lines in this list
 export const file_data = readCookieFile();
