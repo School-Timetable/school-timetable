@@ -17,7 +17,7 @@
     // prova    
     export let grid: TimeTable
     export let sidebar: Subject[]
-    export let professorView: boolean = false
+    export let professorView: boolean
 
 
     // getting subjects colors
@@ -105,6 +105,8 @@
 
     function getSubjectColor(item: Subject | null) 
     {
+        console.log("Subject abbr = ", item?.abbreviation, "subject id = ", item?.id)
+        console.log(subjectColors)
         if (item == null)
             return 'transparent'
         return subjectColors!.get(item.id)
@@ -131,7 +133,7 @@
                 {#each sidebar as item, itemIndex }
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <div class="w-75">
-                            <Hour color={getSubjectColor(item)} droppable={false} draggable={item.hoursPerWeek.value > 0} id="prova" subject={item} on:hourDrop={event => {}}></Hour>
+                            <Hour isProfessorView={professorView} color={getSubjectColor(item)} droppable={false} draggable={item.hoursPerWeek.value > 0} id="prova" subject={item} on:hourDrop={event => {}}></Hour>
                         </div>
                         <span class="badge bg-primary rounded-pill">{item.hoursPerWeek.value}</span>
                     </li>
@@ -172,7 +174,7 @@
                     <tr>
                         {#each {length: daysPerWeek} as _, dayIndex}
                             <td>
-                                <Hour color={getSubjectColor(grid.values[dayIndex][hourIndex])} id={`${dayIndex},${hourIndex}`} on:hourDrop={event => dropValue(hourIndex,dayIndex,event.detail)} subject={grid.values[dayIndex][hourIndex]}></Hour>
+                                <Hour isProfessorView={professorView} color={getSubjectColor(grid.values[dayIndex][hourIndex])} id={`${hourIndex},${dayIndex}`} on:hourDrop={event => dropValue(hourIndex,dayIndex,event.detail)} subject={grid.values[dayIndex][hourIndex]}></Hour>
                             </td>
                         {/each}
                     </tr>
