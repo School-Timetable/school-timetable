@@ -9,11 +9,14 @@
 	import type { FieldInfo } from "$model/model-generics";
 	import TableList from "./TableList.svelte";
 	import MyModal from "$lib/components/MyModal.svelte";
+	import MyCsvModal from "$lib/components/MyCsvModal.svelte";
+	import { readCsv } from "$lib/stores/utils/read_csv_from_file";
 	import { Alert } from "sveltestrap";
 
 	let options = { duration: 200, easing: linear };
 
 	let showModal = false;
+	let showCsvModal = false; 
 	let showDuplicateAlert = false;
 	let toggle = () => {
 		showDuplicateAlert = !showDuplicateAlert;
@@ -70,6 +73,20 @@
 		removeAllClassesFromStorage();
 	}
 
+	function handleConfirmCsvSubmission(event: { detail: any; }) {
+        const file = event.detail;
+		let failedClasses: string[] = [];
+		readCsv(file, 'class').then((result) => {
+			const classes = result[0] as SchoolClass[];
+			failedClasses = result[1] as string[];
+			classes.forEach((schoolClass) => {
+				if (!classAlreadyExists(schoolClass)) {
+					saveSchoolClass(schoolClass);
+				}
+			});
+		});
+    }
+
 </script>
 
 <TableList
@@ -79,6 +96,9 @@
 	on:delete={(e) => removeClass(e.detail.value)}
 	on:deleteAll={() => {
 		showModal = true;
+	}}
+	on:importFromCsv={() => {
+		showCsvModal = true;
 	}}
 >
 	<ClassFormRow
@@ -110,6 +130,10 @@
 		deleted too!
 	</p>
 </MyModal>
+<MyCsvModal bind:showCsvModal on:confirmCsvSubmission={handleConfirmCsvSubmission}>
+	<h2 slot="header">Import class from CSV</h2>
+	<p slot="body">Please select a CSV file with the following columns: <br> Year, Section, and Track.</p>
+</MyCsvModal>
 <Alert color="warning" isOpen={showDuplicateAlert} {toggle}>
 	You are trying to add a class that already exists! Please check whether the
 	fields are unique.

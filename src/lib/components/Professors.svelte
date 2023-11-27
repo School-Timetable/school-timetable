@@ -12,6 +12,8 @@
 	import ProfessorFormRow from "./ProfessorFormRow.svelte";
 	import type { FieldInfo } from "$model/model-generics";
 	import MyModal from "$lib/components/MyModal.svelte";
+	import MyCsvModal from "$lib/components/MyCsvModal.svelte";
+	import { readCsv } from "$lib/stores/utils/read_csv_from_file";
 	import {
 		Alert,
 		Modal,
@@ -19,8 +21,8 @@
 		ModalFooter,
 		ModalHeader,
 	} from "sveltestrap";
-
 	let showModal = false;
+	let showCsvModal = false; 
 	let showDuplicateAlert = false;
 	let toggle = () => {
 		showDuplicateAlert = !showDuplicateAlert;
@@ -72,6 +74,26 @@
 			);
 		});
 	}
+
+	function handleConfirmCsvSubmission(event: { detail: any; }) {
+        const file = event.detail;
+		let failedProfessors: string[] = [];
+		readCsv(file, 'professor').then((result) => {
+			const professors = result[0] as Professor[];
+			failedProfessors = result[1] as string[];
+			professors.forEach((professor) => {
+				if (!professorAlreadyExists(professor)) {
+					save(professor);
+				}
+			});
+		});
+    }
+
+	function addProfessor(professor: Professor) {
+		const professors = get(allProfessors);
+		professors.push(professor);
+		allProfessors.set(professors);
+	}
 </script>
 
 <TableList
@@ -81,6 +103,9 @@
 	on:delete={(e) => removeItem(e.detail.value)}
 	on:deleteAll={() => {
 		showModal = true;
+	}}
+	on:importFromCsv={() => {
+		showCsvModal = true;
 	}}
 >
 	<ProfessorFormRow
@@ -113,6 +138,10 @@
 		deleted too!
 	</p>
 </MyModal>
+<MyCsvModal bind:showCsvModal on:confirmCsvSubmission={handleConfirmCsvSubmission}>
+	<h2 slot="header">Import professors from CSV</h2>
+	<p slot="body">Please select a CSV file with the following columns: <br> Name, Surname, Email, and Cellphone.</p>
+</MyCsvModal>
 <Alert color="warning" isOpen={showDuplicateAlert} {toggle}>
 	You are trying to add a professor that already exists! Please check the
 	name, surname and email.
