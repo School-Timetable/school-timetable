@@ -5,26 +5,48 @@ import { SchoolClass } from '$model/school-class/school-class';
 import { Subject } from '$model/subject/subject';
 
 
-export function readCsv(filePath: string, type: string, existing_prof?: Professor[], existing_class?: SchoolClass[]){
+export function readCsv(file: File, type: string, existing_prof?: Professor[], existing_class?: SchoolClass[]){
     
-    const csvString = fs.readFileSync(filePath, 'utf8');
-    const csv = Papa.parse<string>(csvString);
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
 
-    if(type === 'professor'){
-        return readCsvProfessor(csv.data);
-    }else if(type === 'class'){
-       return readCsvClass(csv.data);
-    }else if(type === 'subject' && existing_prof !== undefined && existing_class !== undefined){
-        return readCsvSubject(csv.data, existing_prof, existing_class);
-    } 
+        reader.onload = function(event) {
+            const csvString = event.target.result as string;
+            const csv = Papa.parse<string>(csvString);
+
+            if(type === 'professor'){
+                resolve(readCsvProfessor(csv.data));
+            }else if(type === 'class'){
+                resolve(readCsvClass(csv.data));
+            }else if(type === 'subject' && existing_prof !== undefined && existing_class !== undefined){
+                resolve(readCsvSubject(csv.data, existing_prof, existing_class));
+            } 
+        };
+
+        reader.onerror = function() {
+            reject(new Error("Error reading file"));
+        };
+
+        reader.readAsText(file);
+    });
 }
 
-function readCsvProfessor(data: any){
+export function readCsvProfessor(data: any){
+    const results: any[] = [];
     const professors: Professor[] = [];
+    const errors: string[] = [];
+    results.push(professors);
+    results.push(errors);
     data.forEach((row: string) => {
-        professors.push(Professor.of(null,row[0], row[1], row[2], row[3]));
+        try {
+            const professor = Professor.of(null,row[0], row[1], row[2], row[3]);
+            professors.push(professor);
+        } catch (error) {
+            const failedProfessor = `Name: ${row[0]}, Surname: ${row[1]}, Email: ${row[2]}, Cell Phone: ${row[3]}`;
+            errors.push(failedProfessor);
+        }
     });
-    return professors;
+    return results;
 }
 
 function readCsvClass(data: any){
