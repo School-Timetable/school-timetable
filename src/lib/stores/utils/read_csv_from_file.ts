@@ -25,7 +25,7 @@ export function readCsv(file: File, type: string){
         };
 
         reader.onerror = function() {
-            reject(new Error("Error reading file"));
+            alert('Unable to read ' + file.fileName + ', please try again or select a different file');
         };
 
         reader.readAsText(file);
