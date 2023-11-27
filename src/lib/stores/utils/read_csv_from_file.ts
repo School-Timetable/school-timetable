@@ -3,9 +3,11 @@ import fs from 'fs'
 import { Professor } from '$model/professor/professor';
 import { SchoolClass } from '$model/school-class/school-class';
 import { Subject } from '$model/subject/subject';
+import { get } from 'svelte/store';
+import { allClassrooms } from "$lib/stores/global_store";
+import { allProfessors } from '$lib/stores/global_store';
 
-
-export function readCsv(file: File, type: string, existing_prof?: Professor[], existing_class?: SchoolClass[]){
+export function readCsv(file: File, type: string){
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
 
@@ -17,8 +19,8 @@ export function readCsv(file: File, type: string, existing_prof?: Professor[], e
                 resolve(readCsvProfessor(csv.data));
             }else if(type === 'class'){
                 resolve(readCsvClass(csv.data));
-            }else if(type === 'subject' && existing_prof !== undefined && existing_class !== undefined){
-                resolve(readCsvSubject(csv.data, existing_prof, existing_class));
+            }else if(type === 'subject'){
+                resolve(readCsvSubject(csv.data));
             } 
         };
 
@@ -66,17 +68,58 @@ function readCsvClass(data: any){
     return results;
 }
 
-function readCsvSubject(data: any, existing_prof: Professor[], existing_class: SchoolClass[]){
+function readCsvSubject(data: any){
+    const results: any[] = [];
     const subjects: Subject[] = [];
+    const errors: string[] = [];
+    results.push(subjects);
+    results.push(errors);
     data.forEach((row: string) => {
-        const schoolClass = existing_class.find(cls => cls.id === row[0]);
-        const professor = existing_prof.find(prof => prof.id === row[1]);
-        
-        if(!professor || !schoolClass){
-            throw new Error("Professor or SchoolClass not found");
-        }
+        try {
 
-        subjects.push(Subject.of(null,schoolClass, professor, row[2], row[3], Number(row[4]), Number(row[5])));
+            const schoolClass = findClass(Number(row[0]),row[1],row[2]);
+            const professor = findProfessor(row[3],row[4],row[5]);
+
+            if(professor && schoolClass){
+                const subject = Subject.of(null,schoolClass, professor, row[6], row[7], Number(row[8]), Number(row[9]));
+                subjects.push(subject);
+            }else{
+                const failedSubject = `Class: ${row[0]}, ${row[1]}, ${row[2]}, Professor: ${row[3]}, ${row[4]}, ${row[5]}, Name: ${row[6]}, Abbreviation: ${row[7]}, Weight: ${row[8]}, Weekly Hours: ${row[9]}`;
+                errors.push(failedSubject);
+            }
+
+        } catch (error) {
+            const failedSubject = `Class: ${row[0]}, ${row[1]}, ${row[2]}, Professor: ${row[3]}, ${row[4]}, ${row[5]}, Name: ${row[6]}, Abbreviation: ${row[7]}, Weight: ${row[8]}, Weekly Hours: ${row[9]}`;
+            errors.push(failedSubject);
+        }
     });
-    return subjects;
+    return results;
+}
+
+function findClass(
+    year: Number,
+    section: string,
+    track: string
+) {
+    return get(allClassrooms).find((old) => {
+        return (
+            old.year.value === year &&
+            old.section.value === section &&
+            old.track?.value.toLocaleUpperCase() === track.toLocaleUpperCase()
+        );
+    });
+}
+
+function findProfessor(
+    name: string,
+    surname: string,
+    email: string,
+) {
+    return get(allProfessors).find((professor) => {
+        return (
+            professor.name.value === name &&
+            professor.surname.value === surname &&
+            professor.email.value === email
+        );
+    });
 }

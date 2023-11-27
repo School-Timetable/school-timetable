@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { allClassrooms } from "$lib/stores/global_store";
+	import { allProfessors } from "$lib/stores/global_store";
 	import type { Subject } from "$model/subject/subject";
 	import SubjectFormRow from "./SubjectFormRow.svelte";
 	import TableList from "./TableList.svelte";
@@ -6,9 +8,13 @@
 	import { get } from "svelte/store";
 	import type { FieldInfo } from "$model/model-generics";
 	import MyModal from "$lib/components/MyModal.svelte";
+	import MyCsvModal from "$lib/components/MyCsvModal.svelte";
+	import { readCsv } from "$lib/stores/utils/read_csv_from_file";
 	import { Alert } from "sveltestrap";
 
+
 	let showModal: boolean = false;
+	let showCsvModal: boolean = false;
 	let showDuplicateAlert = false;
 	let toggle = () => {
 		showDuplicateAlert = !showDuplicateAlert;
@@ -64,6 +70,20 @@
 			);
 		});
 	}
+
+	function handleConfirmCsvSubmission(event: { detail: any; }) {
+        const file = event.detail;
+		let failedSubjects: string[] = [];
+		readCsv(file, 'subject').then((result) => {
+			const subjects = result[0] as Subject[];
+			failedSubjects = result[1] as string[];
+			subjects.forEach((subject) => {
+				if (!subjectAlreadyExists(subject)) {
+					saveSubject(subject);
+				}
+			});
+		});
+    }
 </script>
 
 <!-- svelte-ignore missing-declaration -->
@@ -74,6 +94,9 @@
 	on:delete={(e) => removeSubject(e.detail.value)}
 	on:deleteAll={() => {
 		showModal = true;
+	}}
+	on:importFromCsv={() => {
+		showCsvModal = true;
 	}}
 >
 	<SubjectFormRow
@@ -102,6 +125,10 @@
 	<h2 slot="header">Delete all subjects</h2>
 	<p slot="body">Are you sure you want to delete all subjects?</p>
 </MyModal>
+<MyCsvModal bind:showCsvModal on:confirmCsvSubmission={handleConfirmCsvSubmission}>
+	<h2 slot="header">Import subjects from CSV</h2>
+	<p slot="body">Please select a CSV file with the following columns: <br> Year, Section, and Track of the class, Name, Surname, and Email of the professor, Abbreviation, Name, Weight, and Hours .</p>
+</MyCsvModal>
 <Alert color="warning" isOpen={showDuplicateAlert} {toggle}>
 	You are trying to add a subject that already exists! Please check whether
 	the fields are unique.
