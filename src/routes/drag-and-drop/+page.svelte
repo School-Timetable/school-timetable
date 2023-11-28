@@ -1,10 +1,10 @@
 <script lang="ts">
     import Timetable from '$lib/components/timetable.svelte';
   import { allClassrooms, allProfessors, allSubjects } from '$lib/stores/global_store';
-  import { classTimetableMap, professorTimetableMap, setSubject, type TimeTable } from '$model/TimeTable';
   import { Professor } from '$model/professor/professor';
   import type { SchoolClass } from '$model/school-class/school-class';
   import type { Subject } from '$model/subject/subject';
+  import { TimeTable, getClassTimetableOf, getProfessorTimetableOf } from '$model/timetable/time-table';
 
     // prova
     
@@ -18,7 +18,6 @@
     allClassrooms.subscribe(c => classes = c)
     allSubjects.subscribe(s => {
         subjects = s
-        subjects.forEach(sub =>  setSubject(sub,0,0))
         
     })
 
@@ -36,9 +35,8 @@
     
     function setCurrentView(item: Professor | SchoolClass) {
         
-        const timetableMap : ReadonlyMap<string,TimeTable> = item instanceof Professor ? professorTimetableMap : classTimetableMap
         
-        let timetable = timetableMap.get(item.id)!
+        let timetable = item instanceof Professor ? getProfessorTimetableOf(item) : getClassTimetableOf(item)
         currentTimeTable = timetable
 
 

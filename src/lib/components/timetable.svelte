@@ -4,11 +4,12 @@
 	// Inspired by https://svelte.dev/repl/810b0f1e16ac4bbd8af8ba25d5e0deff?version=3.4.2.
 	
 	import type { Professor } from "$model/professor/professor";
-    import { stringToSubject, type Subject } from "$model/subject/subject";
+    import { stringToSubject, Subject } from "$model/subject/subject";
     import type { SchoolClass } from "$model/school-class/school-class";
  	import Hour from '$lib/components/hour.svelte';
-  import { TimeTable, classTimetableMap, daysPerWeek, hoursPerDay, professorTimetableMap, removeSubject, setSubject } from '$model/TimeTable';
-  import { HoursPerWeek } from '$model/subject/hours-per-week';
+    import { HoursPerWeek } from '$model/subject/hours-per-week';
+  import { daysPerWeek, hoursPerDay, removeSubject, setSubject, type TimeTable } from '$model/timetable/time-table';
+  import { Unavailable } from '$model/timetable/unavailable';
 
 
 
@@ -39,12 +40,6 @@
 
     console.log(subjectColors)
 	
-
-    function getGridMap() : ReadonlyMap<String,TimeTable>
-    {
-        return professorView ? professorTimetableMap : classTimetableMap
-    }
-
 	function dropValue(hour: number,day: number, info: any)
 	{
 
@@ -52,34 +47,23 @@
 		//	return
 
 
-		const oldValue = grid.values[day][hour]
-		setSubject(info.subject,day,hour)
+		const oldValue = grid.getSubjectOn(day,hour)
+		setSubject(day,hour,info.subject)
+
         
 		const pos = info.id.split(",")
-        console.log(info.id)
 		if(pos.length == 2)
         {
-            if(!oldValue)
-                removeSubject(info.subject,pos[0],pos[1])
-            else
-                setSubject(oldValue,pos[0],pos[1])
+            console.log(pos)
+            removeSubject(Number.parseInt(pos[1]),Number.parseInt(pos[0]),info.subject)
+            console.log(info.subject)
+            if(oldValue instanceof Subject)
+                setSubject(Number.parseInt(pos[1]),Number.parseInt(pos[0]),oldValue)
         }
-		else
-		{
-            
-			if(oldValue)
-            {
-                const oldSubject = sidebar.find(val => val.professor.id == oldValue.professor.id)!
-                oldSubject.hoursPerWeek = new HoursPerWeek(oldSubject.hoursPerWeek.value + 1)
-            }
-            
-			
-            const subject = sidebar.find(val => val.professor.id == info.subject.professor.id)!
-            subject.hoursPerWeek = new HoursPerWeek(subject.hoursPerWeek.value - 1)
-            sidebar = sidebar
-		}
+        sidebar = sidebar
+        grid = grid
         
-        grid.values = grid.values
+        //grid.values = grid.values
 	}
 
 	function sideBarDrop(event: any)
@@ -88,12 +72,10 @@
         const subject = stringToSubject(event.dataTransfer.getData("subject"))
         
 		const id = event.dataTransfer.getData("id")
-		const coord = id.split(",")
-        removeSubject(subject,coord[0],coord[1])
-		grid.values[coord[0]][coord[1]] = null
-
-		const currentSubjectSidebar = sidebar.find(val => val.professor.id == subject.professor.id)!
-		currentSubjectSidebar.hoursPerWeek = new HoursPerWeek(currentSubjectSidebar.hoursPerWeek.value + 1)
+		const pos = id.split(",")
+        console.log("AAAAAAAAAA",pos)
+        removeSubject(Number.parseInt(pos[1]),Number.parseInt(pos[0]),subject)
+        grid = grid
         sidebar = sidebar
 	
 	}
@@ -103,13 +85,20 @@
         alert("Work in progess...")
     }
 
-    function getSubjectColor(item: Subject | null) 
+    function getSubjectColor(item: Subject | null | Unavailable) 
     {
-        console.log("Subject abbr = ", item?.abbreviation, "subject id = ", item?.id)
+
+
         console.log(subjectColors)
-        if (item == null)
+        if (item == null || item instanceof Unavailable)
             return 'transparent'
+        console.log("Subject abbr = ", item?.abbreviation, "subject id = ", item?.id)
         return subjectColors!.get(item.id)
+    }
+
+    function getRemainingHours(subject: Subject)
+    {
+        return subject.hoursPerWeek.value - grid.getCountOf(subject)
     }
 
 </script>
@@ -133,9 +122,9 @@
                 {#each sidebar as item, itemIndex }
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <div class="w-75">
-                            <Hour isProfessorView={professorView} color={getSubjectColor(item)} droppable={false} draggable={item.hoursPerWeek.value > 0} id="prova" subject={item} on:hourDrop={event => {}}></Hour>
+                            <Hour isProfessorView={professorView} color={getSubjectColor(item)} droppable={false} draggable={getRemainingHours(item) > 0} id="prova" subject={item} on:hourDrop={event => {}}></Hour>
                         </div>
-                        <span class="badge bg-primary rounded-pill">{item.hoursPerWeek.value}</span>
+                        <span class="badge bg-primary rounded-pill">{getRemainingHours(item)}</span>
                     </li>
                 {/each}
             </ul>
@@ -174,7 +163,7 @@
                     <tr>
                         {#each {length: daysPerWeek} as _, dayIndex}
                             <td>
-                                <Hour isProfessorView={professorView} color={getSubjectColor(grid.values[dayIndex][hourIndex])} id={`${hourIndex},${dayIndex}`} on:hourDrop={event => dropValue(hourIndex,dayIndex,event.detail)} subject={grid.values[dayIndex][hourIndex]}></Hour>
+                                <Hour isProfessorView={professorView} color={getSubjectColor(grid.getSubjectOn(dayIndex,hourIndex))} id={`${hourIndex},${dayIndex}`} on:hourDrop={event => dropValue(hourIndex,dayIndex,event.detail)} subject={grid.values[dayIndex][hourIndex]}></Hour>
                             </td>
                         {/each}
                     </tr>

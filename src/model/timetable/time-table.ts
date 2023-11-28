@@ -11,8 +11,8 @@ export const classTimetableMap: ReadonlyMap<string, TimeTable> = _classTimetable
 export const professorTimetableMap: ReadonlyMap<string, TimeTable> = _professorTimetableMap;
 
 // TODO: remove
-const daysPerWeek = 6;
-const hoursPerDay = 8;
+export const daysPerWeek = 6;
+export const hoursPerDay = 8;
 
 
 export class TimeTable {
@@ -244,9 +244,10 @@ export function removeSubject(dayOfWeek: number, timeOfDay: number, subject: Sub
     // @ts-ignore
     const ptt = getProfessorTimetableOf(subject.professor);
 
-    if (ctt.getSubjectOn(dayOfWeek, timeOfDay) != subject || ptt.getSubjectOn(dayOfWeek, timeOfDay) != subject) {
+    if (ctt.getSubjectOn(dayOfWeek, timeOfDay)?.id != subject.id || ptt.getSubjectOn(dayOfWeek, timeOfDay)?.id != subject.id) {
         throw new Error("Trying to remove a subject from a timeslot that doesn't contain it");
     }
+    
 
     ctt.setSubjectOn(dayOfWeek, timeOfDay, null);
     ptt.setSubjectOn(dayOfWeek, timeOfDay, null);
