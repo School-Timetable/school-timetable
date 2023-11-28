@@ -14,6 +14,8 @@
 	import ThemeSwitcher from "$lib/components/ThemeSwitcher.svelte";
 	import { Navbar, NavbarBrand } from "sveltestrap";
 	import { createPDF } from "$lib/stores/utils/export_to_pdf";
+    import { DayOfWeek } from "$model/timetable/day-of-week";
+    import { HourOfDay } from "$model/timetable/hour-of-day";
 
 	onMount(() => {
 		const generate_file = () =>
@@ -25,6 +27,7 @@
 		allProfessors.subscribe(generate_file);
 		allClassrooms.subscribe(generate_file);
 		allSubjects.subscribe(generate_file);
+
 	});
 </script>
 
