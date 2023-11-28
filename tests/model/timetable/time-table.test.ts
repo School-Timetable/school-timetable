@@ -1,4 +1,4 @@
-import { classTimetableMap, professorTimetableMap, setSubject, getClassTimetableOf, getProfessorTimetableOf, getTimetableOf, removeSubject, setUnavailable, setAvailable, clearAll, removeAllOf } from "$model/timetable/TimeTable";
+import { classTimetableMap, professorTimetableMap, setSubject, getClassTimetableOf, getProfessorTimetableOf, getTimetableOf, removeSubject, setUnavailable, setAvailable, clearAll, removeAllOf } from "$model/timetable/time-table";
 import { Professor } from "$model/professor/professor";
 import { SchoolClass } from "$model/school-class/school-class";
 import { Subject } from "$model/subject/subject";

@@ -15,6 +15,7 @@
 		delete: { value: AcceptedTypes };
 		editStart: { value: AcceptedTypes };
 		deleteAll: void;
+		importFromCsv: void;
 	}>();
 
 	type AcceptedTypes = Professor | SchoolClass | Subject;
@@ -124,12 +125,16 @@
 	function removeAllItems() {
 		eventDispatcher("deleteAll");
 	}
+
+	function importFromCsv(){
+		eventDispatcher("importFromCsv");
+	}
 </script>
 
 <div class="px-3 pb-3">
 	<div class="pb-3 mx-auto" style="max-width: 500px;">
 		<Row>
-			<Col sm={{ size: 8 }}>
+			<Col sm={{ size: 6 }}>
 				<FormSearch
 					{items}
 					on:search={(e) => {
@@ -138,9 +143,12 @@
 				/>
 			</Col>
 
-			<Col sm={{ size: 4 }}>
+			<Col sm={{ size: 6 }}>
 				<Button color="danger" on:click={() => removeAllItems()}>
 					<Icon name="trash-fill" />Delete all
+				</Button>
+				<Button color="primary" on:click={() => importFromCsv()}>
+					<Icon name="file-earmark-arrow-up" />Import
 				</Button>
 			</Col>
 		</Row>
