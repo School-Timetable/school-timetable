@@ -17,7 +17,7 @@ export const allClassrooms = writable(class_data);
 export const allSubjects = writable(getExistingSubjectsFromFile(file_data, prof_data, class_data));
 export const allHoursOfDay = writable(getExistingHoursOfDayFromFile(file_data));
 export const allDaysOfWeek = writable(getExistingDaysOfWeekFromFile(file_data));
-
+allDaysOfWeek.set
 export const theme = writable<"light" | "dark" | "auto">("auto");
 export const editingId = writable<string | null>(null);
 

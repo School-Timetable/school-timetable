@@ -18,8 +18,8 @@
     allClassrooms.subscribe(c => classes = c)
     allSubjects.subscribe(s => {
         subjects = s
-        
     })
+
 
     export let professorView : boolean = false
    

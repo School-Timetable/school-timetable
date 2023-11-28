@@ -28,9 +28,7 @@
     }
 
     function drag(ev:any) {
-        //ev.dataTransfer.setData("text", ev.target.id);
 
-        console.log(JSON.stringify(subject))
         ev.dataTransfer.setData("subject", subjectToString(subject))
         ev.dataTransfer.setData("id", ev.target.id);
         
@@ -41,25 +39,13 @@
 
     function drop(ev:any) {
         ev.preventDefault();
-        console.log("ciao")
-        //var data = ev.dataTransfer.getData("text");
-
         let draggedSubject : Subject | null = stringToSubject(ev.dataTransfer.getData("subject"))
-
-        
-        
-
-
-
         dispatch("hourDrop", {subject: draggedSubject, id: ev.dataTransfer.getData("id")})
         highlight = false
-
-        console.log(draggedSubject)
     }
 
 
     function set_cell_content(subject: Subject | null) {
-        console.log("isProfessorView = ", isProfessorView)
         if (!subject) {
             return undefined;
         }

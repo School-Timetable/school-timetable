@@ -1,30 +1,17 @@
 <script lang="ts">
-    import { Button, Table } from 'sveltestrap';
-
-	// Inspired by https://svelte.dev/repl/810b0f1e16ac4bbd8af8ba25d5e0deff?version=3.4.2.
-	
-	import type { Professor } from "$model/professor/professor";
-    import { stringToSubject, Subject } from "$model/subject/subject";
-    import type { SchoolClass } from "$model/school-class/school-class";
- 	import Hour from '$lib/components/hour.svelte';
-    import { HoursPerWeek } from '$model/subject/hours-per-week';
-  import { daysPerWeek, hoursPerDay, removeSubject, setSubject, type TimeTable } from '$model/timetable/time-table';
-  import { Unavailable } from '$model/timetable/unavailable';
-
-
-
+    import { Table } from 'sveltestrap';
+	import { stringToSubject, Subject } from "$model/subject/subject";
+    import Hour from '$lib/components/hour.svelte';
+    import { daysPerWeek, hoursPerDay, removeSubject, setSubject, type TimeTable } from '$model/timetable/time-table';
+    import { Unavailable } from '$model/timetable/unavailable';
 	export let weekNames = ["MON","TUE","WED","THU","FRI","SAT"]
-
-    // prova    
     export let grid: TimeTable
     export let sidebar: Subject[]
     export let professorView: boolean
 
 
     // getting subjects colors
-
-
-    let availableColors: string[] = [
+    const availableColors: readonly string[] = [
         "#fa968e",  // red
         "#79c9f7",  // blue
         "#88f28d",  // green
@@ -35,35 +22,30 @@
 
     // Map<subject.id, color>
     export let subjectColors: Map<string, string> = new Map()
-    let index = 0
-    sidebar.forEach(subject => subjectColors.set(subject.id, availableColors[(index++)%availableColors.length]))
+    
+    $: sidebar && onSidebarChange()
 
-    console.log(subjectColors)
-	
+    const onSidebarChange = () => {
+        let index = 0
+        subjectColors.clear()
+        sidebar.forEach(subject => subjectColors.set(subject.id, availableColors[(index++)%availableColors.length]))
+
+    }
+
 	function dropValue(hour: number,day: number, info: any)
 	{
-
-		//if(info.prof.name == weekClass.grid[hour][day]?.professor.name)
-		//	return
-
-
 		const oldValue = grid.getSubjectOn(day,hour)
 		setSubject(day,hour,info.subject)
 
-        
 		const pos = info.id.split(",")
 		if(pos.length == 2)
         {
-            console.log(pos)
             removeSubject(Number.parseInt(pos[1]),Number.parseInt(pos[0]),info.subject)
-            console.log(info.subject)
             if(oldValue instanceof Subject)
                 setSubject(Number.parseInt(pos[1]),Number.parseInt(pos[0]),oldValue)
         }
         sidebar = sidebar
         grid = grid
-        
-        //grid.values = grid.values
 	}
 
 	function sideBarDrop(event: any)
@@ -73,7 +55,6 @@
         
 		const id = event.dataTransfer.getData("id")
 		const pos = id.split(",")
-        console.log("AAAAAAAAAA",pos)
         removeSubject(Number.parseInt(pos[1]),Number.parseInt(pos[0]),subject)
         grid = grid
         sidebar = sidebar
@@ -87,12 +68,8 @@
 
     function getSubjectColor(item: Subject | null | Unavailable) 
     {
-
-
-        console.log(subjectColors)
         if (item == null || item instanceof Unavailable)
             return 'transparent'
-        console.log("Subject abbr = ", item?.abbreviation, "subject id = ", item?.id)
         return subjectColors!.get(item.id)
     }
 
