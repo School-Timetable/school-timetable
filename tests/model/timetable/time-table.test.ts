@@ -330,5 +330,16 @@ describe("Timetable", () => {
             expect(tt.getCountOf(subjects[0])).toBe(0);
         });
 
+        it("should be empty", () => {
+            const tt = getTimetableOf(classes[0]);
+
+            expect(tt.isEmpty()).toBe(true);
+
+            setSubject(0, 1, subjects[0]);
+            expect(tt.isEmpty()).toBe(false);
+
+            tt.clear();
+            expect(tt.isEmpty()).toBe(true);
+        });
     });
 });

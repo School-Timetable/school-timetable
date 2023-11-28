@@ -207,6 +207,10 @@ export class TimeTable {
         }
         return unassigned;
     }
+
+    isEmpty(): boolean {
+        return this.subjectsMap.size == 0;
+    }
 }
 
 
