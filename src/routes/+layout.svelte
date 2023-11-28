@@ -13,6 +13,7 @@
 	import { goto } from "$app/navigation";
 	import ThemeSwitcher from "$lib/components/ThemeSwitcher.svelte";
 	import { Navbar, NavbarBrand } from "sveltestrap";
+	import { createPDF } from "$lib/stores/utils/export_to_pdf";
 
 	onMount(() => {
 		const generate_file = () =>
@@ -47,6 +48,11 @@
 		<div class="zoom-hover">
 			<NavbarBrand style="margin-left: 20px;" href="/data-input-form">
 				Input Form
+			</NavbarBrand>
+		</div>
+		<div class="zoom-hover">
+			<NavbarBrand style="margin-left: 20px;" on:click={createPDF}>
+				Pdf
 			</NavbarBrand>
 		</div>
 	</div>

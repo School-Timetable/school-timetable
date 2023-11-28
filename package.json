@@ -33,6 +33,8 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@types/pdfmake": "^0.2.8",
+		"pdfmake": "^0.2.8",
 		"sveltestrap": "^5.11.2",
 		"uuid": "^9.0.1",
 		"zod": "^3.22.4"
