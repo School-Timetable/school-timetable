@@ -1,25 +1,16 @@
 <script lang="ts">
-  import { Professor } from "$model/professor/professor";
-  import { SchoolClass } from "$model/school-class/school-class";
-  import { HoursPerWeek } from "$model/subject/hours-per-week";
     import { Subject, stringToSubject, subjectToString } from "$model/subject/subject";
+    import  { Unavailable } from "$model/timetable/unavailable";
     import { createEventDispatcher } from "svelte";
-
     const dispatch = createEventDispatcher();
-
     export let id : String
-    
     export let draggable: boolean = true
     export let droppable: boolean = true
-
-
-    export let highlight: Boolean = false
-
-
-    export let subject: Subject | null
-
-    export let color: string
-    export let isProfessorView: boolean
+    let highlight: Boolean = false
+    export let subject: Subject | Unavailable | null
+    export let color: string = "transparent"
+    export let isProfessorView: boolean = false
+    export let unavailable: boolean = false
 
 
     function allowDrop(ev:any) {
@@ -55,12 +46,30 @@
             return `${subject.professor.name} ${subject.professor.surname} - ${subject.abbreviation}`
     }
 
-   
+    function onClick()
+    {
+        dispatch("click")
+    }
+
+    function onDragEnd()
+    {
+        dispatch("dragend")
+    }
+
 </script>
 
-<section class="hour text-wrap btn align-middle container-fluid" class:highlight="{highlight}" class:disabled="{!draggable}" style:background-color="{color}" on:dragleave={event => highlight = false}  on:dragenter={event => highlight = draggable} style="user-select: none;" id={id} on:dragstart={event => drag(event)} draggable={subject != null && draggable} on:dragover={event => allowDrop(event)} on:drop={event => drop(event)}>{set_cell_content(subject) || ""}</section>
 
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<div class="container container-fluid btn text-wrap align-middle hour" on:click={onClick} style="position: relative;" >
+    {#if !(subject instanceof Unavailable)}
+        <section class="hourItem" class:highlight="{highlight}" class:disabled="{!draggable}" style:background-color="{color}" on:dragend={onDragEnd} on:dragleave={() => highlight = false}  on:dragenter={() => highlight = draggable} style="user-select: none;" id={id} on:dragstart={event => drag(event)} draggable={subject != null && draggable} on:dragover={event => allowDrop(event)} on:drop={event => drop(event)}>{set_cell_content(subject) || ""}</section>
+    {/if}
+    {#if subject instanceof Unavailable || unavailable}
+        <!-- TODO <img src="images/cross.png"> -->
+        <section class="hourItem">Unavailable</section>
+    {/if}
+</div>
 <style>
 
     .highlight {
@@ -68,13 +77,24 @@
     }
 
     .hour {
+        border: transparent;
         min-width: 50px;
         min-height: 50px;
-        border: transparent;
     }
 
     .disabled {
         background-color: rgb(178, 177, 177) !important; 
+    }
+
+    .hourItem
+    {
+        background-color: rgb(239, 107, 107);
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+        opacity: 0.8;
     }
 
 </style>

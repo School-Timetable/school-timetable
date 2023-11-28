@@ -38,8 +38,7 @@
         
         let timetable = item instanceof Professor ? getProfessorTimetableOf(item) : getClassTimetableOf(item)
         currentTimeTable = timetable
-
-
+        selectedItem = item
         if(item instanceof Professor)
             currentSidebar = subjects.filter(subject => subject.professor.id == item.id)
         else
@@ -72,7 +71,7 @@
         {/each}
     </ul>
     
-    {#if currentTimeTable}
-        <Timetable professorView={professorView} grid={currentTimeTable} sidebar={currentSidebar}></Timetable>
+    {#if currentTimeTable && selectedItem}
+        <Timetable selectedItem="{selectedItem}" professorView={professorView} grid={currentTimeTable} sidebar={currentSidebar}></Timetable>
     {/if}
 </div>

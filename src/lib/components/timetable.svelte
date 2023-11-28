@@ -2,13 +2,18 @@
     import { Table } from 'sveltestrap';
 	import { stringToSubject, Subject } from "$model/subject/subject";
     import Hour from '$lib/components/hour.svelte';
-    import { daysPerWeek, hoursPerDay, removeSubject, setSubject, type TimeTable } from '$model/timetable/time-table';
-    import { Unavailable } from '$model/timetable/unavailable';
+    import { daysPerWeek, getTimetableOf, hoursPerDay, removeSubject, setSubject, setUnavailable, type TimeTable } from '$model/timetable/time-table';
+    import { UNAVAILABLE, Unavailable } from '$model/timetable/unavailable';
+    import type { SchoolClass } from '$model/school-class/school-class';
+    import type { Professor } from '$model/professor/professor';
 	export let weekNames = ["MON","TUE","WED","THU","FRI","SAT"]
     export let grid: TimeTable
     export let sidebar: Subject[]
     export let professorView: boolean
+    export let selectedItem: Professor | SchoolClass
 
+
+    let unavailableTimeable: TimeTable | null = null
 
     // getting subjects colors
     const availableColors: readonly string[] = [
@@ -78,6 +83,34 @@
         return subject.hoursPerWeek.value - grid.getCountOf(subject)
     }
 
+    function onHourClick(day: number, hour: number)
+    {
+        
+        const subject = grid.getSubjectOn(day,hour)
+
+        //se la materia è non disponibile allora si mette a null
+        if(subject instanceof Unavailable)
+            setUnavailable(day,hour,selectedItem,true)
+        //se la materia è null allora si mette a indisponibile
+        else if(subject == null)
+            setUnavailable(day,hour,selectedItem, false)
+    
+        grid = grid  
+    }
+
+    function onSubjectDrag(subject: Subject | null | Unavailable)
+    {
+        if(!(subject instanceof Subject)) return;
+        unavailableTimeable = getTimetableOf(professorView ? subject.schoolClass : subject.professor)
+        console.log("POG", unavailableTimeable.values)
+    }
+
+    function onSubjectDragEnd()
+    {
+        unavailableTimeable = null
+        console.log("UNPOG")
+    }
+
 </script>
 
 
@@ -99,7 +132,7 @@
                 {#each sidebar as item, itemIndex }
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         <div class="w-75">
-                            <Hour isProfessorView={professorView} color={getSubjectColor(item)} droppable={false} draggable={getRemainingHours(item) > 0} id="prova" subject={item} on:hourDrop={event => {}}></Hour>
+                            <Hour on:hourDrag="{() => onSubjectDrag(item)}" on:dragend="{onSubjectDragEnd}" isProfessorView={professorView} color={getSubjectColor(item)} droppable={false} draggable={getRemainingHours(item) > 0} id="prova" subject={item} on:hourDrop={event => {}}></Hour>
                         </div>
                         <span class="badge bg-primary rounded-pill">{getRemainingHours(item)}</span>
                     </li>
@@ -107,25 +140,9 @@
             </ul>
         </div>
         
-        
-
-    
-<!--
-        <div class="row col-2 overflow-auto vh-100 my-1" on:dragover={event => event.preventDefault()} on:drop={event => sideBarDrop(event)}>
-            {#each weekClass.sidebar as item, itemIndex}
-                <div class="row d-inline-block h-auto">
-                    <div class="col-10">
-                        <Hour droppable={false} draggable={item.remainingHours > 0} id="prova" subject={item} on:hourDrop={event => {}}></Hour>
-                    </div>
-                    <div class="col-1 text-center">{item.remainingHours}</div>
-                </div>
-                
-            {/each}
-        </div>
-    -->
         <!--grid-->
         <div class="col-10">
-            <Table responsive>  
+            <Table >  
                 <!--header-->
                 <thead>
                     <tr>
@@ -140,7 +157,16 @@
                     <tr>
                         {#each {length: daysPerWeek} as _, dayIndex}
                             <td>
-                                <Hour isProfessorView={professorView} color={getSubjectColor(grid.getSubjectOn(dayIndex,hourIndex))} id={`${hourIndex},${dayIndex}`} on:hourDrop={event => dropValue(hourIndex,dayIndex,event.detail)} subject={grid.values[dayIndex][hourIndex]}></Hour>
+                                <Hour 
+                                on:hourDrag="{() => onSubjectDrag(grid.values[dayIndex][hourIndex])}"
+                                on:dragend="{onSubjectDragEnd}"
+                                on:click="{() => onHourClick(dayIndex,hourIndex)}"
+                                on:hourDrop={event => dropValue(hourIndex,dayIndex,event.detail)} 
+                                unavailable="{unavailableTimeable !== null && unavailableTimeable.values[dayIndex][hourIndex] instanceof Unavailable}"
+                                isProfessorView={professorView} 
+                                color={getSubjectColor(grid.getSubjectOn(dayIndex,hourIndex))}
+                                id={`${hourIndex},${dayIndex}`}
+                                subject={grid.values[dayIndex][hourIndex]}></Hour>
                             </td>
                         {/each}
                     </tr>
@@ -162,4 +188,5 @@
       border: 1px solid #e3e0e0;
       text-align: center;
     }
+
 </style>
