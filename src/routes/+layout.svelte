@@ -16,6 +16,10 @@
 	import { createPDF } from "$lib/stores/utils/export_to_pdf";
     import { DayOfWeek } from "$model/timetable/day-of-week";
     import { HourOfDay } from "$model/timetable/hour-of-day";
+    import { createExcel } from "$lib/stores/utils/create_excel_file";
+    import { professorTimetableMap } from "$model/timetable/time-table";
+    import { get } from "svelte/store";
+    import { Subject } from "$model/subject/subject";
 
 	onMount(() => {
 		const generate_file = () =>
@@ -56,6 +60,11 @@
 		<div class="zoom-hover">
 			<NavbarBrand style="margin-left: 20px;" on:click={createPDF}>
 				Pdf
+			</NavbarBrand>
+		</div>
+		<div class="zoom-hover">
+			<NavbarBrand style="margin-left: 20px;" on:click={createExcel}>
+				Excel
 			</NavbarBrand>
 		</div>
 	</div>
