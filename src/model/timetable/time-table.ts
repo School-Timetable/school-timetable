@@ -24,7 +24,7 @@ export const professorTimetableMap: ReadonlyMap<string, TimeTable> = _professorT
 
 // TODO: remove
 const daysPerWeek = 6;
-const hoursPerDay = 8;
+const hoursPerDay = 7;
 
 
 export class TimeTable {
