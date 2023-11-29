@@ -6,7 +6,8 @@
     import { UNAVAILABLE, Unavailable } from '$model/timetable/unavailable';
     import type { SchoolClass } from '$model/school-class/school-class';
     import type { Professor } from '$model/professor/professor';
-	export let weekNames = ["MON","TUE","WED","THU","FRI","SAT"]
+    import Grid from './Grid.svelte';
+	let weekNames = ["MON","TUE","WED","THU","FRI","SAT"]
     export let grid: TimeTable
     export let sidebar: Subject[]
     export let professorView: boolean
@@ -37,22 +38,6 @@
 
     }
 
-	function dropValue(hour: number,day: number, info: any)
-	{
-		const oldValue = grid.getSubjectOn(day,hour)
-		setSubject(day,hour,info.subject)
-
-		const pos = info.id.split(",")
-		if(pos.length == 2)
-        {
-            removeSubject(Number.parseInt(pos[1]),Number.parseInt(pos[0]),info.subject)
-            if(oldValue instanceof Subject)
-                setSubject(Number.parseInt(pos[1]),Number.parseInt(pos[0]),oldValue)
-        }
-        sidebar = sidebar
-        grid = grid
-	}
-
 	function sideBarDrop(event: any)
 	{
 
@@ -81,21 +66,6 @@
     function getRemainingHours(subject: Subject)
     {
         return subject.hoursPerWeek.value - grid.getCountOf(subject)
-    }
-
-    function onHourClick(day: number, hour: number)
-    {
-        
-        const subject = grid.getSubjectOn(day,hour)
-
-        //se la materia è non disponibile allora si mette a null
-        if(subject instanceof Unavailable)
-            setUnavailable(day,hour,selectedItem,true)
-        //se la materia è null allora si mette a indisponibile
-        else if(subject == null)
-            setUnavailable(day,hour,selectedItem, false)
-    
-        grid = grid  
     }
 
     function onSubjectDrag(subject: Subject | null | Unavailable)
@@ -141,10 +111,9 @@
         </div>
         
         <!--grid-->
-        
         <div class="col-10">
-            <Table >  
-                <!--header-->
+        <!--    <Table >  
+                
                 <thead>
                     <tr>
                         {#each {length: daysPerWeek} as _, dayIndex}
@@ -153,7 +122,7 @@
                     </tr>
                 </thead>
                 
-                <!--cells-->
+                
                 {#each {length: hoursPerDay} as _, hourIndex}
                     <tr>
                         {#each {length: daysPerWeek} as _, dayIndex}
@@ -172,8 +141,8 @@
                         {/each}
                     </tr>
                 {/each}
-            </Table>
-
+            </Table> -->
+            <Grid timeTable={grid} professorView={professorView} selectedItem={selectedItem} subjectColors={subjectColors}></Grid>
             
             <div class="d-flex justify-content-center">
                 <button type="button" class="btn btn-primary btn-lg w-100" on:click={event => validateTimetable()}>valida orario</button>
@@ -185,9 +154,5 @@
 </div>
  
 <style>
-    td, tr, th {
-      border: 1px solid #e3e0e0;
-      text-align: center;
-    }
 
 </style>
