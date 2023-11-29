@@ -338,6 +338,12 @@ describe("Timetable", () => {
             setSubject(0, 1, subjects[0]);
             expect(tt.isEmpty()).toBe(false);
 
+            tt.setSubjectOn(0, 1, null);
+            expect(tt.isEmpty()).toBe(true);
+
+            setSubject(0, 2, subjects[1]);
+            expect(tt.isEmpty()).toBe(false);
+
             tt.clear();
             expect(tt.isEmpty()).toBe(true);
         });
