@@ -11,7 +11,7 @@ export const classTimetableMap: ReadonlyMap<string, TimeTable> = _classTimetable
 export const professorTimetableMap: ReadonlyMap<string, TimeTable> = _professorTimetableMap;
 
 // TODO: remove
-export const daysPerWeek = 6;
+export const daysPerWeek = 15;
 export const hoursPerDay = 8;
 
 
