@@ -1,5 +1,5 @@
 import pdfMake from "pdfmake/build/pdfmake";
-import pdfFonts from 'pdfmake/build/vfs_fonts';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import type { PageOrientation, PageSize } from "pdfmake/interfaces";
 import { allClassrooms, allDaysOfWeek, allHoursOfDay, allProfessors, allSubjects } from "../global_store";
 import { classTimetableMap, professorTimetableMap, setSubject } from "$model/timetable/time-table";
@@ -16,6 +16,7 @@ const PAGEORIENTATION: PageOrientation = "landscape";
 
 //setSubject(0,0, get(allSubjects)[0]);
 //setSubject(0,3, get(allSubjects)[1])
+
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
