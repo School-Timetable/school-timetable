@@ -49,6 +49,9 @@ jobs:
         with:
           name: Build
 
+      - name: Install dependencies
+        run: npm install
+
       - name: Test
         run: cd .. |
             npm test
