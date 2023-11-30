@@ -48,19 +48,6 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: Build
-          
-      - name: Set up node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-          cache: npm
-
-      - name: Cache node modules
-        uses: actions/cache@v2
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-node-
 
       - name: Test
         run: npm test
