@@ -43,7 +43,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - uses: actions/checkout@v2
+    
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: school-timetable
+          
       - name: Set up node
         uses: actions/setup-node@v4
         with:
@@ -56,11 +61,6 @@ jobs:
           path: node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: ${{ runner.os }}-node-
-            
-      - name: Download Build Artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: school-timetable
 
       - name: Test
         run: npm test
