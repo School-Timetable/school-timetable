@@ -3,7 +3,7 @@ name: G1-pipeline
 
 on: 
   push:
-    branches: [ main ]
+    branches: [ g1-main ]
   pull_request:
     branches: [ main ]
   
