@@ -43,6 +43,19 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+
+      - name: Set up node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-
     
       - name: Download Build Artifact
         uses: actions/download-artifact@v3
@@ -50,5 +63,6 @@ jobs:
           name: Build
 
       - name: Test
-        run: npm test
+        run: cd .. |
+            npm test
   
