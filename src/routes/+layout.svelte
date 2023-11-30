@@ -20,6 +20,7 @@
     import { professorTimetableMap } from "$model/timetable/time-table";
     import { get } from "svelte/store";
     import { Subject } from "$model/subject/subject";
+    import ExportTimetableForm from "$lib/components/ExportTimetableForm.svelte";
 
 	onMount(() => {
 		const generate_file = () =>
@@ -58,6 +59,10 @@
 			</NavbarBrand>
 		</div>
 		<div class="zoom-hover">
+			<ExportTimetableForm style="margin-left: 20px;">
+			</ExportTimetableForm>
+		</div>
+		<!--<div class="zoom-hover">
 			<NavbarBrand style="margin-left: 20px;" on:click={createPDFProfView}>
 				PdfProf
 			</NavbarBrand>
@@ -71,7 +76,7 @@
 			<NavbarBrand style="margin-left: 20px;" on:click={() => createExcel("Professor")}>
 				Excel
 			</NavbarBrand>
-		</div>
+		</div>-->
 	</div>
 
 	<ThemeSwitcher />
