@@ -68,7 +68,7 @@
 			</NavbarBrand>
 		</div>
 		<div class="zoom-hover">
-			<NavbarBrand style="margin-left: 20px;" on:click={createExcel}>
+			<NavbarBrand style="margin-left: 20px;" on:click={() => createExcel("Professor")}>
 				Excel
 			</NavbarBrand>
 		</div>
