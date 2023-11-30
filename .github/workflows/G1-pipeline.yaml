@@ -32,6 +32,12 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: school-timetable
+          path: schoolTimetable
+
     
   unit-test:
     runs-on: ubuntu-latest
@@ -51,11 +57,10 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: ${{ runner.os }}-node-
             
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build
-        run: npm run build
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: school-timetable
 
       - name: Test
         run: npm test
