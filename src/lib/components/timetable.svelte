@@ -6,7 +6,11 @@
     import { UNAVAILABLE, Unavailable } from '$model/timetable/unavailable';
     import type { SchoolClass } from '$model/school-class/school-class';
     import type { Professor } from '$model/professor/professor';
-	export let weekNames = ["MON","TUE","WED","THU","FRI","SAT"]
+    import { allHoursOfDay, allDaysOfWeek } from '$lib/stores/global_store'; //TODO utilizzare i dati reali
+    import { DayOfWeek } from '$model/timetable/day-of-week';
+    import { HourOfDay } from '$model/timetable/hour-of-day';
+	//let weekNames = ["MON","TUE","WED","THU","FRI","SAT"]
+    //let mockHours = ["8:30","9:30","10:30","11:30","12:30","13:30","14:30","15:30"]
     export let grid: TimeTable
     export let sidebar: Subject[]
     export let professorView: boolean
@@ -111,6 +115,30 @@
         console.log("UNPOG")
     }
 
+    function onDayLabelChange(index: number) {
+        let input = document.getElementById("day_label_"+index) as HTMLInputElement;
+        let value: string = input.value;
+        if (value.match(/^[a-zA-Z0-9_\sì]*$/)) {
+            $allDaysOfWeek[index] = DayOfWeek.of(index,value);
+            allDaysOfWeek.set   //updates subscribers
+            console.log($allDaysOfWeek)
+        } else {
+            $allDaysOfWeek[index]? input.value=$allDaysOfWeek[index].label : input.value="day_"+(index+1);
+        }
+    }
+
+    function onHourLabelChange(index: number) {
+        let input = document.getElementById("hour_label_"+index) as HTMLInputElement;
+        let value: string = input.value;
+        if (value.match(/^[a-zA-Z0-9_\:/\s]*$/)) {
+            $allHoursOfDay[index] = HourOfDay.of(index,value);
+            allHoursOfDay.set   //updates subscribers
+            console.log($allHoursOfDay)
+        } else {
+            $allHoursOfDay[index]? input.value=$allHoursOfDay[index].label : input.value="hour_"+(index+1);
+        }
+    }
+
 </script>
 
 
@@ -146,8 +174,16 @@
                 <!--header-->
                 <thead>
                     <tr>
+                        <th class="col-2"></th>
                         {#each {length: daysPerWeek} as _, dayIndex}
-                            <th class="col-2">{weekNames[dayIndex]}</th>
+                            <th class="col-2">
+                                <!-- 
+                                    label with input for days
+                                -->
+                                <input  id="day_label_{dayIndex}" type="text" class="input_text"
+                                    value={$allDaysOfWeek[dayIndex]? $allDaysOfWeek[dayIndex].label : "day_"+(dayIndex+1)}
+                                    on:input={() => onDayLabelChange(dayIndex)}/> 
+                            </th>
                         {/each}
                     </tr>
                 </thead>
@@ -155,6 +191,14 @@
                 <!--cells-->
                 {#each {length: hoursPerDay} as _, hourIndex}
                     <tr>
+                        <!--
+                            label with input for hours
+                        -->
+
+                        <input id="hour_label_{hourIndex}" type="text" class="input_text"
+                            value={$allHoursOfDay[hourIndex]? $allHoursOfDay[hourIndex].label : "hour_"+(hourIndex+1)}
+                            on:input={() => onHourLabelChange(hourIndex)}/>
+
                         {#each {length: daysPerWeek} as _, dayIndex}
                             <td>
                                 <Hour 
@@ -187,6 +231,12 @@
     td, tr, th {
       border: 1px solid #e3e0e0;
       text-align: center;
+      width: fit-content;
     }
 
+    .input_text {
+        border: none;
+        width: 100%;
+        text-align: center;
+    }
 </style>
