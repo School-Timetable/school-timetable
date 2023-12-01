@@ -4,7 +4,7 @@ const MAX_LENGTH = 60;
 const valueSchema = z.string()
     .min(2, "The name is too short (min 2 characters)")
     .max(MAX_LENGTH, `The name is too long (max ${MAX_LENGTH} characters)`)
-    .regex(/^[a-z][\w' ]+[a-z]$/i, "The name contains invalid characters");
+    .regex(/^[a-z][\w' ]*[a-z]$/i, "The name contains invalid characters");
 
 export const nameSchema = z.object({
     value: valueSchema,

@@ -1,24 +1,14 @@
 <script lang="ts">
-	import {
-		Button,
-		ButtonGroup,
-		Col,
-		Form,
-		FormGroup,
-		Icon,
-		Input,
-		Label,
-		Row,
-	} from "sveltestrap";
+	import { Button, Col, FormGroup, Icon, Input, Row } from "sveltestrap";
 	import { createEventDispatcher } from "svelte";
-	import { ZodError, z } from "zod";
+	import { ZodError, ZodSchema } from "zod";
 	import type { SchoolClass } from "$model/school-class/school-class";
 	import { Subject } from "$model/subject/subject";
 	import type { Professor } from "$model/professor/professor";
-	import { abbreviationSchema } from "$model/subject/abbreviation";
-	import { nameSchema } from "$model/subject/name";
-	import { weightSchema } from "$model/subject/weight";
-	import { hoursPerWeekSchema } from "$model/subject/hours-per-week";
+	import { Abbreviation } from "$model/subject/abbreviation";
+	import { Name } from "$model/subject/name";
+	import { Weight } from "$model/subject/weight";
+	import { HoursPerWeek } from "$model/subject/hours-per-week";
 	import { allClassrooms, allProfessors } from "$lib/stores/global_store";
 	import { get } from "svelte/store";
 
@@ -77,6 +67,11 @@
 		feedback: "",
 	});
 
+	$: validateWithSchema(editingSubject._abbreviation, 0, Abbreviation.schema);
+	$: validateWithSchema(editingSubject._name, 1, Name.schema);
+	$: validateWithSchema(editingSubject._weight, 2, Weight.schema);
+	$: validateWithSchema(editingSubject._hoursPerWeek, 3, HoursPerWeek.schema);
+
 	function save() {
 		try {
 			let savedSubject = Subject.of(
@@ -100,13 +95,9 @@
 		dispatch("cancel");
 	}
 
-	function validateWithSchema(
-		value: object | undefined,
-		fieldIdx: number,
-		schema: any,
-	) {
+	function validateWithSchema(obj: any, fieldIdx: number, schema: ZodSchema) {
 		try {
-			schema.parse(value);
+			schema.parse(obj);
 			formValidationFeedback[fieldIdx] = {
 				valid: true,
 				invalid: false,
@@ -122,165 +113,141 @@
 			}
 		}
 	}
-	function handleKeydown(event: KeyboardEvent) {
-		if (event.key === "Enter") {
-			save();
-		}
-	}
 </script>
 
-<Row class="align-items-top g-1 mt-1">
-	<Col sm={{ size: 2 }}>
-		<FormGroup floating label="Class" class="text-muted">
-			<Input
-				type="select"
-				name="schoolClass"
-				id="schoolClass"
-				bind:value={editingSubject._schoolClass}
-			>
-				{#each schoolClasses as schoolClass}
-					<option value={schoolClass}>{schoolClass}</option>
-				{:else}
-					<option value={null}>No classes found</option>
-				{/each}
-			</Input>
-		</FormGroup>
-	</Col>
-
-	<Col sm={{ size: 2 }}>
-		<FormGroup floating label="Professor" class="text-muted">
-			<Input
-				type="select"
-				label="professor"
-				name="professor"
-				id="professor"
-				bind:value={editingSubject._professor}
-			>
-				{#each professors as professor}
-					<option value={professor}>{professor}</option>
-				{:else}
-					<option>no professors</option>
-				{/each}
-			</Input>
-		</FormGroup>
-	</Col>
-
-	<Col sm={{ size: 2 }}>
-		<FormGroup floating label="Abbreviation" class="text-muted">
-			<Input
-				type="text"
-				label="abbreviation"
-				name="abbreviation"
-				id="abbreviation"
-				placeholder="Abbreviation"
-				bind:value={editingSubject._abbreviation.value}
-				bind:valid={formValidationFeedback[0].valid}
-				bind:invalid={formValidationFeedback[0].invalid}
-				bind:feedback={formValidationFeedback[0].feedback}
-				on:keydown={(e) => {
-					handleKeydown(e);
-				}}
-				on:input={() =>
-					validateWithSchema(
-						editingSubject._abbreviation,
-						0,
-						abbreviationSchema,
-					)}
-			/>
-		</FormGroup>
-	</Col>
-
-	<Col sm={{ size: 2 }}>
-		<FormGroup floating label="Name" class="text-muted">
-			<Input
-				type="text"
-				label="name"
-				name="name"
-				id="name"
-				placeholder="Name"
-				bind:value={editingSubject._name.value}
-				bind:valid={formValidationFeedback[1].valid}
-				bind:invalid={formValidationFeedback[1].invalid}
-				bind:feedback={formValidationFeedback[1].feedback}
-				on:keydown={(e) => {
-					handleKeydown(e);
-				}}
-				on:input={() =>
-					validateWithSchema(editingSubject._name, 1, nameSchema)}
-			/>
-		</FormGroup>
-	</Col>
-
-	<Col sm={{ size: 1 }}>
-		<FormGroup floating label="Weight" class="text-muted">
-			<Input
-				type="number"
-				label="weight"
-				name="weight"
-				id="weight"
-				placeholder="Weight"
-				bind:value={editingSubject._weight.value}
-				bind:valid={formValidationFeedback[2].valid}
-				bind:invalid={formValidationFeedback[2].invalid}
-				bind:feedback={formValidationFeedback[2].feedback}
-				on:keydown={(e) => {
-					handleKeydown(e);
-				}}
-				on:input={() =>
-					validateWithSchema(editingSubject._weight, 2, weightSchema)}
-				min="1"
-				max="10"
-			/>
-		</FormGroup>
-	</Col>
-
-	<Col sm={{ size: 1 }}>
-		<FormGroup floating label="Hrs/Week" class="text-muted">
-			<Input
-				type="number"
-				label="hoursPerWeek"
-				name="hoursPerWeek"
-				id="hoursPerWeek"
-				placeholder="Hours per week"
-				bind:value={editingSubject._hoursPerWeek.value}
-				bind:valid={formValidationFeedback[3].valid}
-				bind:invalid={formValidationFeedback[3].invalid}
-				bind:feedback={formValidationFeedback[3].feedback}
-				on:keydown={(e) => {
-					handleKeydown(e);
-				}}
-				on:input={() =>
-					validateWithSchema(
-						editingSubject._hoursPerWeek,
-						3,
-						hoursPerWeekSchema,
-					)}
-				min="1"
-				max="30"
-			/>
-		</FormGroup>
-	</Col>
-
-	<Col sm={{ size: 2 }} class="ms-auto ps-0">
-		<Row class="g-1">
-			<Col>
-				<Button
-					color="primary"
-					class="w-100 text-nowrap"
-					on:click={save}
+<form on:submit|preventDefault={save}>
+	<Row class="align-items-top g-1 mt-1">
+		<Col sm={{ size: 2 }}>
+			<FormGroup floating label="Class" class="text-muted">
+				<Input
+					type="select"
+					name="schoolClass"
+					id="schoolClass"
+					required
+					bind:value={editingSubject._schoolClass}
 				>
-					Save <Icon name="check" />
-				</Button>
-			</Col>
-			<Col>
-				<Button
-					color="danger"
-					class="w-100 text-nowrap"
-					on:click={cancel}
+					{#each schoolClasses as schoolClass}
+						<option value={schoolClass}>{schoolClass}</option>
+					{:else}
+						<option value={null}>No classes found</option>
+					{/each}
+				</Input>
+			</FormGroup>
+		</Col>
+
+		<Col sm={{ size: 2 }}>
+			<FormGroup floating label="Professor" class="text-muted">
+				<Input
+					type="select"
+					label="professor"
+					name="professor"
+					id="professor"
+					required
+					bind:value={editingSubject._professor}
 				>
-					Cancel <Icon name="x" />
-				</Button>
-			</Col>
-		</Row>
-	</Col>
-</Row>
+					{#each professors as professor}
+						<option value={professor}>{professor}</option>
+					{:else}
+						<option>no professors</option>
+					{/each}
+				</Input>
+			</FormGroup>
+		</Col>
+
+		<Col sm={{ size: 2 }}>
+			<FormGroup floating label="Abbreviation" class="text-muted">
+				<Input
+					type="text"
+					label="abbreviation"
+					name="abbreviation"
+					id="abbreviation"
+					placeholder="Abbreviation"
+					required
+					bind:value={editingSubject._abbreviation.value}
+					bind:valid={formValidationFeedback[0].valid}
+					bind:invalid={formValidationFeedback[0].invalid}
+					bind:feedback={formValidationFeedback[0].feedback}
+				/>
+			</FormGroup>
+		</Col>
+
+		<Col sm={{ size: 2 }}>
+			<FormGroup floating label="Name" class="text-muted">
+				<Input
+					type="text"
+					label="name"
+					name="name"
+					id="name"
+					placeholder="Name"
+					required
+					bind:value={editingSubject._name.value}
+					bind:valid={formValidationFeedback[1].valid}
+					bind:invalid={formValidationFeedback[1].invalid}
+					bind:feedback={formValidationFeedback[1].feedback}
+				/>
+			</FormGroup>
+		</Col>
+
+		<Col sm={{ size: 1 }}>
+			<FormGroup floating label="Weight" class="text-muted">
+				<Input
+					type="number"
+					label="weight"
+					name="weight"
+					id="weight"
+					placeholder="Weight"
+					required
+					min="1"
+					max="10"
+					bind:value={editingSubject._weight.value}
+					bind:valid={formValidationFeedback[2].valid}
+					bind:invalid={formValidationFeedback[2].invalid}
+					bind:feedback={formValidationFeedback[2].feedback}
+				/>
+			</FormGroup>
+		</Col>
+
+		<Col sm={{ size: 1 }}>
+			<FormGroup floating label="Hrs/Week" class="text-muted">
+				<Input
+					type="number"
+					label="hoursPerWeek"
+					name="hoursPerWeek"
+					id="hoursPerWeek"
+					placeholder="Hours per week"
+					required
+					min="1"
+					max="30"
+					bind:value={editingSubject._hoursPerWeek.value}
+					bind:valid={formValidationFeedback[3].valid}
+					bind:invalid={formValidationFeedback[3].invalid}
+					bind:feedback={formValidationFeedback[3].feedback}
+				/>
+			</FormGroup>
+		</Col>
+
+		<Col sm={{ size: 2 }} class="ms-auto ps-0">
+			<Row class="g-1">
+				<Col>
+					<Button
+						color="primary"
+						class="w-100 text-nowrap"
+						on:click={save}
+						type="submit"
+					>
+						Save <Icon name="check" />
+					</Button>
+				</Col>
+				<Col>
+					<Button
+						color="danger"
+						class="w-100 text-nowrap"
+						on:click={cancel}
+					>
+						Cancel <Icon name="x" />
+					</Button>
+				</Col>
+			</Row>
+		</Col>
+	</Row>
+</form>
