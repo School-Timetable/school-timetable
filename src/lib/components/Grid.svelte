@@ -72,6 +72,7 @@
             return 'transparent'
         return subjectColors!.get(item.id)
     }
+    
 
     
     function throw_alert_on_inconsistency(){
