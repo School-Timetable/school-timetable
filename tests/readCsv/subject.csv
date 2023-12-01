@@ -1,2 +1,3 @@
-1,A,BOH,John,Doe,john@gmail.com,mat,Matematica,1,1
-2,B,,Jane,Doe,jane@gmail.it,ita,Italiano,2,4
+1,A,Informatica,John,Doe,john@gmail.com,mat,Matematica,1,1
+1,A,,Jane,Doe,jane@gmail.it,ita,Italiano,2,4
+1,A,Biologia,Jane,Doe,jane@gmail.it,ita,Italiano,2,4

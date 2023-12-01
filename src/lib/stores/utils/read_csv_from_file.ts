@@ -102,7 +102,7 @@ function findClass(
     track: string
 ) {
     return get(allClassrooms).find((old) => {
-        if(!track){
+        if(track == '' && old.track?.value === undefined){
             return (
                 old.year.value === year &&
                 old.section.value === section
@@ -111,7 +111,7 @@ function findClass(
             return (
                 old.year.value === year &&
                 old.section.value === section &&
-                old.track?.value.toLocaleUpperCase() === track?.toLocaleUpperCase()
+                old.track.value.toLocaleUpperCase() === track.toLocaleUpperCase()
             );
         }
     });
