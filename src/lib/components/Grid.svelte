@@ -4,7 +4,7 @@
     import type { TimeTable } from '$model/timetable/time-table';
     import type { SchoolClass } from '$model/school-class/school-class';
     import type { Professor } from '$model/professor/professor';
-    import { daysPerWeek, getTimetableOf, hoursPerDay, removeSubject, setSubject, setUnavailable} from '$model/timetable/time-table';
+    import { getTimetableOf, removeSubject, setSubject, setUnavailable} from '$model/timetable/time-table';
     import Hour from '$lib/components/hour.svelte';
     import { Subject } from '$model/subject/subject';
     import { Unavailable } from '$model/timetable/unavailable';
@@ -28,6 +28,13 @@
         console.log("POG", unavailableTimeTable.values)
     }
 
+    function onSubjectDragEnd()
+    {
+        unavailableTimeTable = null
+        location.reload();
+        console.log("UNPOG")
+    }
+
     function onHourClick(day: number, hour: number)
     {
         
@@ -47,6 +54,7 @@
 	{
 		const oldValue = timeTable.getSubjectOn(day,hour)
 		setSubject(day,hour,info.subject)
+        onSubjectDragEnd();
 
 		const pos = info.id.split(",")
 		if(pos.length == 2)
@@ -91,8 +99,7 @@
                 <td>
                     <Hour 
                                 on:hourDrag="{() => onSubjectDrag(timeTable.values[dayIndex][hourIndex])}"
-                                on:dragend="{() => {
-                                    unavailableTimeTable = null;                                    }}"
+                                on:dragend="{onSubjectDragEnd}"
                                 on:click="{() => onHourClick(dayIndex,hourIndex)}"
                                 on:hourDrop={event => dropValue(hourIndex,dayIndex,event.detail)} 
                                 unavailable="{unavailableTimeTable !== null && unavailableTimeTable.values[dayIndex][hourIndex] instanceof Unavailable}"
