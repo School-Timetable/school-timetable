@@ -4,6 +4,7 @@ import type { SchoolClass } from "$model/school-class/school-class";
 import type { Subject } from "$model/subject/subject";
 import { get, writable } from "svelte/store";
 import { readCookieFile } from "./utils/cookie_file_reader";
+import { removeAllOf, removeProfessor, removeSchoolClass } from "$model/timetable/time-table";
 
 // Read the whole file and store the lines in this list
 export const file_data = readCookieFile();
@@ -69,6 +70,7 @@ export function saveObjectToStorage(item: AcceptedTypes, index?: number) {
  */
 export function removeSubjectFromStorage(subject: Subject) {
     allSubjects.set(get(allSubjects).filter((sub) => sub.id !== subject.id));
+    removeAllOf(subject);
 }
 
 /**
@@ -85,6 +87,7 @@ export function removeProfessorFromStorage(prof: Professor): boolean {
         return false;
 
     allProfessors.set(get(allProfessors).filter((item) => item.id !== prof.id));
+    removeProfessor(prof);
     return true;
 }
 
@@ -102,6 +105,7 @@ export function removeSchoolClassFromStorage(classroom: SchoolClass): boolean {
         return false;
 
     allClassrooms.set(get(allClassrooms).filter((item) => item.id !== classroom.id));
+    removeSchoolClass(classroom);
     return true;
 }
 

@@ -430,3 +430,11 @@ export function removeAllOf(subject: Subject): void {
 }
 
 
+export function removeSchoolClass(schoolClass: SchoolClass): void {
+    _classTimetableMap.delete(schoolClass.id);
+}
+
+
+export function removeProfessor(professor: Professor): void {
+    _professorTimetableMap.delete(professor.id);
+}
