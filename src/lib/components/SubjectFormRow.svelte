@@ -1,5 +1,13 @@
 <script lang="ts">
-	import { Button, Col, FormGroup, Icon, Input, Row } from "sveltestrap";
+	import {
+		Button,
+		Col,
+		FormFeedback,
+		FormGroup,
+		Icon,
+		Input,
+		Row,
+	} from "sveltestrap";
 	import { createEventDispatcher } from "svelte";
 	import { ZodError, ZodSchema } from "zod";
 	import type { SchoolClass } from "$model/school-class/school-class";
@@ -32,12 +40,6 @@
 		_hoursPerWeek: { value: number };
 	};
 
-	type FormValidationResult = {
-		valid: boolean;
-		invalid: boolean;
-		feedback: string;
-	};
-
 	let editingSubject: SubjectFormData;
 
 	if (subject) {
@@ -61,16 +63,26 @@
 		};
 	}
 
-	let formValidationFeedback: FormValidationResult[] = new Array(4).fill({
-		valid: false,
-		invalid: false,
-		feedback: "",
-	});
+	type validationFeedbackKey = keyof typeof validationFeedback;
+	let validationFeedback = {
+		abbreviation: { valid: false, invalid: false, feedback: "" },
+		name: { valid: false, invalid: false, feedback: "" },
+		weight: { valid: false, invalid: false, feedback: "" },
+		hoursPerWeek: { valid: false, invalid: false, feedback: "" },
+	};
 
-	$: validateWithSchema(editingSubject._abbreviation, 0, Abbreviation.schema);
-	$: validateWithSchema(editingSubject._name, 1, Name.schema);
-	$: validateWithSchema(editingSubject._weight, 2, Weight.schema);
-	$: validateWithSchema(editingSubject._hoursPerWeek, 3, HoursPerWeek.schema);
+	$: validate(
+		editingSubject._abbreviation,
+		"abbreviation",
+		Abbreviation.schema,
+	);
+	$: validate(editingSubject._name, "name", Name.schema);
+	$: validate(editingSubject._weight, "weight", Weight.schema);
+	$: validate(
+		editingSubject._hoursPerWeek,
+		"hoursPerWeek",
+		HoursPerWeek.schema,
+	);
 
 	function save() {
 		try {
@@ -95,17 +107,21 @@
 		dispatch("cancel");
 	}
 
-	function validateWithSchema(obj: any, fieldIdx: number, schema: ZodSchema) {
+	function validate(
+		obj: { value: any },
+		fieldKey: validationFeedbackKey,
+		schema: ZodSchema,
+	) {
 		try {
 			schema.parse(obj);
-			formValidationFeedback[fieldIdx] = {
+			validationFeedback[fieldKey] = {
 				valid: true,
 				invalid: false,
 				feedback: "",
 			};
 		} catch (e) {
 			if (e instanceof ZodError) {
-				formValidationFeedback[fieldIdx] = {
+				validationFeedback[fieldKey] = {
 					valid: false,
 					invalid: true,
 					feedback: e.issues[0].message,
@@ -164,9 +180,9 @@
 					placeholder="Abbreviation"
 					required
 					bind:value={editingSubject._abbreviation.value}
-					bind:valid={formValidationFeedback[0].valid}
-					bind:invalid={formValidationFeedback[0].invalid}
-					bind:feedback={formValidationFeedback[0].feedback}
+					bind:valid={validationFeedback.abbreviation.valid}
+					bind:invalid={validationFeedback.abbreviation.invalid}
+					bind:feedback={validationFeedback.abbreviation.feedback}
 				/>
 			</FormGroup>
 		</Col>
@@ -181,9 +197,9 @@
 					placeholder="Name"
 					required
 					bind:value={editingSubject._name.value}
-					bind:valid={formValidationFeedback[1].valid}
-					bind:invalid={formValidationFeedback[1].invalid}
-					bind:feedback={formValidationFeedback[1].feedback}
+					bind:valid={validationFeedback.name.valid}
+					bind:invalid={validationFeedback.name.invalid}
+					bind:feedback={validationFeedback.name.feedback}
 				/>
 			</FormGroup>
 		</Col>
@@ -200,9 +216,9 @@
 					min="1"
 					max="10"
 					bind:value={editingSubject._weight.value}
-					bind:valid={formValidationFeedback[2].valid}
-					bind:invalid={formValidationFeedback[2].invalid}
-					bind:feedback={formValidationFeedback[2].feedback}
+					bind:valid={validationFeedback.weight.valid}
+					bind:invalid={validationFeedback.weight.invalid}
+					bind:feedback={validationFeedback.weight.feedback}
 				/>
 			</FormGroup>
 		</Col>
@@ -219,9 +235,9 @@
 					min="1"
 					max="30"
 					bind:value={editingSubject._hoursPerWeek.value}
-					bind:valid={formValidationFeedback[3].valid}
-					bind:invalid={formValidationFeedback[3].invalid}
-					bind:feedback={formValidationFeedback[3].feedback}
+					bind:valid={validationFeedback.hoursPerWeek.valid}
+					bind:invalid={validationFeedback.hoursPerWeek.invalid}
+					bind:feedback={validationFeedback.hoursPerWeek.feedback}
 				/>
 			</FormGroup>
 		</Col>
