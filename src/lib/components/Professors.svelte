@@ -22,7 +22,7 @@
 		ModalHeader,
 	} from "sveltestrap";
 	let showModal = false;
-	let showCsvModal = false; 
+	let showCsvModal = false;
 	let showDuplicateAlert = false;
 	let failedProfessors: string[] = []
 	let showCsvImportAlert = false

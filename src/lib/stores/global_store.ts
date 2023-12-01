@@ -83,12 +83,16 @@ export function removeSubjectFromStorage(subject: Subject) {
  *  return false -> there is a dependency and the prof cannot be removed
  */
 export function removeProfessorFromStorage(prof: Professor): boolean {
-    if(get(allSubjects).findIndex((sub) => sub.professor.id === prof.id) !== -1)
+    try {
+        get(allSubjects).filter((sub) => sub.professor.id === prof.id).forEach((sub) => removeSubjectFromStorage(sub));
+    
+        allProfessors.set(get(allProfessors).filter((item) => item.id !== prof.id));
+        removeProfessor(prof);
+        return true;
+    }
+    catch(e) {
         return false;
-
-    allProfessors.set(get(allProfessors).filter((item) => item.id !== prof.id));
-    removeProfessor(prof);
-    return true;
+    }
 }
 
 /**
@@ -101,12 +105,16 @@ export function removeProfessorFromStorage(prof: Professor): boolean {
  *  return false -> there is a dependency and the prof cannot be removed
  */
 export function removeSchoolClassFromStorage(classroom: SchoolClass): boolean {
-    if(get(allSubjects).findIndex((sub) => sub.schoolClass.id === classroom.id) !== -1)
+    try {
+        get(allSubjects).filter((sub) => sub.schoolClass.id === classroom.id).forEach((sub) => removeSubjectFromStorage(sub));
+    
+        allClassrooms.set(get(allClassrooms).filter((item) => item.id !== classroom.id));
+        removeSchoolClass(classroom);
+        return true;
+    }
+    catch(e) {
         return false;
-
-    allClassrooms.set(get(allClassrooms).filter((item) => item.id !== classroom.id));
-    removeSchoolClass(classroom);
-    return true;
+    }
 }
 
 /**

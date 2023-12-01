@@ -10,6 +10,7 @@
 	import type { FieldInfo } from "$model/model-generics";
 	import { editingId } from "$lib/stores/global_store";
 	import FormSearch from "./FormSearch.svelte";
+    import MyModal from "./MyModal.svelte";
 
 	const eventDispatcher = createEventDispatcher<{
 		delete: { value: AcceptedTypes };
@@ -22,6 +23,8 @@
 	export let items: AcceptedTypes[] = [];
 	let filteredItems: AcceptedTypes[] = items;
 	let viewItems: AcceptedTypes[] = filteredItems;
+	let removingItem: AcceptedTypes | null = null;
+	let showDeleteModal: boolean = false;
 	export let itemsType: string = "items";
 
 	$: {
@@ -47,9 +50,11 @@
 		editingId.set("");
 	}
 
-	function removeItem(item: AcceptedTypes): void {
-		items = items.filter((i) => i.id != item.id);
-		eventDispatcher("delete", { value: item });
+	function removeItem(): void {
+		items = items.filter((i) => i.id != removingItem!.id);
+		eventDispatcher("delete", { value: removingItem! });
+
+		removingItem = null;
 	}
 
 	function createNew() {
@@ -131,6 +136,13 @@
 	}
 </script>
 
+<MyModal bind:showModal={showDeleteModal} on:confirm={removeItem}>
+	<h5 slot="header">Delete {itemsType}</h5>
+	<div slot="body">
+		Are you sure you want to delete this {itemsType}?
+		All associated subjects will be deleted too!
+	</div>
+</MyModal>
 <div class="px-3 pb-3">
 	<div class="pb-3 mx-auto" style="max-width: 500px;">
 		<Row>
@@ -235,7 +247,7 @@
 									color="danger"
 									class="w-100 px-1 my-1 text-nowrap"
 									aria-label="Delete"
-									on:click={() => removeItem(item)}
+									on:click={() => {removingItem = item; removeItem();}}
 								>
 									<Icon name="trash-fill" />
 								</Button>
