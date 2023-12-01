@@ -8,9 +8,6 @@ import { HourOfDay } from '$model/timetable/hour-of-day';
 import { DayOfWeek } from '$model/timetable/day-of-week';
 import { getClassTimetableOf } from '$model/timetable/time-table'; 
 
-// PER TESTARE L'EXPORT IN EXCEL, DECOMMENTARE QUESTE RIGHE
-// allDaysOfWeek.set([DayOfWeek.of(0, "Monday"), DayOfWeek.of(1, "Tuesday"), DayOfWeek.of(2, "Wednesday"), DayOfWeek.of(3, "Thursday"), DayOfWeek.of(4, "Friday"), DayOfWeek.of(5, "Saturday")]);
-// allHoursOfDay.set([HourOfDay.of(0, "1"), HourOfDay.of(1, "2"), HourOfDay.of(2, "3"), HourOfDay.of(3, "4"), HourOfDay.of(4, "5"), HourOfDay.of(5, "6")]);
 
 const hoursPerDay = get(allHoursOfDay).length
 const daysOfWeek = get(allDaysOfWeek).length

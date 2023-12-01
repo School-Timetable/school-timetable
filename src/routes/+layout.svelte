@@ -13,14 +13,7 @@
 	import { goto } from "$app/navigation";
 	import ThemeSwitcher from "$lib/components/ThemeSwitcher.svelte";
 	import { Navbar, NavbarBrand } from "sveltestrap";
-	import { createPDFClassView, createPDFProfView } from "$lib/stores/utils/export_to_pdf";
-    import { DayOfWeek } from "$model/timetable/day-of-week";
-    import { HourOfDay } from "$model/timetable/hour-of-day";
-    import { createExcel } from "$lib/stores/utils/create_excel_file";
-    import { professorTimetableMap } from "$model/timetable/time-table";
-    import { get } from "svelte/store";
-    import { Subject } from "$model/subject/subject";
-    import ExportTimetableForm from "$lib/components/ExportTimetableForm.svelte";
+	import ExportTimetableForm from "$lib/components/ExportTimetableForm.svelte";
 
 	onMount(() => {
 		const generate_file = () =>
@@ -32,7 +25,6 @@
 		allProfessors.subscribe(generate_file);
 		allClassrooms.subscribe(generate_file);
 		allSubjects.subscribe(generate_file);
-
 	});
 </script>
 

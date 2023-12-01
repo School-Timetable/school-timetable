@@ -1,3 +1,5 @@
+import { allDaysOfWeek, allHoursOfDay } from "$lib/stores/global_store";
+import { get } from "svelte/store";
 import { Professor } from "../professor/professor";
 import { SchoolClass } from "../school-class/school-class";
 import type { Subject } from "../subject/subject";
@@ -21,10 +23,6 @@ export const classTimetableMap: ReadonlyMap<string, TimeTable> = _classTimetable
  * to reliably get the TimeTable of a Professor use {@link getProfessorTimetableOf}
  */
 export const professorTimetableMap: ReadonlyMap<string, TimeTable> = _professorTimetableMap;
-
-// TODO: remove
-const daysPerWeek = 6;
-const hoursPerDay = 7;
 
 
 export class TimeTable {
@@ -380,7 +378,7 @@ export function setAvailable(dayOfWeek: number, timeOfDay: number, entity: Schoo
 export function getClassTimetableOf(schoolClass: SchoolClass): TimeTable {
     const classID = schoolClass.id;
     if (!_classTimetableMap.has(classID)) {
-        _classTimetableMap.set(classID, new TimeTable(daysPerWeek, hoursPerDay));
+        _classTimetableMap.set(classID, new TimeTable(get(allDaysOfWeek).length, get(allHoursOfDay).length));
     }
 
     return _classTimetableMap.get(classID)!;
@@ -392,7 +390,7 @@ export function getClassTimetableOf(schoolClass: SchoolClass): TimeTable {
 export function getProfessorTimetableOf(professor: Professor): TimeTable {
     const professorID = professor.id;
     if (!_professorTimetableMap.has(professorID)) {
-        _professorTimetableMap.set(professorID, new TimeTable(daysPerWeek, hoursPerDay));
+        _professorTimetableMap.set(professorID, new TimeTable(get(allDaysOfWeek).length, get(allHoursOfDay).length));
     }
 
     return _professorTimetableMap.get(professorID)!;
