@@ -49,7 +49,14 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: Build
-
+      
+      - name: Cache node modules
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-
+      
       - name: Install dependencies
         run: npm install
 
