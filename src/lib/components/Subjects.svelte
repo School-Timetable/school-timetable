@@ -11,14 +11,35 @@
 	import MyCsvModal from "$lib/components/MyCsvModal.svelte";
 	import { readCsv } from "$lib/stores/utils/read_csv_from_file";
 	import { Alert } from "sveltestrap";
-
+	let failedSubjects: string[] = []
 
 	let showModal: boolean = false;
 	let showCsvModal: boolean = false;
 	let showDuplicateAlert = false;
-	let toggle = () => {
+	let showCsvImportAlert = false;
+
+	let toggleDuplicateAlert = () => {
 		showDuplicateAlert = !showDuplicateAlert;
 	};
+
+	let toggleCsvImportAlert = () => {
+		showCsvImportAlert = !showCsvImportAlert;
+	}
+
+	$: if (failedSubjects.length > 0){
+		toggleCsvImportAlert()
+	}
+
+	$: if (showCsvImportAlert) {
+		setTimeout(() => {
+			resetCsvImportAlert()
+		}, failedSubjects.length*20000)
+	}
+
+	function resetCsvImportAlert() {
+		showCsvImportAlert = false
+		failedSubjects.length = 0
+	}
 
 	let fieldsInfo: FieldInfo[] = [
 		{ fieldName: "schoolClass", label: "Class", columns: 2 },
@@ -32,7 +53,7 @@
 	function saveSubject(subject: Subject) {
 		if (subjectAlreadyExists(subject)) {
 			if (!showDuplicateAlert) 
-				toggle();
+				toggleDuplicateAlert();
 			return;
 		}
 
@@ -44,7 +65,7 @@
 			saveObjectToStorage(subject);
 
 		if (showDuplicateAlert) 
-			toggle();
+			toggleDuplicateAlert();
 
 		editingId.set(null);
 	}
@@ -73,7 +94,7 @@
 
 	function handleConfirmCsvSubmission(event: { detail: any; }) {
         const file = event.detail;
-		let failedSubjects: string[] = [];
+		resetCsvImportAlert()
 		readCsv(file, 'subject').then((result) => {
 			const subjects = result[0] as Subject[];
 			failedSubjects = result[1] as string[];
@@ -129,7 +150,12 @@
 	<h2 slot="header">Import subjects from CSV</h2>
 	<p slot="body">Please select a CSV file with the following columns: <br> Year, Section, and Track of the class, Name, Surname, and Email of the professor, Abbreviation, Name, Weight, and Hours .</p>
 </MyCsvModal>
-<Alert color="warning" isOpen={showDuplicateAlert} {toggle}>
+<Alert color="warning" isOpen={showDuplicateAlert} {toggleDuplicateAlert}>
 	You are trying to add a subject that already exists! Please check whether
 	the fields are unique.
+</Alert>
+<Alert color="warning" isOpen={showCsvImportAlert} toggle={toggleCsvImportAlert} style="white-space: pre-line">
+	{failedSubjects.length} subjects failed to import. Please check the CSV file.
+	The failed entries are:
+	{failedSubjects.join("\n")}
 </Alert>

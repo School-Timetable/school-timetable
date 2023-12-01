@@ -84,12 +84,12 @@ function readCsvSubject(data: any){
                 const subject = Subject.of(null,schoolClass, professor, row[7], row[6], Number(row[8]), Number(row[9]));
                 subjects.push(subject);
             }else{
-                const failedSubject = `Class: ${row[0]}, ${row[1]}, ${row[2]}, Professor: ${row[3]}, ${row[4]}, ${row[5]}, Name: ${row[6]}, Abbreviation: ${row[7]}, Weight: ${row[8]}, Weekly Hours: ${row[9]}`;
+                const failedSubject = `Class: ${row[0]}, ${row[1]}, ${row[2]}, Professor: ${row[3]}, ${row[4]}, ${row[5]}, Abbreviation: ${row[6]}, Subject Name: ${row[7]}, Weight: ${row[8]}, Weekly Hours: ${row[9]}`;
                 errors.push(failedSubject);
             }
 
         } catch (error) {
-            const failedSubject = `Class: ${row[0]}, ${row[1]}, ${row[2]}, Professor: ${row[3]}, ${row[4]}, ${row[5]}, Name: ${row[6]}, Abbreviation: ${row[7]}, Weight: ${row[8]}, Weekly Hours: ${row[9]}`;
+            const failedSubject = `Class: ${row[0]}, ${row[1]}, ${row[2]}, Professor: ${row[3]}, ${row[4]}, ${row[5]}, Abbreviation: ${row[6]}, Subject Name: ${row[7]}, Weight: ${row[8]}, Weekly Hours: ${row[9]}`;
             errors.push(failedSubject);
         }
     });
