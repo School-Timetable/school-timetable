@@ -25,6 +25,7 @@
 	let viewItems: AcceptedTypes[] = filteredItems;
 	let removingItem: AcceptedTypes | null = null;
 	let showDeleteModal: boolean = false;
+
 	export let itemsType: string = "items";
 
 	$: {
@@ -50,7 +51,8 @@
 		editingId.set("");
 	}
 
-	function removeItem(): void {
+	async function removeItem() {
+		
 		items = items.filter((i) => i.id != removingItem!.id);
 		eventDispatcher("delete", { value: removingItem! });
 
@@ -247,7 +249,10 @@
 									color="danger"
 									class="w-100 px-1 my-1 text-nowrap"
 									aria-label="Delete"
-									on:click={() => {removingItem = item; removeItem();}}
+									on:click={() => {
+										removingItem = item;
+										showDeleteModal = true;	
+									}}
 								>
 									<Icon name="trash-fill" />
 								</Button>
