@@ -2,6 +2,7 @@
     import { Subject, stringToSubject, subjectToString } from "$model/subject/subject";
     import  { Unavailable } from "$model/timetable/unavailable";
     import { createEventDispatcher } from "svelte";
+  import { Icon } from "sveltestrap";
     const dispatch = createEventDispatcher();
     export let id : String
     export let draggable: boolean = true
@@ -61,12 +62,13 @@
 
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div on:dragend={onDragEnd} on:dragleave={() => highlight = false}  on:dragenter={() => highlight = draggable} id={id} on:dragstart={event => drag(event)} draggable={subject != null && draggable} on:dragover={event => allowDrop(event)} on:drop={event => drop(event)} class="text-wrap align-middle hour" on:click={onClick} >
+<div class="text-wrap align-middle hour text-center" on:drop={event => drop(event)} on:click={onClick} >
     {#if subject instanceof Unavailable || unavailable}
          <!-- TODO <img src="images/cross.png"> -->
-        <section class="hourItem unavailable">Unavailable</section>
+         <Icon style="font-size: 30px;" name="x" />
+       
     {:else}
-        <section class="hourItem" style="user-select: none;" class:highlight="{highlight}" class:disabled="{!draggable}" style:background-color="{color}" >{set_cell_content(subject) || ""}</section>
+        <section class="btn hourItem" style="user-select: none;" draggable={subject != null && draggable}  on:dragend={onDragEnd} on:dragleave={() => highlight = false}  on:dragenter={() => highlight = draggable} id={id} on:dragstart={event => drag(event)} on:dragover={event => allowDrop(event)}   class:highlight="{highlight}" class:disabled="{!draggable}" style:background-color="{color}" >{set_cell_content(subject) || ""}</section>
     {/if}
 </div>
 <style>
@@ -77,8 +79,8 @@
 
     .hour {
         border: transparent;
-        min-width: 100px;
-        height: 50px;
+        min-width: 120px;
+        height: 60px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -86,11 +88,6 @@
 
     .disabled {
         background-color: rgb(178, 177, 177) !important; 
-    }
-
-    .unavailable
-    {
-        background-color: rgb(239, 107, 107);
     }
 
     .hourItem

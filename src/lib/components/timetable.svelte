@@ -155,13 +155,13 @@
     <div class="d-flex">
         <!--sidebar-->
         <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <ul style="min-width: 150px;max-width: 150px;" class="w-100 list-group" on:dragover={event => event.preventDefault()} on:drop={event => sideBarDrop(event)}>
+        <ul class="list-group me-1" on:dragover={event => event.preventDefault()} on:drop={event => sideBarDrop(event)}>
             {#each sidebar as item, itemIndex }
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     <div class="w-100">
                         <Hour on:hourDrag="{() => onSubjectDrag(item)}" on:dragend="{onSubjectDragEnd}" isProfessorView={professorView} color={getSubjectColor(item)} droppable={false} draggable={getRemainingHours(item) > 0} id="prova" subject={item} on:hourDrop={event => {}}></Hour>
                     </div>
-                    <span class="badge bg-primary rounded-pill">{getRemainingHours(item)}</span>
+                    <span class="badge bg-primary rounded-pill ms-2">{getRemainingHours(item)}</span>
                 </li>
             {/each}
         </ul>
@@ -224,7 +224,6 @@
 <style>
     td, tr, th {
       border: 1px solid #e3e0e0;
-      text-align: center;
       width: fit-content;
     }
 
