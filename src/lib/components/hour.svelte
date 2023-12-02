@@ -2,6 +2,7 @@
     import { Subject, stringToSubject, subjectToString } from "$model/subject/subject";
     import  { Unavailable } from "$model/timetable/unavailable";
     import { createEventDispatcher } from "svelte";
+  import { Icon } from "sveltestrap";
     const dispatch = createEventDispatcher();
     export let id : String
     export let draggable: boolean = true
@@ -61,13 +62,13 @@
 
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="container container-fluid btn text-wrap align-middle hour" on:click={onClick} style="position: relative;" >
-    {#if !(subject instanceof Unavailable)}
-        <section class="hourItem" class:highlight="{highlight}" class:disabled="{!draggable}" style:background-color="{color}" on:dragend={onDragEnd} on:dragleave={() => highlight = false}  on:dragenter={() => highlight = draggable} style="user-select: none;" id={id} on:dragstart={event => drag(event)} draggable={subject != null && draggable} on:dragover={event => allowDrop(event)} on:drop={event => drop(event)}>{set_cell_content(subject) || ""}</section>
-    {/if}
+<div class="text-wrap align-middle hour text-center" on:drop={event => drop(event)} on:click={onClick} >
     {#if subject instanceof Unavailable || unavailable}
-        <!-- TODO <img src="images/cross.png"> -->
-        <section class="hourItem">Unavailable</section>
+         <!-- TODO <img src="images/cross.png"> -->
+         <Icon style="font-size: 30px;" name="x" />
+       
+    {:else}
+        <section class="btn hourItem" style="user-select: none;" draggable={subject != null && draggable}  on:dragend={onDragEnd} on:dragleave={() => highlight = false}  on:dragenter={() => highlight = draggable} id={id} on:dragstart={event => drag(event)} on:dragover={event => allowDrop(event)}   class:highlight="{highlight}" class:disabled="{!draggable}" style:background-color="{color}" >{set_cell_content(subject) || ""}</section>
     {/if}
 </div>
 <style>
@@ -78,8 +79,11 @@
 
     .hour {
         border: transparent;
-        min-width: 50px;
-        min-height: 50px;
+        min-width: 120px;
+        height: 60px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .disabled {
@@ -88,13 +92,8 @@
 
     .hourItem
     {
-        background-color: rgb(239, 107, 107);
-        position: absolute;
-        top: 0px;
-        left: 0px;
         width: 100%;
         height: 100%;
-        opacity: 0.8;
     }
 
 </style>

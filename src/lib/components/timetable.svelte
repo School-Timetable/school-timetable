@@ -87,7 +87,7 @@
             celle con undefined devono essere vuote OK
 -->
 <div class="container-fluid">
-    <div class="row ">
+    <div class="d-flex">
         <!--sidebar-->
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <div class="overflow-auto vh-100 row col-2">
@@ -127,4 +127,5 @@
         width: 100%;
         text-align: center;
     }
+    
 </style>
