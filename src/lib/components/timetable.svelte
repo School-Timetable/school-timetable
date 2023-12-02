@@ -122,7 +122,6 @@
       text-align: center;
       width: fit-content;
     }
-
     .input_text {
         border: none;
         width: 100%;
