@@ -25,7 +25,6 @@
 	let viewItems: AcceptedTypes[] = filteredItems;
 	let removingItem: AcceptedTypes | null = null;
 	let showDeleteModal: boolean = false;
-
 	export let itemsType: string = "items";
 
 	$: {
@@ -51,7 +50,7 @@
 		editingId.set("");
 	}
 
-	async function removeItem() {
+	function removeItem() {
 		
 		items = items.filter((i) => i.id != removingItem!.id);
 		eventDispatcher("delete", { value: removingItem! });
@@ -140,9 +139,13 @@
 
 <MyModal bind:showModal={showDeleteModal} on:confirm={removeItem}>
 	<h5 slot="header">Delete {itemsType}</h5>
-	<div slot="body">
-		Are you sure you want to delete this {itemsType}?
-		All associated subjects will be deleted too!
+	<div slot="body" style="white-space: pre-line;">
+		{#if itemsType !== "subject"}
+			Are you sure you want to delete this {itemsType}?
+			All associated subjects will be deleted too!
+		{:else}
+			Are you sure you want to delete this {itemsType}?
+		{/if}
 	</div>
 </MyModal>
 <div class="px-3 pb-3">
@@ -245,6 +248,7 @@
 							</Col>
 							<Col>
 								<Button
+									title="Delete"
 									id="btn-delete-{item.id}"
 									color="danger"
 									class="w-100 px-1 my-1 text-nowrap"
@@ -256,10 +260,6 @@
 								>
 									<Icon name="trash-fill" />
 								</Button>
-								<Tooltip
-									target="btn-delete-{item.id}"
-									placement="top">Delete</Tooltip
-								>
 							</Col>
 						</Row>
 					</Col>
