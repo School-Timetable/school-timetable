@@ -1,4 +1,6 @@
-/** @type {import('ts-jest').JestConfigWithTsJest} */
+/* @type {import('ts-jest').JestConfigWithTsJest} */
+
+/*
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
@@ -10,8 +12,7 @@ module.exports = {
     "^.+\\.svelte$": "svelte-jester",
   },
   transformIgnorePatterns: [
-    ".+/node_modules/(?!(@sveltejs/kit/.+))",
-    ".+/node_modules/(?!(esm-env/prod-ssr\\.js))",
+    "/node_modules/",
   ],
   moduleFileExtensions: [
     "ts",
@@ -20,3 +21,15 @@ module.exports = {
   ],
 };
 
+*/
+const esModules = ['@sveltejs/kit/src/runtime/app/', 'svelte/', 'esm-env/'].join('|');
+
+module.exports = {
+  testPathIgnorePatterns: ["tests/readCsv/*", "tests/mock/*", "tests/localStorage/*", "tests/model/timetable/time-table.*" ],
+  moduleNameMapper: { '^\\$lib(.*)$': '<rootDir>/src/lib$1', '^\\$model(.*)$': '<rootDir>/src/model$1', '^\\$app/environment$': '"<rootDir>/__mocks__/$app/environment.js' },
+  transform: {
+      '^.+\\.(m?js|ts)$': 'babel-jest', // transpile mjs, mts, js, ts files
+      '^.+\\.svelte$': 'svelte-jester',
+  },
+    transformIgnorePatterns: [`/node_modules/(?!${esModules})`, '/.svelte-kit/'],
+};
