@@ -161,5 +161,6 @@
         border: none;
         width: 100%;
         text-align: center;
+        min-width: 70px;
     }
 </style>
