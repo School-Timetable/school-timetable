@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { Button, Col, Icon, Row, Tooltip } from "sveltestrap";
+	import { Button, Col, Icon, Row } from "sveltestrap";
 	import { fade } from "svelte/transition";
-	import { cubicOut, sineOut } from "svelte/easing";
+	import { cubicOut } from "svelte/easing";
 	import { flip } from "svelte/animate";
 	import type { Professor } from "$model/professor/professor";
 	import type { SchoolClass } from "$model/school-class/school-class";
@@ -10,7 +10,7 @@
 	import type { FieldInfo } from "$model/model-generics";
 	import { editingId } from "$lib/stores/global_store";
 	import FormSearch from "./FormSearch.svelte";
-    import MyModal from "./MyModal.svelte";
+	import MyModal from "./MyModal.svelte";
 
 	const eventDispatcher = createEventDispatcher<{
 		delete: { value: AcceptedTypes };
@@ -51,7 +51,6 @@
 	}
 
 	function removeItem() {
-		
 		items = items.filter((i) => i.id != removingItem!.id);
 		eventDispatcher("delete", { value: removingItem! });
 
@@ -132,7 +131,7 @@
 		eventDispatcher("deleteAll");
 	}
 
-	function importFromCsv(){
+	function importFromCsv() {
 		eventDispatcher("importFromCsv");
 	}
 </script>
@@ -140,11 +139,10 @@
 <MyModal bind:showModal={showDeleteModal} on:confirm={removeItem}>
 	<h5 slot="header">Delete {itemsType}</h5>
 	<div slot="body" style="white-space: pre-line;">
+		Are you sure you want to delete this {itemsType}?
 		{#if itemsType !== "subject"}
-			Are you sure you want to delete this {itemsType}?
+			<br />
 			All associated subjects will be deleted too!
-		{:else}
-			Are you sure you want to delete this {itemsType}?
 		{/if}
 	</div>
 </MyModal>
@@ -222,14 +220,11 @@
 									id="btn-edit-{item.id}"
 									class="w-100 px-1 my-1 text-nowrap"
 									aria-label="Edit"
+									title="Edit"
 									on:click={() => editItem(item)}
 								>
 									<Icon name="pencil-square" />
 								</Button>
-								<Tooltip
-									target="btn-edit-{item.id}"
-									placement="top">Edit</Tooltip
-								>
 							</Col>
 							<Col>
 								<Button
@@ -237,25 +232,22 @@
 									color="secondary"
 									class="w-100 px-1 my-1 text-nowrap"
 									aria-label="Clone"
+									title="Clone"
 									on:click={() => cloneItem(item)}
 								>
 									<Icon name="files" />
 								</Button>
-								<Tooltip
-									target="btn-clone-{item.id}"
-									placement="top">Clone</Tooltip
-								>
 							</Col>
 							<Col>
 								<Button
-									title="Delete"
 									id="btn-delete-{item.id}"
 									color="danger"
 									class="w-100 px-1 my-1 text-nowrap"
 									aria-label="Delete"
+									title="Delete"
 									on:click={() => {
 										removingItem = item;
-										showDeleteModal = true;	
+										showDeleteModal = true;
 									}}
 								>
 									<Icon name="trash-fill" />
@@ -294,6 +286,8 @@
 					<Button
 						color="primary"
 						class="w-100"
+						aria-label="Create new {itemsType}"
+						title="Create new {itemsType}"
 						on:click={() => createNew()}
 						><Icon name="plus" />New {itemsType}</Button
 					>

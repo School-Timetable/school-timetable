@@ -83,30 +83,18 @@
 	}
 
 	function validateAll() {
-		validateWithSchema(editingProfessor._name, "name", Name.schema);
-		validateWithSchema(
-			editingProfessor._surname,
-			"surname",
-			Surname.schema,
-		);
-		validateWithSchema(editingProfessor._email, "email", Mail.schema);
-		validateWithSchema(
-			editingProfessor._cellPhone,
-			"cellPhone",
-			Cellphone.schema,
-		);
+		validate(editingProfessor._name, "name", Name.schema);
+		validate(editingProfessor._surname, "surname", Surname.schema);
+		validate(editingProfessor._email, "email", Mail.schema);
+		validate(editingProfessor._cellPhone, "cellPhone", Cellphone.schema);
 	}
 
-	$: validateWithSchema(editingProfessor._name, "name", Name.schema);
-	$: validateWithSchema(editingProfessor._surname, "surname", Surname.schema);
-	$: validateWithSchema(editingProfessor._email, "email", Mail.schema);
-	$: validateWithSchema(
-		editingProfessor._cellPhone,
-		"cellPhone",
-		Cellphone.schema,
-	);
+	$: validate(editingProfessor._name, "name", Name.schema);
+	$: validate(editingProfessor._surname, "surname", Surname.schema);
+	$: validate(editingProfessor._email, "email", Mail.schema);
+	$: validate(editingProfessor._cellPhone, "cellPhone", Cellphone.schema);
 
-	function validateWithSchema(
+	function validate(
 		editingField: { value: any },
 		fieldName: validationFeedbackKey,
 		schema: ZodSchema,

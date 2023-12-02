@@ -19,7 +19,13 @@
 		const generate_file = () =>
 			localStorage.setItem(
 				"data.tdf",
-				generateCookieFile($allProfessors, $allClassrooms, $allSubjects, $allHoursOfDay, $allDaysOfWeek)
+				generateCookieFile(
+					$allProfessors,
+					$allClassrooms,
+					$allSubjects,
+					$allHoursOfDay,
+					$allDaysOfWeek,
+				),
 			);
 
 		allProfessors.subscribe(generate_file);
@@ -44,28 +50,25 @@
 			SCHOOL TIMETABLE
 		</p>
 
-		<div class="vl"></div>
-		<div class="zoom-hover">
-			<NavbarBrand style="margin-left: 20px;" href="/data-input-form">
-				Input Form
-			</NavbarBrand>
+		<div class="vl mx-4"></div>
+		<div class="zoom-hover mx-2">
+			<NavbarBrand href="/data-input-form">Input Form</NavbarBrand>
 		</div>
-		<div class="zoom-hover">
-			<ExportTimetableForm style="margin-left: 20px;">
-			</ExportTimetableForm>
+		<div class="zoom-hover mx-2">
+			<ExportTimetableForm></ExportTimetableForm>
 		</div>
 		<!--<div class="zoom-hover">
-			<NavbarBrand style="margin-left: 20px;" on:click={createPDFProfView}>
+			<NavbarBrand on:click={createPDFProfView}>
 				PdfProf
 			</NavbarBrand>
 		</div>
 		<div class="zoom-hover">
-			<NavbarBrand style="margin-left: 20px;" on:click={createPDFClassView}>
+			<NavbarBrand on:click={createPDFClassView}>
 				PdfClass
 			</NavbarBrand>
 		</div>
 		<div class="zoom-hover">
-			<NavbarBrand style="margin-left: 20px;" on:click={() => createExcel("Professor")}>
+			<NavbarBrand on:click={() => createExcel("Professor")}>
 				Excel
 			</NavbarBrand>
 		</div>-->
