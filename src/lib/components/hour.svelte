@@ -61,13 +61,12 @@
 
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<div class="container container-fluid btn text-wrap align-middle hour" on:click={onClick} style="position: relative;" >
-    {#if !(subject instanceof Unavailable)}
-        <section class="hourItem" class:highlight="{highlight}" class:disabled="{!draggable}" style:background-color="{color}" on:dragend={onDragEnd} on:dragleave={() => highlight = false}  on:dragenter={() => highlight = draggable} style="user-select: none;" id={id} on:dragstart={event => drag(event)} draggable={subject != null && draggable} on:dragover={event => allowDrop(event)} on:drop={event => drop(event)}>{set_cell_content(subject) || ""}</section>
-    {/if}
+<div on:dragend={onDragEnd} on:dragleave={() => highlight = false}  on:dragenter={() => highlight = draggable} id={id} on:dragstart={event => drag(event)} draggable={subject != null && draggable} on:dragover={event => allowDrop(event)} on:drop={event => drop(event)} class="text-wrap align-middle hour" on:click={onClick} >
     {#if subject instanceof Unavailable || unavailable}
-        <!-- TODO <img src="images/cross.png"> -->
-        <section class="hourItem">Unavailable</section>
+         <!-- TODO <img src="images/cross.png"> -->
+        <section class="hourItem unavailable">Unavailable</section>
+    {:else}
+        <section class="hourItem" style="user-select: none;" class:highlight="{highlight}" class:disabled="{!draggable}" style:background-color="{color}" >{set_cell_content(subject) || ""}</section>
     {/if}
 </div>
 <style>
@@ -78,23 +77,26 @@
 
     .hour {
         border: transparent;
-        min-width: 50px;
-        min-height: 50px;
+        min-width: 100px;
+        height: 50px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .disabled {
         background-color: rgb(178, 177, 177) !important; 
     }
 
-    .hourItem
+    .unavailable
     {
         background-color: rgb(239, 107, 107);
-        position: absolute;
-        top: 0px;
-        left: 0px;
+    }
+
+    .hourItem
+    {
         width: 100%;
         height: 100%;
-        opacity: 0.8;
     }
 
 </style>

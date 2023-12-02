@@ -152,26 +152,24 @@
             celle con undefined devono essere vuote OK
 -->
 <div class="container-fluid">
-    <div class="row ">
+    <div class="d-flex">
         <!--sidebar-->
         <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <div class="overflow-auto vh-100 row col-2">
-            <ul class="list-group" on:dragover={event => event.preventDefault()} on:drop={event => sideBarDrop(event)}>
-                {#each sidebar as item, itemIndex }
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div class="w-75">
-                            <Hour on:hourDrag="{() => onSubjectDrag(item)}" on:dragend="{onSubjectDragEnd}" isProfessorView={professorView} color={getSubjectColor(item)} droppable={false} draggable={getRemainingHours(item) > 0} id="prova" subject={item} on:hourDrop={event => {}}></Hour>
-                        </div>
-                        <span class="badge bg-primary rounded-pill">{getRemainingHours(item)}</span>
-                    </li>
-                {/each}
-            </ul>
-        </div>
+        <ul style="min-width: 150px;max-width: 150px;" class="w-100 list-group" on:dragover={event => event.preventDefault()} on:drop={event => sideBarDrop(event)}>
+            {#each sidebar as item, itemIndex }
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div class="w-100">
+                        <Hour on:hourDrag="{() => onSubjectDrag(item)}" on:dragend="{onSubjectDragEnd}" isProfessorView={professorView} color={getSubjectColor(item)} droppable={false} draggable={getRemainingHours(item) > 0} id="prova" subject={item} on:hourDrop={event => {}}></Hour>
+                    </div>
+                    <span class="badge bg-primary rounded-pill">{getRemainingHours(item)}</span>
+                </li>
+            {/each}
+        </ul>
         
         <!--grid-->
         
-        <div class="col-10">
-            <Table >  
+        <div class="w-100" style="overflow: auto">
+            <table>  
                 <!--header-->
                 <thead>
                     <tr>
@@ -196,7 +194,7 @@
                             label with input for hours
                         -->
 
-                        <input id="hour_label_{hourIndex}" type="text" class="input_text"
+                        <input style="min-width: 70px;" id="hour_label_{hourIndex}" type="text" class="input_text"
                             value={$allHoursOfDay[hourIndex]? $allHoursOfDay[hourIndex].label : "hour_"+(hourIndex+1)}
                             on:input={() => onHourLabelChange(hourIndex)}/>
 
@@ -216,12 +214,7 @@
                         {/each}
                     </tr>
                 {/each}
-            </Table>
-
-            
-            <div class="d-flex justify-content-center">
-                <button type="button" class="btn btn-primary btn-lg w-100" on:click={event => validateTimetable()}>valida orario</button>
-            </div>
+            </table>
             
         </div>
         
