@@ -117,15 +117,5 @@
 </div>
  
 <style>
-    td, tr, th {
-      border: 1px solid #e3e0e0;
-      text-align: center;
-      width: fit-content;
-    }
-    .input_text {
-        border: none;
-        width: 100%;
-        text-align: center;
-    }
     
 </style>
