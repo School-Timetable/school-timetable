@@ -1,22 +1,17 @@
 <script lang="ts">
-    import type { ClassSubject } from "$lib/model";
+    import { Subject, stringToSubject, subjectToString } from "$model/subject/subject";
+    import  { Unavailable } from "$model/timetable/unavailable";
     import { createEventDispatcher } from "svelte";
-
+  import { Icon } from "sveltestrap";
     const dispatch = createEventDispatcher();
-
     export let id : String
-    
     export let draggable: boolean = true
     export let droppable: boolean = true
-
-
-    export let highlight: Boolean = false
-
-
-    export let subject: ClassSubject | null
-
-    export let color: string
-
+    let highlight: Boolean = false
+    export let subject: Subject | Unavailable | null
+    export let color: string = "transparent"
+    export let isProfessorView: boolean = false
+    export let unavailable: boolean = false
 
 
     function allowDrop(ev:any) {
@@ -25,8 +20,8 @@
     }
 
     function drag(ev:any) {
-        //ev.dataTransfer.setData("text", ev.target.id);
-        ev.dataTransfer.setData("subject", JSON.stringify(subject));
+
+        ev.dataTransfer.setData("subject", subjectToString(subject))
         ev.dataTransfer.setData("id", ev.target.id);
         
 
@@ -36,29 +31,46 @@
 
     function drop(ev:any) {
         ev.preventDefault();
-        console.log("ciao")
-        //var data = ev.dataTransfer.getData("text");
-        let draggedSubject : ClassSubject | null = JSON.parse(ev.dataTransfer.getData("subject"))
-
+        let draggedSubject : Subject | null = stringToSubject(ev.dataTransfer.getData("subject"))
         dispatch("hourDrop", {subject: draggedSubject, id: ev.dataTransfer.getData("id")})
         highlight = false
-
-        console.log(draggedSubject)
     }
 
 
-    function set_cell_content(subject: ClassSubject | null) {
+    function set_cell_content(subject: Subject | null) {
         if (!subject) {
             return undefined;
         }
-        return `${subject.professor.name} ${subject.professor.surname} - ${subject.subject}`
+        if (isProfessorView)
+            return `${subject.schoolClass} - ${subject.abbreviation}`
+        else
+            return `${subject.professor.name} ${subject.professor.surname} - ${subject.abbreviation}`
+    }
+
+    function onClick()
+    {
+        dispatch("click")
+    }
+
+    function onDragEnd()
+    {
+        dispatch("dragend")
     }
 
 </script>
 
-<section class="hour text-wrap btn align-middle container-fluid" class:highlight="{highlight}" class:disabled="{!draggable}" style:background-color="{color}" on:dragleave={event => highlight = false}  on:dragenter={event => highlight = draggable} style="user-select: none;" id={id} on:dragstart={event => drag(event)} draggable={subject != null && draggable} on:dragover={event => allowDrop(event)} on:drop={event => drop(event)}>{set_cell_content(subject) || ""}</section>
 
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<div class="text-wrap align-middle hour text-center" on:drop={event => drop(event)} on:click={onClick} >
+    {#if subject instanceof Unavailable || unavailable}
+         <!-- TODO <img src="images/cross.png"> -->
+         <Icon style="font-size: 30px;" name="x" />
+       
+    {:else}
+        <section class="btn hourItem" style="user-select: none;" draggable={subject != null && draggable}  on:dragend={onDragEnd} on:dragleave={() => highlight = false}  on:dragenter={() => highlight = draggable} id={id} on:dragstart={event => drag(event)} on:dragover={event => allowDrop(event)}   class:highlight="{highlight}" class:disabled="{!draggable}" style:background-color="{color}" >{set_cell_content(subject) || ""}</section>
+    {/if}
+</div>
 <style>
 
     .highlight {
@@ -66,13 +78,22 @@
     }
 
     .hour {
-        min-width: 50px;
-        min-height: 50px;
         border: transparent;
+        min-width: 120px;
+        height: 60px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .disabled {
         background-color: rgb(178, 177, 177) !important; 
+    }
+
+    .hourItem
+    {
+        width: 100%;
+        height: 100%;
     }
 
 </style>

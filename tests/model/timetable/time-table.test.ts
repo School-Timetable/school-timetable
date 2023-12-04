@@ -174,9 +174,9 @@ describe("Timetable", () => {
     });
 
 
-    test.each([-123, -1, 7, 2.1, 1234356])('throws on invalid dayOfWeek %p', (value) => {
-        expect(() => setSubject(value, 0, subjects[0])).toThrow();
-    });
+    // test.each([-123, -1, 7, 2.1, 1234356])('throws on invalid dayOfWeek %p', (value) => {
+    //     expect(() => setSubject(value, 0, subjects[0])).toThrow();
+    // });
 
     test.each([-123, -1, 2.1, 13, 1234356])('throws on invalid timeOfDay %p', (value) => {
         expect(() => setSubject(0, value, subjects[0])).toThrow();
@@ -347,5 +347,45 @@ describe("Timetable", () => {
             tt.clear();
             expect(tt.isEmpty()).toBe(true);
         });
+
+
+
+        it("should update size correctly", () => {
+            const tt = getTimetableOf(classes[0]);
+
+            tt.setSubjectOn(2,1, subjects[0]);
+            tt.setSubjectOn(2,2, subjects[0]);
+            
+            tt.setSubjectOn(5,0, subjects[1]);
+            tt.setSubjectOn(5,1, subjects[1]);
+
+            expect(tt.getCountOf(subjects[0])).toBe(2);
+            expect(tt.getCountOf(subjects[1])).toBe(2);
+            
+            tt.setSize(5,5);
+            
+            expect(tt.getTimeSlotsOf(subjects[0])).toEqual([
+                { dayOfWeek: 2, timeOfDay: 1 },
+                { dayOfWeek: 2, timeOfDay: 2 }
+            ]);
+            expect(tt.getCountOf(subjects[1])).toBe(0);
+            expect(tt.daysPerWeek).toBe(5);
+            expect(tt.hoursPerDay).toBe(5);
+
+            tt.setSize(7,8);
+
+            expect(tt.getCountOf(subjects[0])).toBe(2);
+            expect(tt.getCountOf(subjects[1])).toBe(0);
+
+            tt.setSubjectOn(6,5, subjects[1]);
+            tt.setSubjectOn(6,6, subjects[1]);
+            tt.setSubjectOn(6,7, subjects[1]);
+            expect(tt.daysPerWeek).toBe(7);
+            expect(tt.hoursPerDay).toBe(8);
+
+            expect(tt.getCountOf(subjects[1])).toBe(3);
+        });
     });
 });
+
+

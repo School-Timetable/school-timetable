@@ -3,7 +3,7 @@ import { ClassService } from "../../src/services/ClassService";
 import { SubjectService } from "../../src/services/SubjectService";
 
 
-jest.mock('../src/services/ProfessorService')
+jest.mock('../../src/services/ProfessorService')
 
 describe('professors mock:', () => {
     it('test mock', () => {
@@ -15,7 +15,7 @@ describe('professors mock:', () => {
 })
 
 
-jest.mock('../src/services/ClassService')
+jest.mock('../../src/services/ClassService')
 
 describe('classes mock: ', () => {
     it('test mock', () => {
@@ -26,7 +26,7 @@ describe('classes mock: ', () => {
     })
 })
 
-jest.mock('../src/services/SubjectService')
+jest.mock('../../src/services/SubjectService')
 
 describe('subject mock', () => {
     it('test mock', () => {

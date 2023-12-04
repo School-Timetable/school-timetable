@@ -6,9 +6,9 @@ import type { HourOfDay } from "$model/timetable/hour-of-day";
 import type { TimeTable } from "$model/timetable/time-table";
 
 export function generateCookieFile(
-    all_professor: Professor[], 
-    all_classrooms: SchoolClass[], 
-    all_subjects: Subject[], 
+    all_professor: Professor[],
+    all_classrooms: SchoolClass[],
+    all_subjects: Subject[],
     all_hoursOfDay: HourOfDay[],
     all_daysOfWeek: DayOfWeek[],
     base64: boolean = true
@@ -46,15 +46,15 @@ export function generateCookieTimetableFile(classTimetableMap: Map<string, TimeT
 
     let keys = classTimetableMap.keys();
     // For each class in the map, check the timetable
-    for(var classId of keys) {
+    for (var classId of keys) {
         // Get the subjectsMap for each class
-        let subjectsMap = classTimetableMap.get(classId)?.computeSubjectMap();
+        let subjectsMap = classTimetableMap.get(classId)!.subjectMap;
 
         // For each subject, write a line containing all the timeslots where it have been put
-        for(var subjectId of subjectsMap!.keys()) {
+        for (var [subjectId, timeslots] of subjectsMap.entries()) {
             let line = `SM:${classId};${subjectId}`;
 
-            for(var timeslot of subjectsMap!.get(subjectId)!) {
+            for (var timeslot of timeslots) {
                 line = line + `;${timeslot.dayOfWeek}:${timeslot.timeOfDay}`
             }
 
