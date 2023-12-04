@@ -1,6 +1,11 @@
+----- form file ----
 P:professor
 C:classroom
 S:subject
 H:hourOfDay
 D:dayOfWeek
+
+----- timetable file ----
+# Associazione di materia viste per classe
 SM:class-id;subj-id;[dayOfWeek:hoursOfDay]
+SC:prof-id;[dayOfWeek:hoursOfDay]

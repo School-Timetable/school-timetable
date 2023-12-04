@@ -64,3 +64,27 @@ export function generateCookieTimetableFile(classTimetableMap: Map<string, TimeT
 
     return base64 ? btoa(line_str.join("\n")) : line_str.join("\n");
 }
+
+export function generateCookieProfessorsConstraintFile(professorTimetableMap: Map<string, TimeTable>, base64: boolean = false): string {
+    let allProfIds = professorTimetableMap.keys();
+    let lineStr = []
+
+    for(var profId of allProfIds) {
+        let timeslots = professorTimetableMap.get(profId)!.getUnavailableTimeslots();
+        let line = `SC:${profId}`;
+
+        for(var timeslot of timeslots) {
+            line = line + `;${timeslot.dayOfWeek}:${timeslot.timeOfDay}`;
+        }
+
+        lineStr.push(line);
+    }
+
+    return base64 ? btoa(lineStr.join("\n")) : lineStr.join("\n");
+}
+
+export function generateCompleteTimetableFile(classTimetableMap: Map<string, TimeTable>, profTimetableFile: Map<string, TimeTable>, base64: boolean = false) {
+    let complete_str = generateCookieTimetableFile(classTimetableMap) + "\n"+ generateCookieProfessorsConstraintFile(profTimetableFile);
+
+    return base64 ? btoa(complete_str) : complete_str;
+}

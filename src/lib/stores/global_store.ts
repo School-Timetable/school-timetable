@@ -5,6 +5,8 @@ import type { Subject } from "$model/subject/subject";
 import { get, writable } from "svelte/store";
 import { readCookieFile } from "./utils/cookie_file_reader";
 import { removeAllOf, removeProfessor, removeSchoolClass } from "$model/timetable/time-table";
+import { DayOfWeek } from "$model/timetable/day-of-week";
+import { HourOfDay } from "$model/timetable/hour-of-day";
 
 // Read the whole file and store the lines in this list
 export const file_data = readCookieFile();
@@ -138,5 +140,37 @@ export function removeAllClassesFromStorage() {
  */
 export function removeAllSubjectsFromStorage() {
     allSubjects.set([]);
+}
+
+
+export function getAllDaysOfWeek() {
+    try {
+        return get(allDaysOfWeek);
+    } catch {
+        return [
+            new DayOfWeek(0, "Monday"),
+            new DayOfWeek(1, "Tuesday"),
+            new DayOfWeek(2, "Wednesday"),
+            new DayOfWeek(3, "Thursday"),
+            new DayOfWeek(4, "Friday"),
+            new DayOfWeek(5, "Saturday"),
+        ]
+    }
+}
+
+export function getAllHoursOfDay() {
+    try {
+        return get(allHoursOfDay);
+    } catch {
+        return [
+            new HourOfDay(0, "08:00"),
+            new HourOfDay(1, "09:00"),
+            new HourOfDay(2, "10:00"),
+            new HourOfDay(3, "11:00"),
+            new HourOfDay(4, "12:00"),
+            new HourOfDay(5, "13:00"),
+            new HourOfDay(6, "14:00")
+        ]
+    }
 }
 

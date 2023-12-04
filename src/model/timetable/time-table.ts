@@ -1,5 +1,4 @@
-import { allDaysOfWeek, allHoursOfDay } from "$lib/stores/global_store";
-import { get } from "svelte/store";
+import { getAllDaysOfWeek, getAllHoursOfDay } from "$lib/stores/global_store";
 import { Professor } from "../professor/professor";
 import { SchoolClass } from "../school-class/school-class";
 import type { Subject } from "../subject/subject";
@@ -291,12 +290,14 @@ export class TimeTable {
  * @see {@link setUnavailable} to mark a timeslot as unavailable
  * 
  */
-export function setSubject(dayOfWeek: number, timeOfDay: number, subject: Subject): void {
+export function setSubject(dayOfWeek: number, timeOfDay: number, subject: Subject, 
+    classTimetable?: TimeTable, profTimetable?: TimeTable
+): void {
 
-    const classTimeTable = getClassTimetableOf(subject.schoolClass);
+    const classTimeTable = (classTimetable) ? classTimetable : getClassTimetableOf(subject.schoolClass);
     setSubjectOnTimeTable(dayOfWeek, timeOfDay, subject, classTimeTable);
 
-    const professorTimeTable = getProfessorTimetableOf(subject.professor);
+    const professorTimeTable = (profTimetable) ? profTimetable : getProfessorTimetableOf(subject.professor);
     setSubjectOnTimeTable(dayOfWeek, timeOfDay, subject, professorTimeTable);
 }
 
@@ -310,6 +311,7 @@ function setSubjectOnTimeTable(dayOfWeek: number, timeOfDay: number, subject: Su
         throw new Error("Trying to assign a subject on an unavailable timeslot");
     }
     else if (oldSubject != null) {
+        console.log(`Volevo inserire subject ${subject.id} allo slot ${dayOfWeek} ${timeOfDay}, ma c'è già ${subject.id}`)
         // we replace the old subject from all the timetables
         removeSubject(dayOfWeek, timeOfDay, oldSubject);
     }
@@ -341,8 +343,8 @@ export function removeSubject(dayOfWeek: number, timeOfDay: number, subject: Sub
  * @param entity either a {@link SchoolClass} or {@link Professor} which is used to get the right timetable
  * @param available true for removing unavailable mark else false to mark as unavailable, by default it is false
  */
-export function setUnavailable(dayOfWeek: number, timeOfDay: number, entity: SchoolClass | Professor, available: boolean = false): void {
-    const timeTable = getTimetableOf(entity);
+export function setUnavailable(dayOfWeek: number, timeOfDay: number, entity?: SchoolClass | Professor, available: boolean = false, timetable?: TimeTable): void {
+    const timeTable = (timetable) ? timetable : getTimetableOf(entity!);
     const oldSubject = timeTable.getSubjectOn(dayOfWeek, timeOfDay);
 
 
@@ -378,7 +380,7 @@ export function setAvailable(dayOfWeek: number, timeOfDay: number, entity: Schoo
 export function getClassTimetableOf(schoolClass: SchoolClass): TimeTable {
     const classID = schoolClass.id;
     if (!_classTimetableMap.has(classID)) {
-        _classTimetableMap.set(classID, new TimeTable(get(allDaysOfWeek).length, get(allHoursOfDay).length));
+        _classTimetableMap.set(classID, new TimeTable(getAllDaysOfWeek().length, getAllHoursOfDay().length));
     }
 
     return _classTimetableMap.get(classID)!;
@@ -390,7 +392,7 @@ export function getClassTimetableOf(schoolClass: SchoolClass): TimeTable {
 export function getProfessorTimetableOf(professor: Professor): TimeTable {
     const professorID = professor.id;
     if (!_professorTimetableMap.has(professorID)) {
-        _professorTimetableMap.set(professorID, new TimeTable(get(allDaysOfWeek).length, get(allHoursOfDay).length));
+        _professorTimetableMap.set(professorID, new TimeTable(getAllDaysOfWeek().length, getAllHoursOfDay().length));
     }
 
     return _professorTimetableMap.get(professorID)!;
