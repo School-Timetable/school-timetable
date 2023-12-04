@@ -1,24 +1,25 @@
-import type { ClassSubject } from "$lib/model";
+import { Subject } from "../../model/subject/subject";
 import { ClassService } from "./ClassService";
 import { ProfessorService } from "./ProfessorService";
 
 
 export class SubjectService {
-    getSubjects(numProfessori: number, numClassi: number): ClassSubject[] {
-        let res: ClassSubject[] = []
-        const professori = new ProfessorService().getProfessors(numProfessori);
-        const classi = new ClassService().getClasses(numClassi);
+    getSubjects(numProfessori: number, numClassi: number): Subject[] {
+        let res: Subject[] = []
+        const professors = new ProfessorService().getProfessors(numProfessori);
+        const classes = new ClassService().getClasses(numClassi);
         for (let i = 0; i<numProfessori; i++) {
             let classInd = Math.floor(Math.random() * numClassi);
-            res.push({
-                id: i,
-                class: classi[classInd],
-                professor: professori[i],
-                subject: "materia_"+i,
-                abbreviation: "mat_"+i,
-                weight: i,
-                remainingHours: i+classInd
-            });
+            let subject = Subject.of(
+                (i+1).toString(),
+                classes[classInd],
+                professors[i],
+                "materia"+String.fromCharCode("A".charCodeAt(0)+i),
+                "mat"+String.fromCharCode("A".charCodeAt(0)+i),
+                (i+1),
+                i+classInd+1
+            )
+            res.push(subject);
         }
         return res;
     }

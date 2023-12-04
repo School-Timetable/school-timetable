@@ -385,9 +385,10 @@ export function removeSubject(dayOfWeek: number, timeOfDay: number, subject: Sub
     // @ts-expect-error we know subject is of type Subject
     const ptt = getProfessorTimetableOf(subject.professor);
 
-    if (ctt.getSubjectOn(dayOfWeek, timeOfDay) != subject || ptt.getSubjectOn(dayOfWeek, timeOfDay) != subject) {
+    if (ctt.getSubjectOn(dayOfWeek, timeOfDay)?.id != subject.id || ptt.getSubjectOn(dayOfWeek, timeOfDay)?.id != subject.id) {
         throw new Error("Trying to remove a subject from a timeslot that doesn't contain it");
     }
+    
 
     ctt.setSubjectOn(dayOfWeek, timeOfDay, null);
     ptt.setSubjectOn(dayOfWeek, timeOfDay, null);

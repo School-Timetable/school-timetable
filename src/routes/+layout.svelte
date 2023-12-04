@@ -31,6 +31,8 @@
 		allProfessors.subscribe(generate_file);
 		allClassrooms.subscribe(generate_file);
 		allSubjects.subscribe(generate_file);
+		allDaysOfWeek.subscribe(generate_file);
+		allHoursOfDay.subscribe(generate_file);
 	});
 </script>
 
@@ -40,6 +42,7 @@
 	<div class="left-group">
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+
 		<p
 			id="title"
 			class="zoom-hover"

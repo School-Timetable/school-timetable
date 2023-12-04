@@ -1,7 +1,7 @@
 import { getExistingClassroomsFromFile, getExistingDaysOfWeekFromFile, getExistingHoursOfDayFromFile, getExistingProfessorFromFile, getExistingSubjectsFromFile } from "$lib/stores/utils/cookie_file_parser";
-import type { Professor } from "$model/professor/professor";
-import type { SchoolClass } from "$model/school-class/school-class";
-import type { Subject } from "$model/subject/subject";
+import { Professor } from "$model/professor/professor";
+import { SchoolClass } from "$model/school-class/school-class";
+import { Subject } from "$model/subject/subject";
 import { get, writable } from "svelte/store";
 import { readCookieFile } from "./utils/cookie_file_reader";
 import { removeAllOf, removeProfessor, removeSchoolClass } from "$model/timetable/time-table";
@@ -18,7 +18,7 @@ export const allClassrooms = writable(class_data);
 export const allSubjects = writable(getExistingSubjectsFromFile(file_data, prof_data, class_data));
 export const allHoursOfDay = writable(getExistingHoursOfDayFromFile(file_data));
 export const allDaysOfWeek = writable(getExistingDaysOfWeekFromFile(file_data));
-
+allDaysOfWeek.set
 export const theme = writable<"light" | "dark" | "auto">("auto");
 export const editingId = writable<string | null>(null);
 
@@ -30,13 +30,17 @@ export const editingId = writable<string | null>(null);
 type AcceptedTypes = Professor | SchoolClass | Subject;
 
 function getCorrectList(item: AcceptedTypes) {
-    switch(item.constructor.name) {
-        case 'Professor':
-            return allProfessors;
-        case 'SchoolClass':
-            return allClassrooms;
-        case 'Subject':
-            return allSubjects;
+    if(item instanceof Professor) {
+        return allProfessors;
+    }
+    else if(item instanceof SchoolClass) {
+        return allClassrooms;
+    }
+    else if(item instanceof Subject) {
+        return allSubjects;
+    }
+    else {
+        throw new Error("Invalid type");
     }
 }
 
@@ -47,12 +51,17 @@ function getCorrectList(item: AcceptedTypes) {
  * @param {number} index - If it is specified, then the ibject will replace whatever is inserted at [index] position
  */
 export function saveObjectToStorage(item: AcceptedTypes, index?: number) {
+
     let generic_store = getCorrectList(item)!; 
     // @ts-ignore
+    console.log("saveObjectToStorage", generic_store);
+
     let generic_data = get(generic_store);
 
     if(index === undefined) {
         // @ts-ignore 
+        console.log("saveObjectToStorage", generic_data);
+        
         generic_store.set([...generic_data, item]);
     }
     else {
