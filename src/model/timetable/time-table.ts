@@ -134,7 +134,7 @@ export class TimeTable {
         for (let i = 0; i < this.daysPerWeek; i++) {
             for (let j = 0; j < this.hoursPerDay; j++) {
                 const subject = this.getSubjectOn(i, j);
-                if (subject == null || subject.constructor.name == Unavailable.name)
+                if (subject == null || subject instanceof Unavailable)
                     continue;
 
                 if (!tmpSubjectsMap.has(subject.id)) {
@@ -176,8 +176,9 @@ export class TimeTable {
      * @returns true if and only if the timeslot is not marked as unavailable
      */
     isAvailableOn(dayOfWeek: number, timeOfDay: number): boolean {
-        const className = this.getSubjectOn(dayOfWeek, timeOfDay)?.constructor.name ?? "";
-        return className != Unavailable.name;
+        const sub = this.getSubjectOn(dayOfWeek, timeOfDay);
+        return !(sub instanceof Unavailable)
+        
     }
 
     /**
@@ -192,7 +193,7 @@ export class TimeTable {
      */
     isAssignedOn(dayOfWeek: number, timeOfDay: number): boolean {
         const sub = this.getSubjectOn(dayOfWeek, timeOfDay);
-        return sub != null && sub.constructor.name !== Unavailable.name;
+        return sub != null && !(sub instanceof Unavailable);
     }
 
 
@@ -363,7 +364,7 @@ export function setSubject(dayOfWeek: number, timeOfDay: number, subject: Subjec
 function setSubjectOnTimeTable(dayOfWeek: number, timeOfDay: number, subject: Subject, timeTable: TimeTable) {
     const oldSubject = timeTable.getSubjectOn(dayOfWeek, timeOfDay);
 
-    if (oldSubject?.constructor.name == Unavailable.name) {
+    if (oldSubject instanceof Unavailable) {
         throw new Error("Trying to assign a subject on an unavailable timeslot");
     }
     else if (oldSubject != null) {
@@ -376,13 +377,12 @@ function setSubjectOnTimeTable(dayOfWeek: number, timeOfDay: number, subject: Su
 
 
 export function removeSubject(dayOfWeek: number, timeOfDay: number, subject: Subject | Unavailable) {
-    if (subject.constructor.name == Unavailable.name) {
+    if (subject instanceof Unavailable) {
         throw new Error("Trying to remove an unavailable subject");
     }
 
-    // @ts-expect-error we know subject is of type Subject
+    
     const ctt = getClassTimetableOf(subject.schoolClass);
-    // @ts-expect-error we know subject is of type Subject
     const ptt = getProfessorTimetableOf(subject.professor);
 
     if (ctt.getSubjectOn(dayOfWeek, timeOfDay)?.id != subject.id || ptt.getSubjectOn(dayOfWeek, timeOfDay)?.id != subject.id) {
@@ -405,8 +405,7 @@ export function setUnavailable(dayOfWeek: number, timeOfDay: number, entity: Sch
 
 
     if (available) {
-        if (oldSubject?.constructor.name != Unavailable.name) {
-            // throw new Error("Trying to remove a subject from an available timeslot");
+        if (!(oldSubject instanceof Unavailable)) {
             return; // nothing to do
         }
     }
