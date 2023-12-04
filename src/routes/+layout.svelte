@@ -47,7 +47,7 @@
 			id="title"
 			class="zoom-hover"
 			on:click={() => {
-				goto("/");
+				goto("/drag-and-drop");
 			}}
 		>
 			SCHOOL TIMETABLE
