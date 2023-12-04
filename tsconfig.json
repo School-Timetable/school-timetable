@@ -10,6 +10,7 @@
 		"skipLibCheck": true,
 		"sourceMap": true,
 		"strict": true,
+		"target": "es2015",
 		"paths" : {
 			"$model": ["src/model"],
 			"$model/*": ["src/model/*"],
