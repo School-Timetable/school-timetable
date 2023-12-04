@@ -1,9 +1,8 @@
 <script lang="ts">
-    import { Table } from 'sveltestrap';
-	import { stringToSubject, Subject } from "$model/subject/subject";
+    import { stringToSubject, Subject } from "$model/subject/subject";
     import Hour from '$lib/components/hour.svelte';
-    import { daysPerWeek, getTimetableOf, hoursPerDay, removeSubject, setSubject, setUnavailable, type TimeTable } from '$model/timetable/time-table';
-    import { UNAVAILABLE, Unavailable } from '$model/timetable/unavailable';
+    import { removeSubject, type TimeTable } from '$model/timetable/time-table';
+    import { Unavailable } from '$model/timetable/unavailable';
     import type { SchoolClass } from '$model/school-class/school-class';
     import type { Professor } from '$model/professor/professor';
     import Grid from './Grid.svelte';
