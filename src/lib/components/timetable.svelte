@@ -110,9 +110,9 @@
         <div class="col-10">
             <Grid timeTable={grid} professorView={professorView} selectedItem={selectedItem} subjectColors={subjectColors} bind:this= { realGrid } callback = {refresh}></Grid>
             
-            <div class="d-flex justify-content-center my-4">
+            <!-- <div class="d-flex justify-content-center my-4">
                 <button type="button" class="btn btn-primary btn-lg w-100" on:click={event => validateTimetable()}>valida orario</button>
-            </div>
+            </div> -->
             
         </div>
         
