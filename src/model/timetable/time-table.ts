@@ -11,8 +11,8 @@ export const classTimetableMap: ReadonlyMap<string, TimeTable> = _classTimetable
 export const professorTimetableMap: ReadonlyMap<string, TimeTable> = _professorTimetableMap;
 
 // TODO: remove
-export const daysPerWeek = 6;
-export const hoursPerDay = 8;
+export let daysPerWeek = 6;
+export let hoursPerDay = 8;
 
 
 export class TimeTable {
@@ -330,6 +330,9 @@ export function getTimetableOf(entity: SchoolClass | Professor): TimeTable {
 export function clearAll(): void {
     _classTimetableMap.clear();
     _professorTimetableMap.clear();
+    
+
+
 }
 
 
@@ -338,4 +341,9 @@ export function removeAllOf(subject: Subject): void {
     getProfessorTimetableOf(subject.professor).removeAllOf(subject);
 }
 
+export function updateTimetableSize(newDays: number, newHours: number)
+{
+    daysPerWeek = newDays
+    hoursPerDay = newHours
+}
 

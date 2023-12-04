@@ -140,7 +140,7 @@
             <tr>
                 <th class="col-2"></th>
                 <!-- {length: columns_number} -->
-                {#each {length: columns_number} as _, dayIndex}
+                {#each {length: timeTable.daysPerWeek} as _, dayIndex}
                     <th class="col-2">
                         <!-- 
                             label with input for days
@@ -155,12 +155,12 @@
         </thead>
     
     <!--cells-->
-    {#each {length: rows_number} as _, hourIndex}
+    {#each {length: timeTable.hoursPerDay} as _, hourIndex}
         <tr>
             <input style="min-width: 70px;" id="hour_label_{hourIndex}" type="text" class="input_text"
                             value={$allHoursOfDay[hourIndex]? $allHoursOfDay[hourIndex].label : assignDefaultHour(hourIndex)}
                             on:input={() => onHourLabelChange(hourIndex)}/>
-            {#each {length: columns_number} as _, dayIndex}
+            {#each {length: timeTable.daysPerWeek} as _, dayIndex}
                 <td>
                     <Hour 
                         on:hourDrag="{() => onSubjectDrag(timeTable.values[dayIndex][hourIndex])}"

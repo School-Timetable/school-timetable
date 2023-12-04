@@ -2,7 +2,7 @@
     import { Table } from 'sveltestrap';
 	import { stringToSubject, Subject } from "$model/subject/subject";
     import Hour from '$lib/components/hour.svelte';
-    import { daysPerWeek, getTimetableOf, hoursPerDay, removeSubject, setSubject, setUnavailable, type TimeTable } from '$model/timetable/time-table';
+    import { clearAll, daysPerWeek, getTimetableOf, hoursPerDay, removeSubject, setSubject, setUnavailable, TimeTable } from '$model/timetable/time-table';
     import { UNAVAILABLE, Unavailable } from '$model/timetable/unavailable';
     import type { SchoolClass } from '$model/school-class/school-class';
     import type { Professor } from '$model/professor/professor';
@@ -81,6 +81,7 @@
     export function refresh(){
         sidebar = sidebar;
     }
+    
 
 </script>
 
@@ -88,7 +89,7 @@
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
-            
+         
 
 <div class="container-fluid">
     <div class="d-flex">
@@ -109,7 +110,7 @@
         
         <!--grid-->
         <div class="col-10">
-            <Grid timeTable={grid} professorView={professorView} selectedItem={selectedItem} subjectColors={subjectColors} bind:this= { realGrid } callback = {refresh}></Grid>
+            <Grid bind:timeTable="{grid}" professorView={professorView} selectedItem={selectedItem} subjectColors={subjectColors} bind:this= { realGrid } callback = {refresh}></Grid>
             
             <div class="d-flex justify-content-center my-4">
                 <button type="button" class="btn btn-primary btn-lg w-100" on:click={event => validateTimetable()}>valida orario</button>

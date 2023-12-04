@@ -4,7 +4,7 @@
   import { Professor } from '$model/professor/professor';
   import type { SchoolClass } from '$model/school-class/school-class';
   import type { Subject } from '$model/subject/subject';
-  import { TimeTable, getClassTimetableOf, getProfessorTimetableOf } from '$model/timetable/time-table';
+  import { TimeTable, clearAll, daysPerWeek, getClassTimetableOf, getProfessorTimetableOf, hoursPerDay, updateTimetableSize } from '$model/timetable/time-table';
 
     // prova
     
@@ -13,6 +13,10 @@
     let classes: SchoolClass[] = []
     let professors: Professor[] = []
     let currentSidebar: Subject[] = []
+
+
+    export let inputDays: string = daysPerWeek.toString()
+    export let inputHours: string = hoursPerDay.toString()
 
 
     allClassrooms.subscribe(c => classes = c)
@@ -38,6 +42,7 @@
         
         let timetable = item instanceof Professor ? getProfessorTimetableOf(item) : getClassTimetableOf(item)
         currentTimeTable = timetable
+        console.log("PORCO",currentTimeTable.values.length)
         selectedItem = item
         if(item instanceof Professor)
             currentSidebar = subjects.filter(subject => subject.professor.id == item.id)
@@ -53,8 +58,37 @@
         else
             setCurrentView(classes[0])
     }
+
+
+    function updateTimetable()
+    {
+        
+        const numberPattern = new RegExp("^[0-9]+$")
+
+        if(inputDays.match(numberPattern) && inputHours.match(numberPattern))
+        {
+            updateTimetableSize(parseInt(inputDays),parseInt(inputHours))
+            clearAll()
+            if(selectedItem != null)
+                setCurrentView(selectedItem)
+           
+        }
+        else
+        {
+            alert("Invalid Grid Size")
+        }
+        
+    }
+
+
+
 </script>
 
+
+
+<input placeholder="days" bind:value="{inputDays}">
+<input placeholder="hours" bind:value="{inputHours}">
+<button class="btn" on:click={_ => {updateTimetable()}}>Update Size</button>
 <div class="m-3">
 
     <!--toggle professor view-->
@@ -72,6 +106,6 @@
     </ul>
     
     {#if currentTimeTable && selectedItem}
-        <Timetable selectedItem="{selectedItem}" professorView={professorView} grid={currentTimeTable} sidebar={currentSidebar}></Timetable>
+        <Timetable selectedItem="{selectedItem}" professorView={professorView} bind:grid={currentTimeTable} sidebar={currentSidebar}></Timetable>
     {/if}
 </div>
