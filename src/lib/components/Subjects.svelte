@@ -51,6 +51,7 @@
 	];
 
 	function saveSubject(subject: Subject) {
+		console.log(subject);
 		if (subjectAlreadyExists(subject)) {
 			if (!showDuplicateAlert) 
 				toggleDuplicateAlert();

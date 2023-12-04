@@ -1,80 +1,65 @@
 <script lang="ts">
-    interface Oggetto {
-      numeroOggetto: number;
-      valore: string;
-      // Aggiungi altre proprietà se necessario
-    }
   
-    let selectedFile: File | null = null;
-    let jsonContent: Oggetto[] = [];
   
-    // Funzione chiamata quando il file viene selezionato
-    function handleFileChange(event: Event) {
-      const input = event.target as HTMLInputElement;
-      const file = input.files && input.files[0];
+  import { writeToStorage,checkBase64} from '$lib/utils/get_storage_to_download'; 
   
-      // Verifica se un file è stato selezionato e se è di tipo JSON
-      if (file && file.type === "application/json") {
-        selectedFile = file;
+
+  let selectedFile: File | null = null;
+  let txtContent: string[] = [];
+
   
-        // Leggi il contenuto del file JSON
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          try {
-            const jsonData = JSON.parse(e.target!.result as string);
-  
-            if (Array.isArray(jsonData)) {
-              // Assumiamo che il file JSON contenga un array di oggetti
-              jsonContent = jsonData.map((item: any, index: number) => ({
-                numeroOggetto: index + 1,
-                valore: item.valore || "", // Modifica questa parte in base alla struttura del tuo JSON
-              }));
-  
-              console.log("Lista di oggetti dal file JSON:", jsonContent);
+
+  function handleFileChange(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files && input.files[0];
+
+    if (file && file.type === "text/plain") {
+      selectedFile = file;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const fileContent = (e.target!.result as string).trim();
+          txtContent = fileContent.split('\n');
+
+          if (txtContent.length !== 2) {
+            console.error("Il file TXT deve contenere esattamente due righe.");
+            txtContent = [];
+          } else {
+            console.log("Contenuto del file:", txtContent);
+
+            const isValidBase64 = checkBase64(txtContent[0], txtContent[1]);
+            if (isValidBase64) {
+              writeToStorage(txtContent[0],txtContent[1]);
+
             } else {
-              console.error("Il file JSON deve contenere un array di oggetti.");
+              alert("le due stringhe non sono valide")
+
             }
-          } catch (error) {
-            console.error("Errore durante il parsing del file JSON:", error);
           }
-        };
-  
-        reader.readAsText(file);
-      } else {
-        selectedFile = null;
-        console.log("Seleziona un file JSON valido.");
-      }
+        } catch (error) {
+          console.error("Errore durante la lettura del file TXT:", error);
+        }
+      };
+
+      reader.readAsText(file);
+    } else {
+      selectedFile = null;
+      console.log("Seleziona un file TXT valido.");
     }
-  </script>
-  
-  <style>
-    /* Aggiungi eventuali stili CSS qui */
-  </style>
-  
-  <div>
-    <label for="jsonFile">Seleziona un file JSON:</label>
-    <input
-      type="file"
-      id="jsonFile"
-      accept=".json"
-      on:change={handleFileChange}
-    />
-  
-    {#if selectedFile}
-      <p>File selezionato: {selectedFile.name}</p>
-    {/if}
-  
-   {#if jsonContent.length > 0}
-    <h2>Contenuto del file JSON:</h2>
-    <ul>
-      //users is array and user is an alias
-      {#each jsonContent as content}
-         <li>OGGETTO NUMERO: {content.numeroOggetto} VALORE: {content.valore} </li>
-  
-      {/each}
-  
-  </ul>
+  }
+</script>
+
+<div>
+  <label for="txtFile">Upload del tuo ambiente di lavoro:</label>
+  <input
+    type="file"
+    id="txtFile"
+    accept=".txt"
+    on:change={handleFileChange}
+  />
+
+  {#if selectedFile}
+    <p>File selezionato: {selectedFile.name}</p>
   {/if}
-  
-  </div>
-  
+</div>
