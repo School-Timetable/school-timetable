@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // from docs:
 // Materia(Classe*, Prof*, Nome, Abbreviazione, Peso, Ore_Sett)
 
@@ -130,3 +132,43 @@ export class Subject {
     }
 
 }
+
+export function subjectToString(subject: Subject | null): string
+{
+    return JSON.stringify(
+        {
+            id: subject?.id,
+            schoolClass: {
+                id: subject?.schoolClass.id,
+                year: subject?.schoolClass.year.value,
+                section: subject?.schoolClass.section.value,
+                track: subject?.schoolClass.track?.value
+            },
+            professor: {
+                id: subject?.professor.id,
+                name: subject?.professor.name.value,
+                surname: subject?.professor.surname.value,
+                email: subject?.professor.email.value,
+                cellphone: subject?.professor.cellPhone.value
+            },
+            name: subject?.name.value,
+            abbreviation: subject?.abbreviation.value,
+            weight: subject?.weight.value,
+            hoursPerWeek: subject?.hoursPerWeek.value
+        }
+    );
+}
+
+export function stringToSubject(subject: string): Subject
+{
+    const sub = JSON.parse(subject)
+    return Subject.of(
+        sub.id,
+        SchoolClass.of(sub.schoolClass.id,sub.schoolClass.year,sub.schoolClass.section,sub.schoolClass.track),
+        Professor.of(sub.professor.id,sub.professor.name,sub.professor.surname,sub.professor.email,sub.professor.cellphone),
+        sub.name,
+        sub.abbreviation,
+        sub.weight,
+        sub.hoursPerWeek)
+}
+
