@@ -1,8 +1,7 @@
 import { c as create_ssr_component, a as compute_rest_props, s as setContext, g as getContext, o as onDestroy, b as spread, e as escape_object, d as escape_attribute_value, f as add_attribute, v as validate_component, h as subscribe, i as escape, j as each } from "../../chunks/index2.js";
-import { c as classnames, t as theme, a as allDaysOfWeek, b as allHoursOfDay, d as allSubjects, e as allClassrooms, f as allProfessors } from "../../chunks/Offcanvas.svelte_svelte_type_style_lang.js";
+import { c as classnames, t as theme, I as Icon, a as allDaysOfWeek, b as allHoursOfDay, d as allSubjects, e as allClassrooms, f as allProfessors } from "../../chunks/Offcanvas.svelte_svelte_type_style_lang.js";
 import { createPopper } from "@popperjs/core";
 import { w as writable } from "../../chunks/index.js";
-import { I as Icon } from "../../chunks/Icon.js";
 function createPopperActions(initOptions) {
   let contentNode;
   let options = initOptions;

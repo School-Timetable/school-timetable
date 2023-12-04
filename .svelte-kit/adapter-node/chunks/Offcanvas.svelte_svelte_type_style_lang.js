@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { v4 } from "uuid";
 import { w as writable } from "./index.js";
+import { c as create_ssr_component, a as compute_rest_props, b as spread, e as escape_object, d as escape_attribute_value } from "./index2.js";
 const valueSchema$a = z.string().min(2, "The name is too short (min 2 characters)").max(50, "The name is too long (max 50 characters)").regex(/^[a-z]+( [a-z]+)*$/i, "The name is not valid");
 const nameSchema$1 = z.object({
   value: valueSchema$a
@@ -629,9 +630,24 @@ function uuid() {
     return v.toString(16);
   });
 }
+const Icon = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let classes;
+  let $$restProps = compute_rest_props($$props, ["class", "name"]);
+  let { class: className = "" } = $$props;
+  let { name = "" } = $$props;
+  if ($$props.class === void 0 && $$bindings.class && className !== void 0)
+    $$bindings.class(className);
+  if ($$props.name === void 0 && $$bindings.name && name !== void 0)
+    $$bindings.name(name);
+  classes = classnames(className, `bi-${name}`);
+  return `<i${spread([escape_object($$restProps), { class: escape_attribute_value(classes) }], {})}></i>`;
+});
 const Modal_svelte_svelte_type_style_lang = "";
 const Offcanvas_svelte_svelte_type_style_lang = "";
 export {
+  Icon as I,
+  Professor as P,
+  SchoolClass as S,
   allDaysOfWeek as a,
   allHoursOfDay as b,
   classnames as c,
@@ -646,6 +662,7 @@ export {
   trackSchema as l,
   mailSchema as m,
   nameSchema$1 as n,
+  Subject as o,
   surnameSchema as s,
   theme as t,
   uuid as u,

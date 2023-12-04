@@ -11,20 +11,14 @@
     "file": "_app/immutable/assets/Offcanvas.60614438.css",
     "src": "Offcanvas.css"
   },
-  "_Icon.js": {
-    "file": "chunks/Icon.js",
-    "imports": [
-      "_index2.js",
-      "_Offcanvas.svelte_svelte_type_style_lang.js"
-    ]
-  },
   "_Offcanvas.svelte_svelte_type_style_lang.js": {
     "css": [
       "_app/immutable/assets/Offcanvas.60614438.css"
     ],
     "file": "chunks/Offcanvas.svelte_svelte_type_style_lang.js",
     "imports": [
-      "_index.js"
+      "_index.js",
+      "_index2.js"
     ]
   },
   "_index.js": {
@@ -71,8 +65,7 @@
     "imports": [
       "_index2.js",
       "_Offcanvas.svelte_svelte_type_style_lang.js",
-      "_index.js",
-      "_Icon.js"
+      "_index.js"
     ],
     "isEntry": true,
     "src": "src/routes/+layout.svelte"
@@ -96,7 +89,6 @@
     "file": "entries/pages/data-input-form/_page.svelte.js",
     "imports": [
       "_index2.js",
-      "_Icon.js",
       "_Offcanvas.svelte_svelte_type_style_lang.js"
     ],
     "isEntry": true,
@@ -111,12 +103,12 @@
     "src": "src/routes/downloadUploadData/+page.svelte"
   },
   "src/routes/drag-and-drop/+page.css": {
-    "file": "_app/immutable/assets/_page.892c81e9.css",
+    "file": "_app/immutable/assets/_page.162be90b.css",
     "src": "src/routes/drag-and-drop/+page.css"
   },
   "src/routes/drag-and-drop/+page.svelte": {
     "css": [
-      "_app/immutable/assets/_page.892c81e9.css"
+      "_app/immutable/assets/_page.162be90b.css"
     ],
     "file": "entries/pages/drag-and-drop/_page.svelte.js",
     "imports": [

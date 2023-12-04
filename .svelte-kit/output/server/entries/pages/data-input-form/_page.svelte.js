@@ -1,6 +1,5 @@
 import { c as create_ssr_component, a as compute_rest_props, b as spread, e as escape_object, d as escape_attribute_value, i as escape, f as add_attribute, k as compute_slots, v as validate_component, j as each, o as onDestroy, m as missing_component, l as createEventDispatcher, n as get_store_value, h as subscribe } from "../../../chunks/index2.js";
-import { I as Icon } from "../../../chunks/Icon.js";
-import { c as classnames, i as isObject, g as getColumnSizeClass, u as uuid, e as allClassrooms, f as allProfessors, h as editingId, d as allSubjects, n as nameSchema, s as surnameSchema, m as mailSchema, j as cellPhoneSchema, y as yearSchema, k as sectionSchema, l as trackSchema } from "../../../chunks/Offcanvas.svelte_svelte_type_style_lang.js";
+import { c as classnames, i as isObject, g as getColumnSizeClass, u as uuid, I as Icon, e as allClassrooms, f as allProfessors, h as editingId, d as allSubjects, n as nameSchema, s as surnameSchema, m as mailSchema, j as cellPhoneSchema, y as yearSchema, k as sectionSchema, l as trackSchema } from "../../../chunks/Offcanvas.svelte_svelte_type_style_lang.js";
 import { createPopper } from "@popperjs/core";
 import "papaparse";
 import "fs";
