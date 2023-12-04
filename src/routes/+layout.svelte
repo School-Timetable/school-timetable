@@ -24,6 +24,8 @@
 		allProfessors.subscribe(generate_file);
 		allClassrooms.subscribe(generate_file);
 		allSubjects.subscribe(generate_file);
+		allDaysOfWeek.subscribe(generate_file);
+		allHoursOfDay.subscribe(generate_file);
 	});
 </script>
 

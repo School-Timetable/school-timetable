@@ -645,6 +645,8 @@ const Icon = create_ssr_component(($$result, $$props, $$bindings, slots) => {
 const Modal_svelte_svelte_type_style_lang = "";
 const Offcanvas_svelte_svelte_type_style_lang = "";
 export {
+  DayOfWeek as D,
+  HourOfDay as H,
   Icon as I,
   Professor as P,
   SchoolClass as S,

@@ -83,6 +83,15 @@
             return 'transparent'
         return subjectColors!.get(item.id)
     }
+
+    function assignDefaultDay(index: number): string {
+        let defaultValue = "day "+(index+1);
+        allDaysOfWeek.update((array) => {
+            array[index] = DayOfWeek.of(index,defaultValue);
+            return array;
+        });
+        return defaultValue;
+    }
     
     function onDayLabelChange(index: number) {
         let input = document.getElementById("day_label_"+index) as HTMLInputElement;
@@ -94,6 +103,15 @@
         } else {
             $allDaysOfWeek[index]? input.value=$allDaysOfWeek[index].label : input.value="day_"+(index+1);
         }
+    }
+
+    function assignDefaultHour(index: number) {
+        let defaultValue = "hour "+(index+1);
+        allHoursOfDay.update((array) => {
+            array[index] = HourOfDay.of(index,defaultValue);
+            return array;
+        });
+        return defaultValue;
     }
 
     function onHourLabelChange(index: number) {
@@ -128,7 +146,7 @@
                             label with input for days
                         -->
                         <input  id="day_label_{dayIndex}" type="text" class="input_text"
-                            value={$allDaysOfWeek[dayIndex]? $allDaysOfWeek[dayIndex].label : "day_"+(dayIndex+1)}
+                            value={$allDaysOfWeek[dayIndex]? $allDaysOfWeek[dayIndex].label : assignDefaultDay(dayIndex)}
                             on:input={() => onDayLabelChange(dayIndex)}/> 
                     </th>
                 {/each}
@@ -140,20 +158,20 @@
     {#each {length: rows_number} as _, hourIndex}
         <tr>
             <input style="min-width: 70px;" id="hour_label_{hourIndex}" type="text" class="input_text"
-                            value={$allHoursOfDay[hourIndex]? $allHoursOfDay[hourIndex].label : "hour_"+(hourIndex+1)}
+                            value={$allHoursOfDay[hourIndex]? $allHoursOfDay[hourIndex].label : assignDefaultHour(hourIndex)}
                             on:input={() => onHourLabelChange(hourIndex)}/>
             {#each {length: columns_number} as _, dayIndex}
                 <td>
                     <Hour 
-                                on:hourDrag="{() => onSubjectDrag(timeTable.values[dayIndex][hourIndex])}"
-                                on:dragend="{onSubjectDragEnd}"
-                                on:click="{() => onHourClick(dayIndex,hourIndex)}"
-                                on:hourDrop={event => dropValue(hourIndex,dayIndex,event.detail)} 
-                                unavailable="{unavailableTimeTable !== null && unavailableTimeTable.values[dayIndex][hourIndex] instanceof Unavailable}"
-                                isProfessorView={professorView} 
-                                color={getSubjectColor(timeTable.getSubjectOn(dayIndex,hourIndex))}
-                                id={`${hourIndex},${dayIndex}`}
-                                subject={timeTable.values[dayIndex][hourIndex]}></Hour>
+                        on:hourDrag="{() => onSubjectDrag(timeTable.values[dayIndex][hourIndex])}"
+                        on:dragend="{onSubjectDragEnd}"
+                        on:click="{() => onHourClick(dayIndex,hourIndex)}"
+                        on:hourDrop={event => dropValue(hourIndex,dayIndex,event.detail)} 
+                        unavailable="{unavailableTimeTable !== null && unavailableTimeTable.values[dayIndex][hourIndex] instanceof Unavailable}"
+                        isProfessorView={professorView} 
+                        color={getSubjectColor(timeTable.getSubjectOn(dayIndex,hourIndex))}
+                        id={`${hourIndex},${dayIndex}`}
+                        subject={timeTable.values[dayIndex][hourIndex]}></Hour>
                 </td>
             {/each}
         </tr>

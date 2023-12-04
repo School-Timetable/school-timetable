@@ -1,5 +1,5 @@
 import { c as create_ssr_component, l as createEventDispatcher, v as validate_component, p as add_styles, q as merge_ssr_styles, f as add_attribute, i as escape, h as subscribe, j as each } from "../../../chunks/index2.js";
-import { S as SchoolClass, P as Professor, I as Icon, b as allHoursOfDay, a as allDaysOfWeek, t as theme, o as Subject, e as allClassrooms, d as allSubjects, f as allProfessors } from "../../../chunks/Offcanvas.svelte_svelte_type_style_lang.js";
+import { S as SchoolClass, P as Professor, I as Icon, b as allHoursOfDay, a as allDaysOfWeek, t as theme, o as Subject, D as DayOfWeek, H as HourOfDay, e as allClassrooms, d as allSubjects, f as allProfessors } from "../../../chunks/Offcanvas.svelte_svelte_type_style_lang.js";
 class Unavailable {
   id = "unavailable";
   static static_id = "unavailable";
@@ -286,6 +286,22 @@ const Grid = create_ssr_component(($$result, $$props, $$bindings, slots) => {
       return "transparent";
     return subjectColors.get(item.id);
   }
+  function assignDefaultDay(index) {
+    let defaultValue = "day " + (index + 1);
+    allDaysOfWeek.update((array) => {
+      array[index] = DayOfWeek.of(index, defaultValue);
+      return array;
+    });
+    return defaultValue;
+  }
+  function assignDefaultHour(index) {
+    let defaultValue = "hour " + (index + 1);
+    allHoursOfDay.update((array) => {
+      array[index] = HourOfDay.of(index, defaultValue);
+      return array;
+    });
+    return defaultValue;
+  }
   if ($$props.timeTable === void 0 && $$bindings.timeTable && timeTable !== void 0)
     $$bindings.timeTable(timeTable);
   if ($$props.professorView === void 0 && $$bindings.professorView && professorView !== void 0)
@@ -309,7 +325,7 @@ const Grid = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     return `<th class="col-2 svelte-1dzj1ao">
                         <input id="${"day_label_" + escape(dayIndex, true)}" type="text" class="input_text svelte-1dzj1ao"${add_attribute(
       "value",
-      $allDaysOfWeek[dayIndex] ? $allDaysOfWeek[dayIndex].label : "day_" + (dayIndex + 1),
+      $allDaysOfWeek[dayIndex] ? $allDaysOfWeek[dayIndex].label : assignDefaultDay(dayIndex),
       0
     )}> 
                     </th>`;
@@ -320,7 +336,7 @@ const Grid = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     ${each({ length: rows_number }, (_, hourIndex) => {
     return `<tr class="svelte-1dzj1ao"><input style="min-width: 70px;" id="${"hour_label_" + escape(hourIndex, true)}" type="text" class="input_text svelte-1dzj1ao"${add_attribute(
       "value",
-      $allHoursOfDay[hourIndex] ? $allHoursOfDay[hourIndex].label : "hour_" + (hourIndex + 1),
+      $allHoursOfDay[hourIndex] ? $allHoursOfDay[hourIndex].label : assignDefaultHour(hourIndex),
       0
     )}>
             ${each({ length: columns_number }, (_2, dayIndex) => {
