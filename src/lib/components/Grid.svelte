@@ -11,6 +11,8 @@
     import Hour from '$lib/components/hour.svelte';
     import { Subject } from '$model/subject/subject';
     import { Unavailable } from '$model/timetable/unavailable';
+    import { theme } from '$lib/stores/global_store'; 
+    import { darkThemeColors, lightThemeColors } from '$lib/colors';
 
 
     export let timeTable: TimeTable;
@@ -20,10 +22,16 @@
     export let subjectColors: Map<string, string> = new Map()
     export let callback: () => void;
 
-
     let unavailableTimeTable: TimeTable | null = null
     let rows_number: number = timeTable.hoursPerDay;
     let columns_number: number = timeTable.daysPerWeek;
+
+
+
+    theme.subscribe(value => {
+        timeTable = timeTable
+    })
+
 
     export function onSubjectDrag(subject: Subject | null | Unavailable)
     {
@@ -108,30 +116,30 @@
     onMount(throw_alert_on_inconsistency);
 </script>
 
-<div>
-   <Table >  
-    <thead>
-        <tr>
-            <th class="col-2"></th>
-            <!-- {length: columns_number} -->
-            {#each {length: columns_number} as _, dayIndex}
-                <th class="col-2">
-                    <!-- 
-                        label with input for days
-                    -->
-                    <input  id="day_label_{dayIndex}" type="text" class="input_text"
-                        value={$allDaysOfWeek[dayIndex]? $allDaysOfWeek[dayIndex].label : "day_"+(dayIndex+1)}
-                        on:input={() => onDayLabelChange(dayIndex)}/> 
-                </th>
-            {/each}
-            <!-- <th><button on:click={timeTable.add_column}>+</button></th> -->
-        </tr>
-    </thead>
+<div class="w-100" style="overflow: auto">
+    <table>  
+        <thead>
+            <tr>
+                <th class="col-2"></th>
+                <!-- {length: columns_number} -->
+                {#each {length: columns_number} as _, dayIndex}
+                    <th class="col-2">
+                        <!-- 
+                            label with input for days
+                        -->
+                        <input  id="day_label_{dayIndex}" type="text" class="input_text"
+                            value={$allDaysOfWeek[dayIndex]? $allDaysOfWeek[dayIndex].label : "day_"+(dayIndex+1)}
+                            on:input={() => onDayLabelChange(dayIndex)}/> 
+                    </th>
+                {/each}
+                <!-- <th><button on:click={timeTable.add_column}>+</button></th> -->
+            </tr>
+        </thead>
     
     <!--cells-->
     {#each {length: rows_number} as _, hourIndex}
         <tr>
-            <input id="hour_label_{hourIndex}" type="text" class="input_text"
+            <input style="min-width: 70px;" id="hour_label_{hourIndex}" type="text" class="input_text"
                             value={$allHoursOfDay[hourIndex]? $allHoursOfDay[hourIndex].label : "hour_"+(hourIndex+1)}
                             on:input={() => onHourLabelChange(hourIndex)}/>
             {#each {length: columns_number} as _, dayIndex}
@@ -150,7 +158,7 @@
             {/each}
         </tr>
     {/each}
-</Table>
+    </table>
 </div>
 
 <style>

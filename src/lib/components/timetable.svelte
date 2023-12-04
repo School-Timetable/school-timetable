@@ -7,9 +7,9 @@
     import type { SchoolClass } from '$model/school-class/school-class';
     import type { Professor } from '$model/professor/professor';
     import Grid from './Grid.svelte';
-    import { allHoursOfDay, allDaysOfWeek } from '$lib/stores/global_store'; //TODO utilizzare i dati reali
-    import { DayOfWeek } from '$model/timetable/day-of-week';
-    import { HourOfDay } from '$model/timetable/hour-of-day';
+    import { theme } from '$lib/stores/global_store'; 
+    import { darkThemeColors, lightThemeColors } from '$lib/colors';
+
 	let weekNames = ["MON","TUE","WED","THU","FRI","SAT"];
     //let mockHours = ["8:30","9:30","10:30","11:30","12:30","13:30","14:30","15:30"]
     export let grid: TimeTable;
@@ -18,15 +18,8 @@
     export let selectedItem: Professor | SchoolClass;
     let realGrid: Grid;
 
-    // getting subjects colors
-    const availableColors: readonly string[] = [
-        "#fa968e",  // red
-        "#79c9f7",  // blue
-        "#88f28d",  // green
-        "#f0ce78",  // yellow
-        "#f2a477",  // orange
-        "#c57ff0",  // purple
-    ]
+    let currentColors: readonly string[] = lightThemeColors
+
 
     // Map<subject.id, color>
     export let subjectColors: Map<string, string> = new Map()
@@ -36,9 +29,24 @@
     const onSidebarChange = () => {
         let index = 0
         subjectColors.clear()
-        sidebar.forEach(subject => subjectColors.set(subject.id, availableColors[(index++)%availableColors.length]))
-
+        sidebar.forEach(subject => subjectColors.set(subject.id, currentColors[(index++)%currentColors.length]))
     }
+
+    theme.subscribe(value => {
+        if (value == 'light') {
+            currentColors = lightThemeColors
+        } 
+        else if (value == 'dark') {
+            currentColors = darkThemeColors
+        }
+        else {
+            currentColors = darkThemeColors // todo: detect auto theme and set colors consequently
+        }
+        let index = 0
+        subjectColors.clear()
+        sidebar.forEach(subject => subjectColors.set(subject.id, currentColors[(index++)%currentColors.length]))
+        refresh()
+    })
 
 	function sideBarDrop(event: any)
 	{
@@ -81,23 +89,19 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
             
-<!--todo:   sidebar e grid di uguale altezza
-            hover sulle celle OK
-            bordi attorno alle celle OK
-            celle con undefined devono essere vuote OK
--->
+
 <div class="container-fluid">
     <div class="d-flex">
         <!--sidebar-->
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <div class="overflow-auto vh-100 row col-2">
-            <ul class="list-group" on:dragover={event => event.preventDefault()} on:drop={event => sideBarDrop(event)}>
+            <ul class="list-group me-1" on:dragover={event => event.preventDefault()} on:drop={event => sideBarDrop(event)}>
                 {#each sidebar as item, itemIndex }
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div class="w-75">
+                        <div class="w-100">
                             <Hour on:hourDrag="{() => realGrid.onSubjectDrag(item)}" on:dragend="{realGrid.onSubjectDragEnd}" isProfessorView={professorView} color={getSubjectColor(item)} droppable={false} draggable={getRemainingHours(item) > 0} id="prova" subject={item} on:hourDrop={event => {}}></Hour>
                         </div>
-                        <span class="badge bg-primary rounded-pill">{item.hoursPerWeek.value - grid.getCountOf(item)}</span>
+                        <span class="badge bg-primary rounded-pill ms-2">{item.hoursPerWeek.value - grid.getCountOf(item)}</span>
                     </li>
                 {/each}
             </ul>
@@ -107,7 +111,7 @@
         <div class="col-10">
             <Grid timeTable={grid} professorView={professorView} selectedItem={selectedItem} subjectColors={subjectColors} bind:this= { realGrid } callback = {refresh}></Grid>
             
-            <div class="d-flex justify-content-center">
+            <div class="d-flex justify-content-center my-4">
                 <button type="button" class="btn btn-primary btn-lg w-100" on:click={event => validateTimetable()}>valida orario</button>
             </div>
             
