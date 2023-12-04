@@ -124,7 +124,7 @@
                         on:input={() => onDayLabelChange(dayIndex)}/> 
                 </th>
             {/each}
-            <th><button on:click={timeTable.add_column}>+</button></th>
+            <!-- <th><button on:click={timeTable.add_column}>+</button></th> -->
         </tr>
     </thead>
     
