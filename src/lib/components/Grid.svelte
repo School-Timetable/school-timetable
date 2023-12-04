@@ -113,6 +113,7 @@
     <thead>
         <tr>
             <th class="col-2"></th>
+            <!-- {length: columns_number} -->
             {#each {length: columns_number} as _, dayIndex}
                 <th class="col-2">
                     <!-- 
@@ -123,6 +124,7 @@
                         on:input={() => onDayLabelChange(dayIndex)}/> 
                 </th>
             {/each}
+            <th><button on:click={timeTable.add_column}>+</button></th>
         </tr>
     </thead>
     

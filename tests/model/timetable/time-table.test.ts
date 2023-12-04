@@ -330,5 +330,23 @@ describe("Timetable", () => {
             expect(tt.getCountOf(subjects[0])).toBe(0);
         });
 
+        // it("should add a column", () => {
+        //     const tt = getTimetableOf(classes[0]);
+        //     const columns_before: number = tt.values[0].length;
+        //     tt.add_column();
+        //     const columns_after: number = tt.values[0].length;
+        //     expect(columns_after).toBe(columns_before + 1);
+        // });
+        // it("should add a row", () => {
+        //     const tt = getTimetableOf(classes[0]);
+        //     const rows_before = tt.values.length;
+        //     tt.add_row();
+        //     const rows_after = tt.values.length;
+        //     expect(rows_after).toBe(rows_before + 1);
+
+        // });
+
     });
 });
+
+

@@ -11,7 +11,7 @@ export const classTimetableMap: ReadonlyMap<string, TimeTable> = _classTimetable
 export const professorTimetableMap: ReadonlyMap<string, TimeTable> = _professorTimetableMap;
 
 // TODO: remove
-export const daysPerWeek = 10;
+export const daysPerWeek = 6;
 export const hoursPerDay = 8;
 
 
@@ -126,7 +126,7 @@ export class TimeTable {
      * @returns true if and only if the timeslot is not marked as unavailable
      */
     isAvailableOn(dayOfWeek: number, timeOfDay: number): boolean {
-        let className = this.getSubjectOn(dayOfWeek, timeOfDay)?.constructor.name ?? "";
+        const className = this.getSubjectOn(dayOfWeek, timeOfDay)?.constructor.name ?? "";
         return className != Unavailable.name;
     }
 
@@ -207,6 +207,23 @@ export class TimeTable {
         }
         return unassigned;
     }
+
+    // add_row(): void{
+    //     const new_row:(Subject | Unavailable | null) [] = [];
+    //     for(let i = 0; i < this.values[0].length; i++){
+    //         new_row.push(null);
+    //     }
+    //     this.values.push(new_row);
+    //     //this.hoursPerDay = this.hoursPerDay + 1;
+    // }
+
+    // add_column(): void {
+    //     // for each row append a new null value
+    //     for(let row_id = 0; row_id < this.hoursPerDay; row_id++){
+    //         this.values[row_id].push(null);
+    //     }
+    //     //this.daysPerWeek = this.daysPerWeek + 1;
+    // }
 }
 
 
