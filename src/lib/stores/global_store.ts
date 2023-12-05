@@ -1,12 +1,14 @@
-import { getExistingClassroomsFromFile, getExistingDaysOfWeekFromFile, getExistingHoursOfDayFromFile, getExistingProfessorFromFile, getExistingSubjectsFromFile } from "$lib/stores/utils/cookie_file_parser";
+import { getCompleteTimetableFromFile, getExistingClassroomsFromFile, getExistingDaysOfWeekFromFile, getExistingHoursOfDayFromFile, getExistingProfessorFromFile, getExistingSubjectsFromFile } from "$lib/stores/utils/cookie_file_parser";
 import { Professor } from "$model/professor/professor";
 import { SchoolClass } from "$model/school-class/school-class";
 import { Subject } from "$model/subject/subject";
 import { get, writable } from "svelte/store";
-import { readCookieFile } from "./utils/cookie_file_reader";
+import { readCookieFile, readCookieFileTimetable } from "./utils/cookie_file_reader";
 import { removeAllOf, removeProfessor, removeSchoolClass } from "$model/timetable/time-table";
 import { DayOfWeek } from "$model/timetable/day-of-week";
 import { HourOfDay } from "$model/timetable/hour-of-day";
+
+
 
 // Read the whole file and store the lines in this list
 export const file_data = readCookieFile();
@@ -20,7 +22,13 @@ export const allClassrooms = writable(class_data);
 export const allSubjects = writable(getExistingSubjectsFromFile(file_data, prof_data, class_data));
 export const allHoursOfDay = writable(getExistingHoursOfDayFromFile(file_data));
 export const allDaysOfWeek = writable(getExistingDaysOfWeekFromFile(file_data));
-allDaysOfWeek.set
+
+export const timetable_file_data = readCookieFileTimetable();
+let timetableData = getCompleteTimetableFromFile(timetable_file_data, get(allSubjects), get(allDaysOfWeek).length, get(allHoursOfDay).length);
+
+export const classTimeTableMap = writable(timetableData[0]);
+export const professorTimeTableMap = writable(timetableData[1]);
+
 export const theme = writable<"light" | "dark" | "auto">("auto");
 export const editingId = writable<string | null>(null);
 
@@ -178,4 +186,3 @@ export function getAllHoursOfDay() {
         ]
     }
 }
-

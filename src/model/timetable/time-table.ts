@@ -1,9 +1,7 @@
-import { getAllDaysOfWeek, getAllHoursOfDay } from "$lib/stores/global_store";
 import { Professor } from "../professor/professor";
 import { SchoolClass } from "../school-class/school-class";
 import type { Subject } from "../subject/subject";
 import { Unavailable } from "./unavailable";
-
 
 
 const _classTimetableMap: Map<string, TimeTable> = new Map();
@@ -437,7 +435,7 @@ export function setAvailable(dayOfWeek: number, timeOfDay: number, entity: Schoo
 export function getClassTimetableOf(schoolClass: SchoolClass): TimeTable {
     const classID = schoolClass.id;
     if (!_classTimetableMap.has(classID)) {
-        _classTimetableMap.set(classID, new TimeTable(getAllDaysOfWeek().length, getAllHoursOfDay().length));
+        _classTimetableMap.set(classID, new TimeTable(6,7));//getAllDaysOfWeek().length, getAllHoursOfDay().length));
     }
 
     return _classTimetableMap.get(classID)!;
@@ -449,7 +447,7 @@ export function getClassTimetableOf(schoolClass: SchoolClass): TimeTable {
 export function getProfessorTimetableOf(professor: Professor): TimeTable {
     const professorID = professor.id;
     if (!_professorTimetableMap.has(professorID)) {
-        _professorTimetableMap.set(professorID, new TimeTable(getAllDaysOfWeek().length, getAllHoursOfDay().length));
+        _professorTimetableMap.set(professorID, new TimeTable(6,7));//getAllDaysOfWeek().length, getAllHoursOfDay().length));
     }
 
     return _professorTimetableMap.get(professorID)!;

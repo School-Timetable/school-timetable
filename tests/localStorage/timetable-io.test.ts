@@ -1,4 +1,4 @@
-import {  getClassroomProfessorTimetablesFromFile, getProfessorTimetableConstraintsFromFile } from "$lib/stores/utils/cookie_file_parser";
+import {  getCompleteTimetableFromFile } from "$lib/stores/utils/cookie_file_parser";
 import { generateCompleteTimetableFile, generateCookieProfessorsConstraintFile, generateCookieTimetableFile } from "$lib/stores/utils/cookie_file_writer";
 import { Professor } from "$model/professor/professor";
 import { SchoolClass } from "$model/school-class/school-class";
@@ -85,10 +85,10 @@ test("Test matrix to csv succeed", () => {
 test("Test csv to matrix succeed", () => {
     let timetable_csv = [
         "SM:class-1;subj-1;0:0;0:1",    
-        "SM:class-1;subj-2;1:0;2:1",      
+        "SM:class-1;subj-2;1:0;2:1",     
         "SM:class-1;unavailable;1:1;2:0",
-        "SM:class-2;subj-3;0:0;0:1", 
-        "SM:class-2;subj-4;1:0;1:1"
+        "SM:class-2;subj-4;0:0;0:1", 
+        "SM:class-2;subj-3;1:0;1:1"
     ];
 
 
@@ -110,20 +110,15 @@ test("Test csv to matrix succeed", () => {
 
 
 
-    expectedTimetable.get("class-2")?.setSubjectOn(0, 0, subjects[2]);
-    expectedTimetable.get("class-2")?.setSubjectOn(0, 1, subjects[2]);
+    expectedTimetable.get("class-2")?.setSubjectOn(0, 0, subjects[3]);
+    expectedTimetable.get("class-2")?.setSubjectOn(0, 1, subjects[3]);
 
-    expectedTimetable.get("class-2")?.setSubjectOn(1, 0, subjects[3]);
-    expectedTimetable.get("class-2")?.setSubjectOn(1, 1, subjects[3]);
+    expectedTimetable.get("class-2")?.setSubjectOn(1, 0, subjects[2]);
+    expectedTimetable.get("class-2")?.setSubjectOn(1, 1, subjects[2]);
 
 
-    let computed_result = getClassroomProfessorTimetablesFromFile(timetable_csv, subjects, 3, 2)[0];
-
-    require('util').inspect.defaultOptions.depth = null;
-    /*console.log("-------- Expected ------")
-    console.log(expectedTimetable);
-    console.log("-------- Actual ----------");
-    console.log(computed_result); */
+    // require('util').inspect.defaultOptions.depth = 4;
+    let computed_result = getCompleteTimetableFromFile(timetable_csv, subjects, 3, 2)[0];
     
     expect(computed_result).toEqual(expectedTimetable);
 })
@@ -154,27 +149,6 @@ test("Test professor constraints to csv works", () => {
 
 })
 
-test("Test csv to professor constraints", () => {
-    let csv = [
-        "SC:prof-1;0:1;1:1",
-        "SC:prof-2;0:0;1:1"
-    ];
-
-    let expectedTimetable: Map<string, TimeTable> = new Map();
-
-    expectedTimetable.set("prof-1", new TimeTable(2,2));
-    expectedTimetable.set("prof-2", new TimeTable(2,2));
-
-    expectedTimetable.get("prof-1")?.setSubjectOn(0, 1, new Unavailable());
-    expectedTimetable.get("prof-1")?.setSubjectOn(1, 1, new Unavailable());
-
-
-    expectedTimetable.get("prof-2")?.setSubjectOn(0, 0, new Unavailable());
-    expectedTimetable.get("prof-2")?.setSubjectOn(1, 1, new Unavailable());
-
-    let computed_result = getProfessorTimetableConstraintsFromFile(csv, 2, 2);
-    expect(computed_result).toEqual(expectedTimetable);
-})
 
 test("Test complete csv generation works", () => {
     let classTimetable: Map<string, TimeTable> = new Map();
@@ -192,7 +166,7 @@ test("Test complete csv generation works", () => {
 
     setSubject    (0, 0, subjects[0], classTimetable.get("class-1")!, profTimetable.get("prof-1")!);
     setUnavailable(0, 1, classrooms[0], false, classTimetable.get("class-1")!);
-
+    
     setSubject    (1, 0, subjects[1], classTimetable.get("class-1")!, profTimetable.get("prof-2")!);
     setUnavailable(1, 1, classrooms[0], false, classTimetable.get("class-1")!);
 
@@ -221,7 +195,58 @@ test("Test complete csv generation works", () => {
 
 
     let computed_result = generateCompleteTimetableFile(classTimetable, profTimetable);
-
     expect(computed_result).toEqual(expected_result);
+})
+
+
+test("Test complete timetable from csv read works", () => {
+    let csv = [
+        "SM:class-1;subj-1;0:0",
+        "SM:class-1;unavailable;0:1;1:1",
+        "SM:class-1;subj-2;1:0",
+        "SM:class-2;unavailable;0:0;1:0",
+        "SM:class-2;subj-3;0:1",
+        "SM:class-2;subj-4;1:1", 
+        "SC:prof-1;1:0",
+        "SC:prof-2;0:0"
+    ]
+
+
+    let classTimetable: Map<string, TimeTable> = new Map();
+    let profTimetable: Map<string, TimeTable> = new Map();
+
+    // 2x2 matrix for each timetable
+    classTimetable.set("class-1", new TimeTable(2, 2));
+    classTimetable.set("class-2", new TimeTable(2, 2));
+
+    profTimetable.set("prof-1", new TimeTable(2, 2));
+    profTimetable.set("prof-2", new TimeTable(2, 2));
+
+    // prof-1  0,0  0,1
+    // prof-2  1,0  1,1 
+
+    setSubject    (0, 0, subjects[0], classTimetable.get("class-1")!, profTimetable.get("prof-1")!);
+    setUnavailable(0, 1, classrooms[0], false, classTimetable.get("class-1")!);
+    
+    setSubject    (1, 0, subjects[1], classTimetable.get("class-1")!, profTimetable.get("prof-2")!);
+    setUnavailable(1, 1, classrooms[0], false, classTimetable.get("class-1")!);
+
+  
+    setUnavailable(0, 0, classrooms[1], false, classTimetable.get("class-2")!);
+    setSubject    (0, 1, subjects[2], classTimetable.get("class-2")!, profTimetable.get("prof-1")!);
+
+    setUnavailable(1, 0, classrooms[1], false, classTimetable.get("class-2")!);
+    setSubject    (1, 1, subjects[3], classTimetable.get("class-2")!, profTimetable.get("prof-2")!);
+
+
+
+    setUnavailable(1, 0, professors[0], false, profTimetable.get("prof-1")!);
+    setUnavailable(0, 0, professors[1], false, profTimetable.get("prof-2")!);
+
+
+    let computed_result = getCompleteTimetableFromFile(csv, subjects, 2, 2);
+
+    expect(computed_result[0]).toEqual(classTimetable);
+    expect(computed_result[1]).toEqual(profTimetable);
 })
 

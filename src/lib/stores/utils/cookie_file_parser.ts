@@ -88,7 +88,7 @@ export function getExistingDaysOfWeekFromFile(file_data: string[]) {
     return daysOfWeek;
 }
 
-export function getClassroomProfessorTimetablesFromFile(
+export function getCompleteTimetableFromFile(
     file_data: string[], 
     allSubjects: Subject[], 
     daysOfWeek: number, 
@@ -99,6 +99,7 @@ export function getClassroomProfessorTimetablesFromFile(
 
     file_data.forEach((line) => {
         let matcher = line.match(/^SM:([A-Za-z0-9\-]+);([A-Za-z0-9\-]+);([\d:;]+)$/);
+
         if(matcher != null) {
             let classId = matcher[1];
             let subjectId = matcher[2];
@@ -114,56 +115,43 @@ export function getClassroomProfessorTimetablesFromFile(
                 profId = subject.professor.id;
             }
 
-            if(allClassesTimetable.get(classId) === undefined)
+            if(allClassesTimetable.get(classId) === undefined) {
                 allClassesTimetable.set(classId, new TimeTable(daysOfWeek, hoursOfDay));
+            }
 
-            if(profId !== undefined && allProfessorTimetable.get(profId) === undefined)
+            if(profId !== undefined && allProfessorTimetable.get(profId) === undefined) {
                 allProfessorTimetable.set(profId, new TimeTable(daysOfWeek, hoursOfDay));
+            }
 
             for(var timeslot of timeslotsSplitted) {
                 let timeslotData = timeslot.split(":");
-                console.log("Inserisco materia ", subject.id, ", della classe ", classId, " al timeslot ", timeslotData[0], ", ", timeslotData[1]);
-
-                if(subject.constructor.name === "Unavailable") {
+                
+                if(subject instanceof Unavailable) {
                     setUnavailable(Number(timeslotData[0]), Number(timeslotData[1]), undefined, false, allClassesTimetable.get(classId)!)
                 } else {
                     setSubject(Number(timeslotData[0]), Number(timeslotData[1]), subject as Subject, allClassesTimetable.get(classId), allProfessorTimetable.get(profId!))
                 }
 
             }
+        } 
+        else {
+            let constraintMatcher = line.match(/^SC:([A-Za-z0-9\-]+);([\d:;]+)$/);
+
+            if(constraintMatcher != null) {
+                let profId = constraintMatcher[1];
+                let timeslotsSplitted = constraintMatcher[2].split(";");
+    
+                if(allProfessorTimetable.get(profId) === undefined)
+                    allProfessorTimetable.set(profId, new TimeTable(daysOfWeek, hoursOfDay));
+    
+                for(var timeslot of timeslotsSplitted) {
+                    let timeslotData = timeslot.split(":");
+                    allProfessorTimetable.get(profId)!.setSubjectOn(Number(timeslotData[0]), Number(timeslotData[1]), new Unavailable());
+    
+                }
+            }
         }
     });
 
     return [allClassesTimetable, allProfessorTimetable];
-}
-
-export function getProfessorTimetableConstraintsFromFile(
-    file_data: string[],
-    daysOfWeek: number,
-    hoursOfDay: number
-): Map<string, TimeTable> {
-    let allProfessorTimetable = new Map<string, TimeTable>();
-
-    file_data.forEach((line) => {
-        let matcher = line.match(/^SC:([A-Za-z0-9\-]+);([\d:;]+)$/);
-        if(matcher != null) {
-            let profId = matcher[1];
-            let timeslotsSplitted = matcher[2].split(";");
-
-            if(allProfessorTimetable.get(profId) === undefined)
-                allProfessorTimetable.set(profId, new TimeTable(daysOfWeek, hoursOfDay));
-
-            for(var timeslot of timeslotsSplitted) {
-                let timeslotData = timeslot.split(":");
-                allProfessorTimetable.get(profId)!.setSubjectOn(Number(timeslotData[0]), Number(timeslotData[1]), new Unavailable());
-
-            }
-        }
-    })
-
-    return allProfessorTimetable;
-}
-
-export function parseCompleteTimetableFile(file_data: string[], daysOfWeek: number, hoursOfDay: number) {
-
 }
