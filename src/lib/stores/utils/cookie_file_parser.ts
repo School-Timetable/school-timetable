@@ -3,7 +3,7 @@ import { SchoolClass } from "$model/school-class/school-class";
 import { Subject } from "$model/subject/subject";
 import { DayOfWeek } from "$model/timetable/day-of-week";
 import { HourOfDay } from "$model/timetable/hour-of-day";
-import { TimeTable, setSubject, setUnavailable } from "$model/timetable/time-table";
+import { TimeTable, getTimetableOf, putClassTimetable, putProfTimetable, setSubject, setUnavailable } from "$model/timetable/time-table";
 import { Unavailable } from "$model/timetable/unavailable";
 
 
@@ -115,12 +115,14 @@ export function getCompleteTimetableFromFile(
                 profId = subject.professor.id;
             }
 
+            
+
             if(allClassesTimetable.get(classId) === undefined) {
-                allClassesTimetable.set(classId, new TimeTable(daysOfWeek, hoursOfDay));
+                putClassTimetable(classId, allClassesTimetable, daysOfWeek, hoursOfDay);
             }
 
             if(profId !== undefined && allProfessorTimetable.get(profId) === undefined) {
-                allProfessorTimetable.set(profId, new TimeTable(daysOfWeek, hoursOfDay));
+               putProfTimetable(profId, allProfessorTimetable, daysOfWeek, hoursOfDay);
             }
 
             for(var timeslot of timeslotsSplitted) {

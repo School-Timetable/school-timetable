@@ -4,8 +4,11 @@ import type { Subject } from "../subject/subject";
 import { Unavailable } from "./unavailable";
 
 
-const _classTimetableMap: Map<string, TimeTable> = new Map();
-const _professorTimetableMap: Map<string, TimeTable> = new Map();
+let updateClassroomsCallback: (map: Map<string, TimeTable>) => void
+let updateProfessorsCallback: (map: Map<string, TimeTable>) => void
+
+let _classTimetableMap: Map<string, TimeTable> = new Map();
+let _professorTimetableMap: Map<string, TimeTable> = new Map();
 
 /**
  * Maps the id of a {@link SchoolClass} to its {@link TimeTable}
@@ -355,6 +358,11 @@ export function setSubject(dayOfWeek: number, timeOfDay: number, subject: Subjec
 
     const professorTimeTable = (profTimetable) ? profTimetable : getProfessorTimetableOf(subject.professor);
     setSubjectOnTimeTable(dayOfWeek, timeOfDay, subject, professorTimeTable);
+
+    if(updateClassroomsCallback) {
+        updateClassroomsCallback(_classTimetableMap)
+        updateProfessorsCallback(_professorTimetableMap)
+    }
 }
 
 /**
@@ -392,6 +400,11 @@ export function removeSubject(dayOfWeek: number, timeOfDay: number, subject: Sub
 
     ctt.setSubjectOn(dayOfWeek, timeOfDay, null);
     ptt.setSubjectOn(dayOfWeek, timeOfDay, null);
+
+    if(updateClassroomsCallback) {
+        updateClassroomsCallback(_classTimetableMap)
+        updateProfessorsCallback(_professorTimetableMap)
+    }
 }
 
 
@@ -417,6 +430,11 @@ export function setUnavailable(dayOfWeek: number, timeOfDay: number, entity?: Sc
 
     const newSubject = available ? null : new Unavailable();
     timeTable.setSubjectOn(dayOfWeek, timeOfDay, newSubject);
+
+    if(updateClassroomsCallback) {
+        updateClassroomsCallback(_classTimetableMap)
+        updateProfessorsCallback(_professorTimetableMap)
+    }
 }
 
 
@@ -508,4 +526,27 @@ export function changeTimeTableSize(daysPerWeek: number, hoursPerDay: number) {
     _professorTimetableMap.forEach((timeTable) => {
         timeTable.setSize(daysPerWeek, hoursPerDay);
     });
+}
+
+export function putClassTimetable(classId: string, allTimetables: Map<string, TimeTable>, daysOfWeek: number, hoursOfDay: number) {
+    allTimetables.set(classId, new TimeTable(daysOfWeek, hoursOfDay));
+}
+
+
+export function putProfTimetable(profId: string, allTimetables: Map<string, TimeTable>, daysOfWeek: number, hoursOfDay: number) {
+    allTimetables.set(profId, new TimeTable(daysOfWeek, hoursOfDay));
+}
+
+
+export function setUpdateClassroomsCallback(callback: (map: Map<string, TimeTable>) => void) {
+    updateClassroomsCallback = callback;
+}
+
+export function setUpdateProfessorsCallback(callback: (map: Map<string, TimeTable>) => void) {
+    updateProfessorsCallback = callback;
+}
+
+export function updateTimetablesMatrix(classTimeTable: Map<string, TimeTable>, profTimetable: Map<string, TimeTable>) {
+    _classTimetableMap = classTimeTable;
+    _professorTimetableMap = profTimetable;
 }
