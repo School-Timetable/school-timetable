@@ -5,9 +5,11 @@
 		allHoursOfDay,
 		allProfessors,
 		allSubjects,
+		classTimeTableMap,
+		professorTimeTableMap,
 		theme,
 	} from "$lib/stores/global_store";
-	import { generateCookieFile } from "$lib/stores/utils/cookie_file_writer";
+	import { generateCompleteTimetableFile, generateCookieFile } from "$lib/stores/utils/cookie_file_writer";
 	import { onMount } from "svelte";
 	import { Container, Styles } from "sveltestrap";
 	import { goto } from "$app/navigation";
@@ -33,6 +35,16 @@
 		allSubjects.subscribe(generate_file);
 		allDaysOfWeek.subscribe(generate_file);
 		allHoursOfDay.subscribe(generate_file);
+
+		const generate_timetable_file = () => {
+			console.log("SONO QUII");
+			localStorage.setItem(
+				"timetable.tdf",
+				generateCompleteTimetableFile($classTimeTableMap, $professorTimeTableMap, true)
+			)
+		}
+
+		classTimeTableMap.subscribe(generate_timetable_file);
 	});
 </script>
 

@@ -1,13 +1,14 @@
-import { getAllDaysOfWeek, getAllHoursOfDay } from "$lib/stores/global_store";
 import { Professor } from "../professor/professor";
 import { SchoolClass } from "../school-class/school-class";
 import type { Subject } from "../subject/subject";
 import { Unavailable } from "./unavailable";
 
 
+let updateClassroomsCallback: (map: Map<string, TimeTable>) => void
+let updateProfessorsCallback: (map: Map<string, TimeTable>) => void
 
-const _classTimetableMap: Map<string, TimeTable> = new Map();
-const _professorTimetableMap: Map<string, TimeTable> = new Map();
+let _classTimetableMap: Map<string, TimeTable> = new Map();
+let _professorTimetableMap: Map<string, TimeTable> = new Map();
 
 /**
  * Maps the id of a {@link SchoolClass} to its {@link TimeTable}
@@ -357,6 +358,11 @@ export function setSubject(dayOfWeek: number, timeOfDay: number, subject: Subjec
 
     const professorTimeTable = (profTimetable) ? profTimetable : getProfessorTimetableOf(subject.professor);
     setSubjectOnTimeTable(dayOfWeek, timeOfDay, subject, professorTimeTable);
+
+    if(updateClassroomsCallback) {
+        updateClassroomsCallback(_classTimetableMap)
+        updateProfessorsCallback(_professorTimetableMap)
+    }
 }
 
 /**
@@ -394,6 +400,11 @@ export function removeSubject(dayOfWeek: number, timeOfDay: number, subject: Sub
 
     ctt.setSubjectOn(dayOfWeek, timeOfDay, null);
     ptt.setSubjectOn(dayOfWeek, timeOfDay, null);
+
+    if(updateClassroomsCallback) {
+        updateClassroomsCallback(_classTimetableMap)
+        updateProfessorsCallback(_professorTimetableMap)
+    }
 }
 
 
@@ -419,6 +430,11 @@ export function setUnavailable(dayOfWeek: number, timeOfDay: number, entity?: Sc
 
     const newSubject = available ? null : new Unavailable();
     timeTable.setSubjectOn(dayOfWeek, timeOfDay, newSubject);
+
+    if(updateClassroomsCallback) {
+        updateClassroomsCallback(_classTimetableMap)
+        updateProfessorsCallback(_professorTimetableMap)
+    }
 }
 
 
@@ -437,7 +453,7 @@ export function setAvailable(dayOfWeek: number, timeOfDay: number, entity: Schoo
 export function getClassTimetableOf(schoolClass: SchoolClass): TimeTable {
     const classID = schoolClass.id;
     if (!_classTimetableMap.has(classID)) {
-        _classTimetableMap.set(classID, new TimeTable(getAllDaysOfWeek().length, getAllHoursOfDay().length));
+        _classTimetableMap.set(classID, new TimeTable(6,7));//getAllDaysOfWeek().length, getAllHoursOfDay().length));
     }
 
     return _classTimetableMap.get(classID)!;
@@ -449,7 +465,7 @@ export function getClassTimetableOf(schoolClass: SchoolClass): TimeTable {
 export function getProfessorTimetableOf(professor: Professor): TimeTable {
     const professorID = professor.id;
     if (!_professorTimetableMap.has(professorID)) {
-        _professorTimetableMap.set(professorID, new TimeTable(getAllDaysOfWeek().length, getAllHoursOfDay().length));
+        _professorTimetableMap.set(professorID, new TimeTable(6,7));//getAllDaysOfWeek().length, getAllHoursOfDay().length));
     }
 
     return _professorTimetableMap.get(professorID)!;
@@ -510,4 +526,27 @@ export function changeTimeTableSize(daysPerWeek: number, hoursPerDay: number) {
     _professorTimetableMap.forEach((timeTable) => {
         timeTable.setSize(daysPerWeek, hoursPerDay);
     });
+}
+
+export function putClassTimetable(classId: string, allTimetables: Map<string, TimeTable>, daysOfWeek: number, hoursOfDay: number) {
+    allTimetables.set(classId, new TimeTable(daysOfWeek, hoursOfDay));
+}
+
+
+export function putProfTimetable(profId: string, allTimetables: Map<string, TimeTable>, daysOfWeek: number, hoursOfDay: number) {
+    allTimetables.set(profId, new TimeTable(daysOfWeek, hoursOfDay));
+}
+
+
+export function setUpdateClassroomsCallback(callback: (map: Map<string, TimeTable>) => void) {
+    updateClassroomsCallback = callback;
+}
+
+export function setUpdateProfessorsCallback(callback: (map: Map<string, TimeTable>) => void) {
+    updateProfessorsCallback = callback;
+}
+
+export function updateTimetablesMatrix(classTimeTable: Map<string, TimeTable>, profTimetable: Map<string, TimeTable>) {
+    _classTimetableMap = classTimeTable;
+    _professorTimetableMap = profTimetable;
 }

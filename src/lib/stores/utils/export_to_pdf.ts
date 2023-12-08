@@ -1,8 +1,7 @@
 import pdfMake from "pdfmake/build/pdfmake";
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import type { PageOrientation, PageSize } from "pdfmake/interfaces";
-import { allClassrooms, allDaysOfWeek, allHoursOfDay, allProfessors, allSubjects } from "../global_store";
-import { classTimetableMap, professorTimetableMap, setSubject } from "$model/timetable/time-table";
+import { allClassrooms, allDaysOfWeek, allHoursOfDay, allProfessors, allSubjects, classTimeTableMap, professorTimeTableMap } from "../global_store";
 import { get } from "svelte/store";
 import { HourOfDay } from "$model/timetable/hour-of-day";
 import { DayOfWeek } from "$model/timetable/day-of-week";
@@ -27,10 +26,10 @@ function createProfessorView() {
   let bodyRows: any[] = [];
   
   get(allProfessors).forEach(professor => {
-    if( professorTimetableMap.has(professor.id) ) {
+    if( get(professorTimeTableMap).has(professor.id) ) {
       let profRow = [];
       profRow.push(professor.name + " " + professor.surname);
-      let profTimetable = professorTimetableMap.get(professor.id);
+      let profTimetable = get(professorTimeTableMap).get(professor.id);
       
       for (let i = 0; i < get(allDaysOfWeek).length; i++) {
         for (let j = 0; j < get(allHoursOfDay).length; j++) {
@@ -55,10 +54,10 @@ function createClassView() {
     let bodyRows: any[] = [];
     
     get(allClassrooms).forEach(classroom => {
-      if( classTimetableMap.has(classroom.id) ) {
+      if(get(classTimeTableMap).has(classroom.id) ) {
         let classRow = [];
         classRow.push(classroom.year.value.toString() + classroom.section.value.toString());
-        let classTimetable = classTimetableMap.get(classroom.id);
+        let classTimetable = get(classTimeTableMap).get(classroom.id);
         
         for (let i = 0; i < get(allDaysOfWeek).length; i++) {
           for (let j = 0; j < get(allHoursOfDay).length; j++) {
