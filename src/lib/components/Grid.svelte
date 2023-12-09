@@ -96,7 +96,7 @@
     function onDayLabelChange(index: number) {
         let input = document.getElementById("day_label_"+index) as HTMLInputElement;
         let value: string = input.value;
-        if (value.match(/^[a-zA-Z0-9_\sì]*$/)) {
+        if (value.match(/^[a-zA-Z0-9 ]+$/)) {
             $allDaysOfWeek[index] = DayOfWeek.of(index,value);
             allDaysOfWeek.set   //updates subscribers
             console.log($allDaysOfWeek)
@@ -117,7 +117,7 @@
     function onHourLabelChange(index: number) {
         let input = document.getElementById("hour_label_"+index) as HTMLInputElement;
         let value: string = input.value;
-        if (value.match(/^[a-zA-Z0-9_\:/\s]*$/)) {
+        if (value.match(/^[a-zA-Z0-9: ]+$/)) {
             $allHoursOfDay[index] = HourOfDay.of(index,value);
             allHoursOfDay.set   //updates subscribers
             console.log($allHoursOfDay)
