@@ -2,6 +2,7 @@
     import { Table } from 'sveltestrap';
 	import { stringToSubject, Subject } from "$model/subject/subject";
     import Hour from '$lib/components/hour.svelte';
+    import WeakConstrainsWidget from './WeakConstrainsWidget.svelte';
     import { clearAll, daysPerWeek, getTimetableOf, hoursPerDay, removeSubject, setSubject, setUnavailable, TimeTable } from '$model/timetable/time-table';
     import { UNAVAILABLE, Unavailable } from '$model/timetable/unavailable';
     import type { SchoolClass } from '$model/school-class/school-class';
@@ -106,6 +107,10 @@
                     </li>
                 {/each}
             </ul>
+
+            <div style="overflow: scroll;">
+                <WeakConstrainsWidget/>
+            </div>
         </div>
         
         <!--grid-->

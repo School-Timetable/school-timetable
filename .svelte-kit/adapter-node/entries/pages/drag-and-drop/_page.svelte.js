@@ -1,13 +1,13 @@
-import { c as create_ssr_component, l as createEventDispatcher, v as validate_component, p as add_styles, q as merge_ssr_styles, f as add_attribute, i as escape, h as subscribe, j as each } from "../../../chunks/index2.js";
-import { S as SchoolClass, P as Professor, I as Icon, b as allHoursOfDay, a as allDaysOfWeek, t as theme, o as Subject, D as DayOfWeek, H as HourOfDay, e as allClassrooms, d as allSubjects, f as allProfessors } from "../../../chunks/Offcanvas.svelte_svelte_type_style_lang.js";
+import { c as create_ssr_component, s as setContext, f as add_attribute, a as compute_rest_props, b as spread, e as escape_object, v as validate_component, d as escape_attribute_value, j as each, l as createEventDispatcher, p as add_styles, q as merge_ssr_styles, i as escape, h as subscribe } from "../../../chunks/index2.js";
+import { S as SchoolClass, P as Professor, c as classnames, I as Icon, b as allHoursOfDay, a as allDaysOfWeek, t as theme, o as Subject, D as DayOfWeek, H as HourOfDay, e as allClassrooms, d as allSubjects, f as allProfessors } from "../../../chunks/Offcanvas.svelte_svelte_type_style_lang.js";
 class Unavailable {
   id = "unavailable";
   static static_id = "unavailable";
 }
 const _classTimetableMap = /* @__PURE__ */ new Map();
 const _professorTimetableMap = /* @__PURE__ */ new Map();
-const daysPerWeek = 6;
-const hoursPerDay = 8;
+let daysPerWeek = 6;
+let hoursPerDay = 8;
 class TimeTable {
   // first list is day of week, second is time of day
   // null means no subject
@@ -176,8 +176,88 @@ function getTimetableOf(entity) {
     throw new Error("entity is not a SchoolClass or a Professor");
   }
 }
+const Colgroup = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  setContext("colgroup", true);
+  return `<colgroup>${slots.default ? slots.default({}) : ``}</colgroup>`;
+});
+const ResponsiveContainer = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let responsiveClassName;
+  let { class: className = "" } = $$props;
+  let { responsive = false } = $$props;
+  if ($$props.class === void 0 && $$bindings.class && className !== void 0)
+    $$bindings.class(className);
+  if ($$props.responsive === void 0 && $$bindings.responsive && responsive !== void 0)
+    $$bindings.responsive(responsive);
+  responsiveClassName = classnames(className, {
+    "table-responsive": responsive === true,
+    [`table-responsive-${responsive}`]: typeof responsive === "string"
+  });
+  return `${responsive ? `<div${add_attribute("class", responsiveClassName, 0)}>${slots.default ? slots.default({}) : ``}</div>` : `${slots.default ? slots.default({}) : ``}`}`;
+});
+const TableFooter = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let $$restProps = compute_rest_props($$props, []);
+  setContext("footer", true);
+  return `<tfoot${spread([escape_object($$restProps)], {})}><tr>${slots.default ? slots.default({}) : ``}</tr></tfoot>`;
+});
+const TableHeader = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let $$restProps = compute_rest_props($$props, []);
+  setContext("header", true);
+  return `<thead${spread([escape_object($$restProps)], {})}><tr>${slots.default ? slots.default({}) : ``}</tr></thead>`;
+});
+const Table = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  let classes;
+  let $$restProps = compute_rest_props($$props, ["class", "size", "bordered", "borderless", "striped", "hover", "responsive", "rows"]);
+  let { class: className = "" } = $$props;
+  let { size = "" } = $$props;
+  let { bordered = false } = $$props;
+  let { borderless = false } = $$props;
+  let { striped = false } = $$props;
+  let { hover = false } = $$props;
+  let { responsive = false } = $$props;
+  let { rows = void 0 } = $$props;
+  if ($$props.class === void 0 && $$bindings.class && className !== void 0)
+    $$bindings.class(className);
+  if ($$props.size === void 0 && $$bindings.size && size !== void 0)
+    $$bindings.size(size);
+  if ($$props.bordered === void 0 && $$bindings.bordered && bordered !== void 0)
+    $$bindings.bordered(bordered);
+  if ($$props.borderless === void 0 && $$bindings.borderless && borderless !== void 0)
+    $$bindings.borderless(borderless);
+  if ($$props.striped === void 0 && $$bindings.striped && striped !== void 0)
+    $$bindings.striped(striped);
+  if ($$props.hover === void 0 && $$bindings.hover && hover !== void 0)
+    $$bindings.hover(hover);
+  if ($$props.responsive === void 0 && $$bindings.responsive && responsive !== void 0)
+    $$bindings.responsive(responsive);
+  if ($$props.rows === void 0 && $$bindings.rows && rows !== void 0)
+    $$bindings.rows(rows);
+  classes = classnames(className, "table", size ? "table-" + size : false, bordered ? "table-bordered" : false, borderless ? "table-borderless" : false, striped ? "table-striped" : false, hover ? "table-hover" : false);
+  return `${validate_component(ResponsiveContainer, "ResponsiveContainer").$$render($$result, { responsive }, {}, {
+    default: () => {
+      return `<table${spread([escape_object($$restProps), { class: escape_attribute_value(classes) }], {})}>${rows ? `${validate_component(Colgroup, "Colgroup").$$render($$result, {}, {}, {
+        default: () => {
+          return `${slots.default ? slots.default({}) : ``}`;
+        }
+      })}
+      ${validate_component(TableHeader, "TableHeader").$$render($$result, {}, {}, {
+        default: () => {
+          return `${slots.default ? slots.default({ row }) : ``}`;
+        }
+      })}
+      <tbody>${each(rows, (row2) => {
+        return `<tr>${slots.default ? slots.default({ row: row2 }) : ``}
+          </tr>`;
+      })}</tbody>
+      ${validate_component(TableFooter, "TableFooter").$$render($$result, {}, {}, {
+        default: () => {
+          return `${slots.default ? slots.default({}) : ``}`;
+        }
+      })}` : `${slots.default ? slots.default({}) : ``}`}</table>`;
+    }
+  })}`;
+});
 const hour_svelte_svelte_type_style_lang = "";
-const css$1 = {
+const css$2 = {
   code: ".highlight.svelte-xnyhct{background-color:gainsboro}.hour.svelte-xnyhct{border:transparent;min-width:120px;height:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.disabled.svelte-xnyhct{background-color:rgb(178, 177, 177) !important}.hourItem.svelte-xnyhct{width:100%;height:100%}",
   map: null
 };
@@ -213,7 +293,7 @@ const Hour = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     $$bindings.isProfessorView(isProfessorView);
   if ($$props.unavailable === void 0 && $$bindings.unavailable && unavailable !== void 0)
     $$bindings.unavailable(unavailable);
-  $$result.css.add(css$1);
+  $$result.css.add(css$2);
   return `
 <div class="text-wrap align-middle hour text-center svelte-xnyhct">${subject instanceof Unavailable || unavailable ? `
          ${validate_component(Icon, "Icon").$$render($$result, { style: "font-size: 30px;", name: "x" }, {}, {})}` : `<section class="${[
@@ -221,6 +301,73 @@ const Hour = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     " " + (!draggable ? "disabled" : "")
   ].join(" ").trim()}"${add_styles(merge_ssr_styles("user-select: none;", { "background-color": color }))}${add_attribute("draggable", subject != null && draggable, 0)}${add_attribute("id", id, 0)}>${escape(set_cell_content(subject) || "")}</section>`}
 </div>`;
+});
+const WeakConstrainsWidget_svelte_svelte_type_style_lang = "";
+const css$1 = {
+  code: "th.svelte-1w9ejsp,td.svelte-1w9ejsp{text-align:left;padding:8px}.label.svelte-1w9ejsp{width:100%;text-align:center}.selected_label.svelte-1w9ejsp{width:100%;text-align:center;background-color:#2980b9}.container.svelte-1w9ejsp{display:flex}",
+  map: null
+};
+const WeakConstrainsWidget = create_ssr_component(($$result, $$props, $$bindings, slots) => {
+  const weak_constrains = {
+    1: "Weak_1Weak_1Weak_1Weak_1Weak_1",
+    2: "Weak_2",
+    3: "Weak_3",
+    4: "Weak_4",
+    5: "Weak_5"
+  };
+  let { selected_weak = 1 } = $$props;
+  function select_weak(key) {
+    selected_weak = key;
+  }
+  function swap_up() {
+    const upper_label = weak_constrains[selected_weak - 1];
+    weak_constrains[selected_weak - 1] = weak_constrains[selected_weak];
+    weak_constrains[selected_weak] = upper_label;
+  }
+  function swap_down() {
+    const bottom_label = weak_constrains[selected_weak + 1];
+    weak_constrains[selected_weak + 1] = weak_constrains[selected_weak];
+    weak_constrains[selected_weak] = bottom_label;
+  }
+  function bring_weak_up() {
+    if (selected_weak - 1 > 0) {
+      swap_up();
+      select_weak(selected_weak - 1);
+    }
+  }
+  function bring_weak_down() {
+    if (selected_weak + 1 <= Object.keys(weak_constrains).length) {
+      swap_down();
+      select_weak(selected_weak + 1);
+    }
+  }
+  if ($$props.weak_constrains === void 0 && $$bindings.weak_constrains && weak_constrains !== void 0)
+    $$bindings.weak_constrains(weak_constrains);
+  if ($$props.selected_weak === void 0 && $$bindings.selected_weak && selected_weak !== void 0)
+    $$bindings.selected_weak(selected_weak);
+  if ($$props.swap_up === void 0 && $$bindings.swap_up && swap_up !== void 0)
+    $$bindings.swap_up(swap_up);
+  if ($$props.swap_down === void 0 && $$bindings.swap_down && swap_down !== void 0)
+    $$bindings.swap_down(swap_down);
+  if ($$props.bring_weak_up === void 0 && $$bindings.bring_weak_up && bring_weak_up !== void 0)
+    $$bindings.bring_weak_up(bring_weak_up);
+  if ($$props.bring_weak_down === void 0 && $$bindings.bring_weak_down && bring_weak_down !== void 0)
+    $$bindings.bring_weak_down(bring_weak_down);
+  $$result.css.add(css$1);
+  return `${validate_component(Table, "Table").$$render($$result, { style: "margin: 0 0 300px -20px" }, {}, {
+    default: () => {
+      return `<thead><div class="container svelte-1w9ejsp"><tr><th class="svelte-1w9ejsp"><button class="btn btn-primary"><i class="bi bi-arrow-up"></i></button></th></tr>
+            <tr><th class="svelte-1w9ejsp"><button class="btn btn-primary"><i class="bi bi-arrow-down"></i></button></th></tr></div></thead>
+    <div><tbody>
+        ${each(Object.entries(weak_constrains), ([key, value]) => {
+        return `${parseInt(key) === selected_weak ? `<tr class="selected_label svelte-1w9ejsp"><div style="overflow: scroll;max-width: 200px;margin: 0;padding: 0;"><td style="margin: 0; padding: 0;" class="svelte-1w9ejsp"><button class="btn" id="${"label_" + escape(key, true)}">Level ${escape(key)} : ${escape(value)}</button>
+                        </td></div>
+                </tr>` : `<tr class="label svelte-1w9ejsp"><div style="overflow: scroll;max-width: 200px;margin: 0;padding: 0;"><td style="margin: 0; padding: 0;" class="svelte-1w9ejsp"><button class="btn" id="${"label_" + escape(key, true)}">Level ${escape(key)} : ${escape(value)}</button>
+                        </td></div>
+                </tr>`}`;
+      })}</tbody></div>`;
+    }
+  })}`;
 });
 const lightThemeColors = [
   "#fa968e",
@@ -266,8 +413,8 @@ const Grid = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let { subjectColors = /* @__PURE__ */ new Map() } = $$props;
   let { callback } = $$props;
   let unavailableTimeTable = null;
-  let rows_number = timeTable.hoursPerDay;
-  let columns_number = timeTable.daysPerWeek;
+  timeTable.hoursPerDay;
+  timeTable.daysPerWeek;
   theme.subscribe((value) => {
     timeTable = timeTable;
   });
@@ -321,7 +468,7 @@ const Grid = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   $$unsubscribe_allDaysOfWeek();
   return `<div class="w-100" style="overflow: auto"><table><thead><tr class="svelte-1dzj1ao"><th class="col-2 svelte-1dzj1ao"></th>
                 
-                ${each({ length: columns_number }, (_, dayIndex) => {
+                ${each({ length: timeTable.daysPerWeek }, (_, dayIndex) => {
     return `<th class="col-2 svelte-1dzj1ao">
                         <input id="${"day_label_" + escape(dayIndex, true)}" type="text" class="input_text svelte-1dzj1ao"${add_attribute(
       "value",
@@ -333,13 +480,13 @@ const Grid = create_ssr_component(($$result, $$props, $$bindings, slots) => {
                 </tr></thead>
     
     
-    ${each({ length: rows_number }, (_, hourIndex) => {
+    ${each({ length: timeTable.hoursPerDay }, (_, hourIndex) => {
     return `<tr class="svelte-1dzj1ao"><input style="min-width: 70px;" id="${"hour_label_" + escape(hourIndex, true)}" type="text" class="input_text svelte-1dzj1ao"${add_attribute(
       "value",
       $allHoursOfDay[hourIndex] ? $allHoursOfDay[hourIndex].label : assignDefaultHour(hourIndex),
       0
     )}>
-            ${each({ length: columns_number }, (_2, dayIndex) => {
+            ${each({ length: timeTable.daysPerWeek }, (_2, dayIndex) => {
       return `<td class="svelte-1dzj1ao">${validate_component(Hour, "Hour").$$render(
         $$result,
         {
@@ -413,7 +560,7 @@ const Timetable = create_ssr_component(($$result, $$props, $$bindings, slots) =>
     $$settled = true;
     sidebar && onSidebarChange();
     $$rendered = `<head><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"></head>
-            
+         
 
 <div class="container-fluid"><div class="d-flex">
         
@@ -433,20 +580,26 @@ const Timetable = create_ssr_component(($$result, $$props, $$bindings, slots) =>
       )}</div>
                         <span class="badge bg-primary rounded-pill ms-2">${escape(item.hoursPerWeek.value - grid.getCountOf(item))}</span>
                     </li>`;
-    })}</ul></div>
+    })}</ul>
+
+            <div style="overflow: scroll;">${validate_component(WeakConstrainsWidget, "WeakConstrainsWidget").$$render($$result, {}, {}, {})}</div></div>
         
         
         <div class="col-10">${validate_component(Grid, "Grid").$$render(
       $$result,
       {
-        timeTable: grid,
         professorView,
         selectedItem,
         subjectColors,
         callback: refresh,
+        timeTable: grid,
         this: realGrid
       },
       {
+        timeTable: ($$value) => {
+          grid = $$value;
+          $$settled = false;
+        },
         this: ($$value) => {
           realGrid = $$value;
           $$settled = false;
@@ -464,6 +617,8 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let classes = [];
   let professors = [];
   let currentSidebar = [];
+  let { inputDays = daysPerWeek.toString() } = $$props;
+  let { inputHours = hoursPerDay.toString() } = $$props;
   allClassrooms.subscribe((c) => classes = c);
   allSubjects.subscribe((s) => {
   });
@@ -473,32 +628,50 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   allProfessors.subscribe((profs) => {
     professors = profs;
   });
+  if ($$props.inputDays === void 0 && $$bindings.inputDays && inputDays !== void 0)
+    $$bindings.inputDays(inputDays);
+  if ($$props.inputHours === void 0 && $$bindings.inputHours && inputHours !== void 0)
+    $$bindings.inputHours(inputHours);
   if ($$props.professorView === void 0 && $$bindings.professorView && professorView !== void 0)
     $$bindings.professorView(professorView);
   if ($$props.selectedItem === void 0 && $$bindings.selectedItem && selectedItem !== void 0)
     $$bindings.selectedItem(selectedItem);
   if ($$props.currentTimeTable === void 0 && $$bindings.currentTimeTable && currentTimeTable !== void 0)
     $$bindings.currentTimeTable(currentTimeTable);
-  return `<div class="m-3">
+  let $$settled;
+  let $$rendered;
+  do {
+    $$settled = true;
+    $$rendered = `<input placeholder="days"${add_attribute("value", inputDays, 0)}>
+<input placeholder="hours"${add_attribute("value", inputHours, 0)}>
+<button class="btn">Update Size</button>
+<div class="m-3">
     <div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" ${professorView ? "checked" : ""}>
         <label class="form-check-label" for="flexSwitchCheckChecked">Professor View</label></div>
 
     <ul class="nav nav-tabs">${each(professorView ? professors : classes, (item) => {
-    return `<li class="nav-item"><a class="${["nav-link", item == selectedItem ? "active" : ""].join(" ").trim()}" href="#">${escape(item.toString())}</a>
+      return `<li class="nav-item"><a class="${["nav-link", item == selectedItem ? "active" : ""].join(" ").trim()}" href="#">${escape(item.toString())}</a>
             </li>`;
-  })}</ul>
+    })}</ul>
     
     ${currentTimeTable && selectedItem ? `${validate_component(Timetable, "Timetable").$$render(
-    $$result,
-    {
-      selectedItem,
-      professorView,
-      grid: currentTimeTable,
-      sidebar: currentSidebar
-    },
-    {},
-    {}
-  )}` : ``}</div>`;
+      $$result,
+      {
+        selectedItem,
+        professorView,
+        sidebar: currentSidebar,
+        grid: currentTimeTable
+      },
+      {
+        grid: ($$value) => {
+          currentTimeTable = $$value;
+          $$settled = false;
+        }
+      },
+      {}
+    )}` : ``}</div>`;
+  } while (!$$settled);
+  return $$rendered;
 });
 export {
   Page as default

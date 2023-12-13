@@ -109,7 +109,7 @@ const options = {
   root: Root,
   service_worker: false,
   templates: {
-    app: ({ head, body, assets: assets2, nonce, env }) => '<!DOCTYPE html>\r\n<html lang="en">\r\n\r\n<head>\r\n	<meta charset="utf-8" />\r\n	<link rel="icon" href="' + assets2 + '/favicon.png" />\r\n	<!-- bootstrap import -->\r\n	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">\r\n	<!-- bootstrap icons import -->\r\n	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">\r\n	<meta name="viewport" content="width=device-width, initial-scale=1" />\r\n	' + head + '\r\n</head>\r\n\r\n<body data-sveltekit-preload-data="hover">\r\n	<div style="display: contents">' + body + "</div>\r\n</body>\r\n\r\n</html>\r\n<style>\r\n	body {\r\n		background-color: var(--color-verylight);\r\n		color: var(--color-strongest);\r\n		transition: background-color 0.5s ease;\r\n	}\r\n\r\n	.zoom-hover {\r\n        transition: all 0.2s ease;\r\n    }\r\n\r\n    .zoom-hover:hover {\r\n        transform: scale(1.1);\r\n        transition: all 0.2s ease;\r\n    }\r\n</style>",
+    app: ({ head, body, assets: assets2, nonce, env }) => '<!DOCTYPE html>\n<html lang="en">\n\n<head>\n	<meta charset="utf-8" />\n	<link rel="icon" href="' + assets2 + '/favicon.png" />\n	<!-- bootstrap import -->\n	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">\n	<!-- bootstrap icons import -->\n	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">\n	<meta name="viewport" content="width=device-width, initial-scale=1" />\n	' + head + '\n</head>\n\n<body data-sveltekit-preload-data="hover">\n	<div style="display: contents">' + body + "</div>\n</body>\n\n</html>\n<style>\n	body {\n		background-color: var(--color-verylight);\n		color: var(--color-strongest);\n		transition: background-color 0.5s ease;\n	}\n\n	.zoom-hover {\n        transition: all 0.2s ease;\n    }\n\n    .zoom-hover:hover {\n        transform: scale(1.1);\n        transition: all 0.2s ease;\n    }\n</style>",
     error: ({ status, message }) => '<!doctype html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<title>' + message + `</title>
 
 		<style>
@@ -181,7 +181,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "nu60ho"
+  version_hash: "1vptyhg"
 };
 function get_hooks() {
   return {};

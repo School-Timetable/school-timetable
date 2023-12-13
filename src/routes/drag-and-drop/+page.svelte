@@ -1,11 +1,10 @@
 <script lang="ts">
     import Timetable from '$lib/components/timetable.svelte';
-  import { allClassrooms, allProfessors, allSubjects } from '$lib/stores/global_store';
-  import { Professor } from '$model/professor/professor';
-  import type { SchoolClass } from '$model/school-class/school-class';
-  import type { Subject } from '$model/subject/subject';
-  import { TimeTable, clearAll, daysPerWeek, getClassTimetableOf, getProfessorTimetableOf, hoursPerDay, updateTimetableSize } from '$model/timetable/time-table';
-
+    import { allClassrooms, allProfessors, allSubjects } from '$lib/stores/global_store';
+    import { Professor } from '$model/professor/professor';
+    import type { SchoolClass } from '$model/school-class/school-class';
+    import type { Subject } from '$model/subject/subject';
+    import { TimeTable, clearAll, daysPerWeek, getClassTimetableOf, getProfessorTimetableOf, hoursPerDay, updateTimetableSize } from '$model/timetable/time-table';
     // prova
     
 
