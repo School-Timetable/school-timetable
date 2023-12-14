@@ -4,7 +4,7 @@ import { SchoolClass } from "$model/school-class/school-class";
 import { Subject } from "$model/subject/subject";
 import { get, writable } from "svelte/store";
 import { readCookieFile, readCookieFileTimetable } from "./utils/cookie_file_reader";
-import { removeAllOf, removeProfessor, removeSchoolClass, setUpdateClassroomsCallback, setUpdateProfessorsCallback, setupCloneDaysOfWeekHoursOfDay, updateTimetablesMatrix } from "$model/timetable/time-table";
+import { EntityType, generateTimetablesFromAspFile, removeAllOf, removeProfessor, removeSchoolClass, setUpdateClassroomsCallback, setUpdateProfessorsCallback, setupCloneDaysOfWeekHoursOfDay, updateTimetablesMatrix } from "$model/timetable/time-table";
 import { DayOfWeek } from "$model/timetable/day-of-week";
 import { HourOfDay } from "$model/timetable/hour-of-day";
 
@@ -40,6 +40,50 @@ setupCloneDaysOfWeekHoursOfDay(allDaysOfWeek, allHoursOfDay);
 export const theme = writable<"light" | "dark" | "auto">("auto");
 export const editingId = writable<string | null>(null);
 
+
+function parseSolverResponse(response: string) {
+    let resp = response.replaceAll(").", ")")
+    let lines = resp.split("\n");
+
+    let timetables = generateTimetablesFromAspFile(lines, get(allSubjects))
+ 
+    classTimeTableMap.set(timetables.classTimetables);
+    professorTimeTableMap.set(timetables.profTimetables);
+}
+
+export function askSolverForTimetable() {
+    const subjectsFacts = get(allSubjects).map((e) => e.toAspFact());
+    const unavailabilityFacts: string[] = [];
+
+    let classTimetables = get(classTimeTableMap);
+    for(var classId of classTimetables.keys()) {
+        unavailabilityFacts.push(...classTimetables.get(classId)!.getAspUnavailability(EntityType.Classroom, classId));
+    }
+
+    let profTimetables = get(professorTimeTableMap);
+    for(var profId of profTimetables.keys()) {
+        unavailabilityFacts.push(...profTimetables.get(profId)!.getAspUnavailability(EntityType.Professor, profId));
+    }
+
+    const hoursOfDayFact = `hours_per_day(${get(allHoursOfDay).length})`;
+    const daysPerWeekFacts = `days_per_week(${get(allDaysOfWeek).length})`;
+
+    const factsArray = [hoursOfDayFact, daysPerWeekFacts, ...subjectsFacts, ...unavailabilityFacts];
+    const factString = factsArray.join(".\n") + ".";
+
+    const options = {
+        method: "POST",
+        headers: {
+            'Content-Type': 'text/plain',
+        },
+        body: factString
+    }
+    
+    //@ts-ignore
+    fetch("http://localhost:8000/solve", options).then((resp) => {
+        resp.text().then(content => parseSolverResponse(content))
+    });
+}
 
 /* ----------------- THIS PART BELOW CONTAINS THE METHOD TO ACCESS THE STORAGE ------------------ */
 

@@ -1,6 +1,6 @@
 <script lang="ts">
     import Timetable from '$lib/components/timetable.svelte';
-  import { allClassrooms, allProfessors, allSubjects } from '$lib/stores/global_store';
+  import { allClassrooms, allProfessors, allSubjects, askSolverForTimetable } from '$lib/stores/global_store';
   import { Professor } from '$model/professor/professor';
   import type { SchoolClass } from '$model/school-class/school-class';
   import type { Subject } from '$model/subject/subject';
@@ -12,8 +12,8 @@
     export let professorView : boolean = false
     export let selectedItem: Professor | SchoolClass | null = null
     export let currentTimeTable : TimeTable | null = null
-
     
+
     function setCurrentView(item: Professor | SchoolClass) {
         let timetable = item instanceof Professor ? getProfessorTimetableOf(item) : getClassTimetableOf(item)
         currentTimeTable = timetable
@@ -55,4 +55,9 @@
     {#if currentTimeTable && selectedItem}
         <Timetable selectedItem="{selectedItem}" professorView={professorView} grid={currentTimeTable} sidebar={currentSidebar}></Timetable>
     {/if}
+
+    <!-- THIS IS A TEST BUTTON, TODO Remove it-->
+    <button on:click={askSolverForTimetable}>
+        AspSolver
+    </button>
 </div>

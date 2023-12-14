@@ -242,6 +242,23 @@ export class TimeTable {
         this._subjectMap.clear();
     }
 
+    /**
+     * Removes all subjects from the timetable, except for unavailable timeslots
+     * 
+     * @see {@link removeAllOf}
+     */
+    clearIfNotUnavailable(): void {
+        for (let i = 0; i < this.daysPerWeek; i++) {
+            for (let j = 0; j < this.hoursPerDay; j++) {
+                if(!(this.values[i][j] instanceof Unavailable))
+                    this.values[i][j] = null;
+            }
+        }
+
+        this._subjectMap.clear();
+    }
+
+
 
 
     /**
@@ -592,14 +609,20 @@ export function setupCloneDaysOfWeekHoursOfDay(daysOfWeek: Writable<DayOfWeek[]>
 
 
 export function generateTimetablesFromAspFile(fileData: string[], allSubjects: Subject[], isTesting: boolean = false) {
-    _classTimetableMap.clear();
-    _professorTimetableMap.clear();
+    for(var timetable of _classTimetableMap.values()) {
+        timetable.clearIfNotUnavailable();
+    }
+
+    for(var timetable of _professorTimetableMap.values()) {
+        timetable.clearIfNotUnavailable();
+    }
+
     _isTesting = isTesting;
 
     let searchSubject = (id: string) => allSubjects[allSubjects.findIndex((sub) => sub.id === id)];
 
     for(var line of fileData) {
-        let regex = /^assign\("([A-Za-z0-9\-]+)", (\d+), (\d+)\)$/;
+        let regex = /^assign\("([A-Za-z0-9\-]+)",(\d+),(\d+)\)$/;
         let matcher = line.match(regex);
 
         if(matcher != null) {

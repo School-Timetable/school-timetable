@@ -99,15 +99,15 @@ test("Timetable to unavailability asp works", () => {
 
 test("Asp mapping to object works", () => {
     let mapping = [
-        'assign("subj-00", 0, 0)',
-        'assign("subj-00", 0, 1)',
-        'assign("subj-01", 1, 0)',
-        'assign("subj-01", 1, 1)',
+        'assign("subj-00",0,0)',
+        'assign("subj-00",0,1)',
+        'assign("subj-01",1,0)',
+        'assign("subj-01",1,1)',
 
-        'assign("subj-11", 0, 0)',
-        'assign("subj-11", 0, 1)',
-        'assign("subj-10", 1, 0)',
-        'assign("subj-10", 1, 1)',
+        'assign("subj-11",0,0)',
+        'assign("subj-11",0,1)',
+        'assign("subj-10",1,0)',
+        'assign("subj-10",1,1)',
     ]
 
     let classTimetable: Map<string, TimeTable> = new Map();
