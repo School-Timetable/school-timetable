@@ -2,13 +2,23 @@ import { Professor } from "../professor/professor";
 import { SchoolClass } from "../school-class/school-class";
 import type { Subject } from "../subject/subject";
 import { Unavailable } from "./unavailable";
+import type { HourOfDay } from "./hour-of-day";
+import { get, type Writable } from "svelte/store";
+import type { DayOfWeek } from "./day-of-week";
 
 
 let updateClassroomsCallback: (map: Map<string, TimeTable>) => void
 let updateProfessorsCallback: (map: Map<string, TimeTable>) => void
 
+let _isTesting = false;
+
+let _allHoursOfDay: Writable<HourOfDay[]>;
+let _allDaysOfWeek: Writable<DayOfWeek[]>;
+
 let _classTimetableMap: Map<string, TimeTable> = new Map();
 let _professorTimetableMap: Map<string, TimeTable> = new Map();
+
+export enum EntityType { Classroom = "class", Professor = "prof" }
 
 /**
  * Maps the id of a {@link SchoolClass} to its {@link TimeTable}
@@ -265,6 +275,17 @@ export class TimeTable {
     }
 
     /**
+     * Compute and returns the list of unavailabilities as a list of ASP facts
+     * 
+     * @returns a list of string of type unavailable_on(Type: "prof" | "class", EntityID, Day, Hour)
+     */
+    getAspUnavailability(entityType: EntityType, entityId: string): string[] {
+        return this.subjectMap.get(Unavailable.static_id)
+            ?.map((e) => `unavailable_on("${entityType}", "${entityId}", ${e.dayOfWeek}, ${e.timeOfDay})`) 
+            ?? []
+    }
+
+    /**
      * @returns all the timeslots that aren't assigned to any subject, using {@link isUnassignedOn}
      */
     getUnassignedTimeslots(): { dayOfWeek: number, timeOfDay: number }[] {
@@ -343,8 +364,19 @@ export class TimeTable {
 }
 
 
+export function _getNumberOfDaysOfWeek() {
+    return _isTesting ? 2 : get(_allDaysOfWeek).length;
+}
+
+export function _getNumberOfHoursOfDay() {
+    return _isTesting ? 2 : get(_allHoursOfDay).length;
+}
+
+
 /**
  * Sets the subject to the correct timetables, ensuring they are kept in sync
+ * 
+ * The parameters [classTimetable] and [profTimetable] are used only for test purposes
  * 
  * @see {@link setUnavailable} to mark a timeslot as unavailable
  * 
@@ -359,6 +391,7 @@ export function setSubject(dayOfWeek: number, timeOfDay: number, subject: Subjec
     const professorTimeTable = (profTimetable) ? profTimetable : getProfessorTimetableOf(subject.professor);
     setSubjectOnTimeTable(dayOfWeek, timeOfDay, subject, professorTimeTable);
 
+    // Since the local matrices have been updated, signal to the globalStore this update so as to write on the localStorage
     if(updateClassroomsCallback) {
         updateClassroomsCallback(_classTimetableMap)
         updateProfessorsCallback(_professorTimetableMap)
@@ -401,6 +434,7 @@ export function removeSubject(dayOfWeek: number, timeOfDay: number, subject: Sub
     ctt.setSubjectOn(dayOfWeek, timeOfDay, null);
     ptt.setSubjectOn(dayOfWeek, timeOfDay, null);
 
+    // Since the local matrices have been updated, signal to the globalStore this update so as to write on the localStorage
     if(updateClassroomsCallback) {
         updateClassroomsCallback(_classTimetableMap)
         updateProfessorsCallback(_professorTimetableMap)
@@ -453,7 +487,7 @@ export function setAvailable(dayOfWeek: number, timeOfDay: number, entity: Schoo
 export function getClassTimetableOf(schoolClass: SchoolClass): TimeTable {
     const classID = schoolClass.id;
     if (!_classTimetableMap.has(classID)) {
-        _classTimetableMap.set(classID, new TimeTable(6,7));//getAllDaysOfWeek().length, getAllHoursOfDay().length));
+        _classTimetableMap.set(classID, new TimeTable(_getNumberOfDaysOfWeek(), _getNumberOfHoursOfDay()));
     }
 
     return _classTimetableMap.get(classID)!;
@@ -465,7 +499,7 @@ export function getClassTimetableOf(schoolClass: SchoolClass): TimeTable {
 export function getProfessorTimetableOf(professor: Professor): TimeTable {
     const professorID = professor.id;
     if (!_professorTimetableMap.has(professorID)) {
-        _professorTimetableMap.set(professorID, new TimeTable(6,7));//getAllDaysOfWeek().length, getAllHoursOfDay().length));
+        _professorTimetableMap.set(professorID, new TimeTable(_getNumberOfDaysOfWeek(), _getNumberOfHoursOfDay()));
     }
 
     return _professorTimetableMap.get(professorID)!;
@@ -549,4 +583,37 @@ export function setUpdateProfessorsCallback(callback: (map: Map<string, TimeTabl
 export function updateTimetablesMatrix(classTimeTable: Map<string, TimeTable>, profTimetable: Map<string, TimeTable>) {
     _classTimetableMap = classTimeTable;
     _professorTimetableMap = profTimetable;
+}
+
+export function setupCloneDaysOfWeekHoursOfDay(daysOfWeek: Writable<DayOfWeek[]>, hoursOfDay: Writable<HourOfDay[]>) {
+    _allDaysOfWeek = daysOfWeek;
+    _allHoursOfDay = hoursOfDay;
+}
+
+
+export function generateTimetablesFromAspFile(fileData: string[], allSubjects: Subject[], isTesting: boolean = false) {
+    _classTimetableMap.clear();
+    _professorTimetableMap.clear();
+    _isTesting = isTesting;
+
+    let searchSubject = (id: string) => allSubjects[allSubjects.findIndex((sub) => sub.id === id)];
+
+    for(var line of fileData) {
+        let regex = /^assign\("([A-Za-z0-9\-]+)", (\d+), (\d+)\)$/;
+        let matcher = line.match(regex);
+
+        if(matcher != null) {
+            let subjId = matcher[1];
+            let dayOfWeek = Number(matcher[2]);
+            let hourOfDay = Number(matcher[3]);
+            
+            let subject = searchSubject(subjId);
+            setSubject(dayOfWeek, hourOfDay, subject);
+        }
+    }
+
+    return {
+        profTimetables: _professorTimetableMap,
+        classTimetables: _classTimetableMap
+    }
 }

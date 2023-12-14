@@ -9,8 +9,7 @@
     import { theme } from '$lib/stores/global_store'; 
     import { darkThemeColors, lightThemeColors } from '$lib/colors';
 
-	let weekNames = ["MON","TUE","WED","THU","FRI","SAT"];
-    //let mockHours = ["8:30","9:30","10:30","11:30","12:30","13:30","14:30","15:30"]
+
     export let grid: TimeTable;
     export let sidebar: Subject[];
     export let professorView: boolean;

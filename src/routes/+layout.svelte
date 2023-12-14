@@ -37,7 +37,6 @@
 		allHoursOfDay.subscribe(generate_file);
 
 		const generate_timetable_file = () => {
-			console.log("SONO QUII");
 			localStorage.setItem(
 				"timetable.tdf",
 				generateCompleteTimetableFile($classTimeTableMap, $professorTimeTableMap, true)

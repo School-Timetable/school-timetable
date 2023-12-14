@@ -45,6 +45,7 @@ export function getExistingHoursOfDayFromFile(file_data: string[]) {
     let hoursOfDay: HourOfDay[] = [];
     file_data.forEach(line => {
         if (line.substring(0, 2) === "H:") {
+            console.log(line);
             hoursOfDay.push(HourOfDay.ofCsv(line))
         }
     })

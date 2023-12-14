@@ -4,7 +4,7 @@ import { SchoolClass } from "$model/school-class/school-class";
 import { Subject } from "$model/subject/subject";
 import { get, writable } from "svelte/store";
 import { readCookieFile, readCookieFileTimetable } from "./utils/cookie_file_reader";
-import { removeAllOf, removeProfessor, removeSchoolClass, setUpdateClassroomsCallback, setUpdateProfessorsCallback, updateTimetablesMatrix } from "$model/timetable/time-table";
+import { removeAllOf, removeProfessor, removeSchoolClass, setUpdateClassroomsCallback, setUpdateProfessorsCallback, setupCloneDaysOfWeekHoursOfDay, updateTimetablesMatrix } from "$model/timetable/time-table";
 import { DayOfWeek } from "$model/timetable/day-of-week";
 import { HourOfDay } from "$model/timetable/hour-of-day";
 
@@ -33,6 +33,8 @@ updateTimetablesMatrix(get(classTimeTableMap), get(professorTimeTableMap));
 
 setUpdateClassroomsCallback((allTimetables) => classTimeTableMap.set(allTimetables))
 setUpdateProfessorsCallback((allTimetables) => professorTimeTableMap.set(allTimetables))
+
+setupCloneDaysOfWeekHoursOfDay(allDaysOfWeek, allHoursOfDay);
 
 
 export const theme = writable<"light" | "dark" | "auto">("auto");
