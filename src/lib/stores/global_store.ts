@@ -40,6 +40,8 @@ setupCloneDaysOfWeekHoursOfDay(allDaysOfWeek, allHoursOfDay);
 export const theme = writable<"light" | "dark" | "auto">("auto");
 export const editingId = writable<string | null>(null);
 
+export let controller: any
+export let signal: any
 
 function parseSolverResponse(response: string) {
     let resp = response.replaceAll(").", ")")
@@ -71,18 +73,33 @@ export function askSolverForTimetable() {
     const factsArray = [hoursOfDayFact, daysPerWeekFacts, ...subjectsFacts, ...unavailabilityFacts];
     const factString = factsArray.join(".\n") + ".";
 
+    controller = new AbortController()
+    signal = controller.signal
+    
     const options = {
         method: "POST",
         headers: {
-            'Content-Type': 'text/plain',
+            'Content-Type': 'text/plain'
         },
+        signal,
         body: factString
     }
     
+
     //@ts-ignore
-    fetch("http://localhost:8000/solve", options).then((resp) => {
-        resp.text().then(content => parseSolverResponse(content))
-    });
+    fetch("http://localhost:8000/solve", options)
+        .then((resp) => {
+            resp.text().then(content => parseSolverResponse(content))
+        })
+        .catch(error => {
+            if (error.name === 'AbortError') {
+            console.log('Fetch interrotta: ', error);
+            } else {
+            console.error('Si è verificato un errore durante il fetch:', error);
+            }
+        });
+    
+    
 }
 
 /* ----------------- THIS PART BELOW CONTAINS THE METHOD TO ACCESS THE STORAGE ------------------ */

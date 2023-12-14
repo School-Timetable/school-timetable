@@ -8,6 +8,7 @@
     import Grid from './Grid.svelte';
     import { theme } from '$lib/stores/global_store'; 
     import { darkThemeColors, lightThemeColors } from '$lib/colors';
+    import AspSolverButtons from "./AspSolverButtons.svelte";
 
 
     export let grid: TimeTable;
@@ -113,6 +114,7 @@
                 <button type="button" class="btn btn-primary btn-lg w-100" on:click={event => validateTimetable()}>valida orario</button>
             </div> -->
             
+            <AspSolverButtons></AspSolverButtons>
         </div>
         
     </div>
