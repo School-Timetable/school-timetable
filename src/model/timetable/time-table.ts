@@ -565,6 +565,11 @@ export function getTimetableOf(entity: SchoolClass | Professor): TimeTable {
 export function clearAll(): void {
     _classTimetableMap.clear();
     _professorTimetableMap.clear();
+    
+    if(updateClassroomsCallback) {
+        updateClassroomsCallback(_classTimetableMap)
+        updateProfessorsCallback(_professorTimetableMap)
+    }
 }
 
 /** 

@@ -1,14 +1,15 @@
 <script lang="ts">
-	import { stringToSubject, Subject } from "$model/subject/subject";
-	import Hour from "$lib/components/hour.svelte";
-	import { removeSubject, type TimeTable } from "$model/timetable/time-table";
-	import { Unavailable } from "$model/timetable/unavailable";
-	import type { SchoolClass } from "$model/school-class/school-class";
-	import type { Professor } from "$model/professor/professor";
-	import Grid from "./Grid.svelte";
-	import { theme } from "$lib/stores/global_store";
-	import { darkThemeColors, lightThemeColors } from "$lib/colors";
-	import AspSolverButtons from "./AspSolverButtons.svelte";
+    import { stringToSubject, Subject } from "$model/subject/subject";
+    import Hour from '$lib/components/hour.svelte';
+    import { removeSubject, type TimeTable } from '$model/timetable/time-table';
+    import { Unavailable } from '$model/timetable/unavailable';
+    import type { SchoolClass } from '$model/school-class/school-class';
+    import type { Professor } from '$model/professor/professor';
+    import Grid from './Grid.svelte';
+    import { theme } from '$lib/stores/global_store'; 
+    import { darkThemeColors, lightThemeColors } from '$lib/colors';
+    import AspSolverButtons from "./AspSolverButtons.svelte";
+
 
 	export let grid: TimeTable;
 	export let sidebar: Subject[];
@@ -76,9 +77,10 @@
 		return subject.hoursPerWeek.value - grid.getCountOf(subject);
 	}
 
-	export function refresh() {
-		sidebar = sidebar;
-	}
+    export function refresh(){
+        sidebar = sidebar;
+    }
+
 </script>
 
 <div class="container-fluid">
@@ -131,10 +133,11 @@
 			<!-- <div class="d-flex justify-content-center my-4">
                 <button type="button" class="btn btn-primary btn-lg w-100" on:click={event => validateTimetable()}>valida orario</button>
             </div> -->
-
-			<AspSolverButtons></AspSolverButtons>
-		</div>
-	</div>
+            
+            <AspSolverButtons></AspSolverButtons>
+        </div>
+        
+    </div>
 </div>
 
 <style>
