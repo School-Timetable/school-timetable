@@ -1,7 +1,7 @@
 <script lang="ts">
     import { Table, Button} from 'sveltestrap';
   import { number } from 'zod';
-	export const weak_constrains: { [key: string]: any }  = {1: 'contiguous_subject_hours', 2: 'least_subjects_batches', 3:'least_subjects_swaps', 4:'minimize_days_weight_difference'}; 
+	export const weak_constrains: { [key: string]: any }  = {1: {name: 'contiguous_subject_hours', active: true}, 2: {name: 'least_subjects_batches', active:true}, 3:{name: 'least_subjects_swaps', active: true}, 4:{name: 'minimize_days_weight_difference', active: true}}; 
     let selected_weak = 1
 
 
@@ -35,13 +35,21 @@
         }
     }
 
+    function weak_is_checked(key: number): boolean{
+        return weak_constrains[key].active;
+    }
+
+    function handle_click_weak_checkbox(key: number){
+        weak_constrains[key].active = !weak_constrains[key].active;
+    }
+
+
     export function to_string(): string[]{
         const weak_constrains_strings: string[] = []
         Object.entries(weak_constrains).forEach(([key, value]) => {
-            const weak = 'weak_constraint("'+value+'", '+key+').';
+            const weak = 'weak_constraint("'+value.name+'", '+key+').';
             weak_constrains_strings.push(weak);
         });
-        console.log(weak_constrains_strings);
         return weak_constrains_strings;
     }
     
@@ -72,7 +80,14 @@
                 <tr class="selected_label">
                     <div style="overflow: scroll;max-width: 200px;margin: 0;padding: 0;">
                         <td style="margin: 0; padding: 0;">
-                            <button class="btn" on:click={() => select_weak(parseInt(key))} id="label_{key}" >Level {key} : {value}</button>
+                            <button class="btn" on:click={() => select_weak(parseInt(key))} id="label_{key}" >
+                                {#if weak_is_checked(parseInt(key))}
+                                    <input type="checkbox" id='checkbox_{key}}' checked on:click={()=>{handle_click_weak_checkbox(parseInt(key))}}>
+                                {:else}
+                                    <input type="checkbox" id='checkbox_{key}}' on:click={()=>{handle_click_weak_checkbox(parseInt(key))}}>
+                                {/if}
+                                Level {key} : {value.name}
+                            </button>
                         </td>
                     </div>
                 </tr>
@@ -80,7 +95,14 @@
                 <tr class="label">
                     <div style="overflow: scroll;max-width: 200px;margin: 0;padding: 0;">
                         <td style="margin: 0; padding: 0;">
-                            <button class="btn" on:click={() => select_weak(parseInt(key))} id="label_{key}" >Level {key} : {value}</button>
+                            <button class="btn" on:click={() => select_weak(parseInt(key))} id="label_{key}" >
+                                {#if weak_is_checked(parseInt(key))}
+                                    <input type="checkbox" id='checkbox_{key}}' checked on:click={()=>{handle_click_weak_checkbox(parseInt(key))}}>
+                                {:else}
+                                    <input type="checkbox" id='checkbox_{key}}' on:click={()=>{handle_click_weak_checkbox(parseInt(key))}}>
+                                {/if}
+                                Level {key} : {value.name}
+                            </button>
                         </td>
                     </div>
                 </tr>
