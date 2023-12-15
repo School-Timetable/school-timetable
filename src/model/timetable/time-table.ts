@@ -188,7 +188,7 @@ export class TimeTable {
     isAvailableOn(dayOfWeek: number, timeOfDay: number): boolean {
         const sub = this.getSubjectOn(dayOfWeek, timeOfDay);
         return !(sub instanceof Unavailable)
-        
+
     }
 
     /**
@@ -250,14 +250,14 @@ export class TimeTable {
     clearIfNotUnavailable(): void {
         for (let i = 0; i < this.daysPerWeek; i++) {
             for (let j = 0; j < this.hoursPerDay; j++) {
-                if(!(this.values[i][j] instanceof Unavailable)) {
+                if (!(this.values[i][j] instanceof Unavailable)) {
                     this.values[i][j] = null;
                 }
             }
         }
 
-        for(var key of this._subjectMap.keys()) {
-            if(key != Unavailable.static_id) {
+        for (var key of this._subjectMap.keys()) {
+            if (key != Unavailable.static_id) {
                 this._subjectMap.set(key, []);
             }
         }
@@ -303,17 +303,17 @@ export class TimeTable {
      */
     getAspUnavailability(entityType: EntityType, entityId: string): string[] {
         return this.subjectMap.get(Unavailable.static_id)
-            ?.map((e) => `unavailable_on("${entityType}", "${entityId}", ${e.dayOfWeek}, ${e.timeOfDay})`) 
+            ?.map((e) => `unavailable_on("${entityType}", "${entityId}", ${e.dayOfWeek}, ${e.timeOfDay})`)
             ?? []
     }
 
     getAspSubjectsAssignments() {
         let assignments: string[] = []
-        for(var subjectId of this._subjectMap.keys()) {
-            if(subjectId === Unavailable.static_id)
+        for (var subjectId of this._subjectMap.keys()) {
+            if (subjectId === Unavailable.static_id)
                 continue;
 
-            for(var timeslot of this._subjectMap.get(subjectId)!) {
+            for (var timeslot of this._subjectMap.get(subjectId)!) {
                 assignments.push(`assigned("${subjectId}", ${timeslot.dayOfWeek}, ${timeslot.timeOfDay})`)
             }
         }
@@ -391,10 +391,11 @@ export class TimeTable {
             this.values.pop();
         }
 
-        this._subjectMap = this.computeSubjectMap();
-
         this._daysPerWeek = daysPerWeek;
         this._hoursPerDay = hoursPerDay;
+
+        this._subjectMap = this.computeSubjectMap();
+
     }
 
 }
@@ -417,7 +418,7 @@ export function _getNumberOfHoursOfDay() {
  * @see {@link setUnavailable} to mark a timeslot as unavailable
  * 
  */
-export function setSubject(dayOfWeek: number, timeOfDay: number, subject: Subject, 
+export function setSubject(dayOfWeek: number, timeOfDay: number, subject: Subject,
     classTimetable?: TimeTable, profTimetable?: TimeTable
 ): void {
 
@@ -428,7 +429,7 @@ export function setSubject(dayOfWeek: number, timeOfDay: number, subject: Subjec
     setSubjectOnTimeTable(dayOfWeek, timeOfDay, subject, professorTimeTable);
 
     // Since the local matrices have been updated, signal to the globalStore this update so as to write on the localStorage
-    if(updateClassroomsCallback) {
+    if (updateClassroomsCallback) {
         updateClassroomsCallback(_classTimetableMap)
         updateProfessorsCallback(_professorTimetableMap)
     }
@@ -458,20 +459,20 @@ export function removeSubject(dayOfWeek: number, timeOfDay: number, subject: Sub
         throw new Error("Trying to remove an unavailable subject");
     }
 
-    
+
     const ctt = getClassTimetableOf(subject.schoolClass);
     const ptt = getProfessorTimetableOf(subject.professor);
 
     if (ctt.getSubjectOn(dayOfWeek, timeOfDay)?.id != subject.id || ptt.getSubjectOn(dayOfWeek, timeOfDay)?.id != subject.id) {
         throw new Error("Trying to remove a subject from a timeslot that doesn't contain it");
     }
-    
+
 
     ctt.setSubjectOn(dayOfWeek, timeOfDay, null);
     ptt.setSubjectOn(dayOfWeek, timeOfDay, null);
 
     // Since the local matrices have been updated, signal to the globalStore this update so as to write on the localStorage
-    if(updateClassroomsCallback) {
+    if (updateClassroomsCallback) {
         updateClassroomsCallback(_classTimetableMap)
         updateProfessorsCallback(_professorTimetableMap)
     }
@@ -501,7 +502,7 @@ export function setUnavailable(dayOfWeek: number, timeOfDay: number, entity?: Sc
     const newSubject = available ? null : new Unavailable();
     timeTable.setSubjectOn(dayOfWeek, timeOfDay, newSubject);
 
-    if(updateClassroomsCallback) {
+    if (updateClassroomsCallback) {
         updateClassroomsCallback(_classTimetableMap)
         updateProfessorsCallback(_professorTimetableMap)
     }
@@ -589,13 +590,20 @@ export function changeTimeTableSize(daysPerWeek: number, hoursPerDay: number) {
     if (daysPerWeek <= 0 || hoursPerDay <= 0)
         throw new Error("Invalid timetable size, daysPerWeek and hoursPerDay must be greater than 0");
 
-
     _classTimetableMap.forEach((timeTable) => {
         timeTable.setSize(daysPerWeek, hoursPerDay);
     });
     _professorTimetableMap.forEach((timeTable) => {
         timeTable.setSize(daysPerWeek, hoursPerDay);
     });
+
+    if (updateClassroomsCallback) {
+        updateClassroomsCallback(_classTimetableMap)
+        updateProfessorsCallback(_professorTimetableMap)
+    }
+
+    console.log("Changed timetable size to", daysPerWeek, hoursPerDay);
+
 }
 
 export function putClassTimetable(classId: string, allTimetables: Map<string, TimeTable>, daysOfWeek: number, hoursOfDay: number) {
@@ -628,11 +636,11 @@ export function setupCloneDaysOfWeekHoursOfDay(daysOfWeek: Writable<DayOfWeek[]>
 
 
 export function generateTimetablesFromAspFile(fileData: string[], allSubjects: Subject[], isTesting: boolean = false) {
-    for(var timetable of _classTimetableMap.values()) {
+    for (var timetable of _classTimetableMap.values()) {
         timetable.clearIfNotUnavailable();
     }
 
-    for(var timetable of _professorTimetableMap.values()) {
+    for (var timetable of _professorTimetableMap.values()) {
         timetable.clearIfNotUnavailable();
     }
 
@@ -640,15 +648,15 @@ export function generateTimetablesFromAspFile(fileData: string[], allSubjects: S
 
     let searchSubject = (id: string) => allSubjects[allSubjects.findIndex((sub) => sub.id === id)];
 
-    for(var line of fileData) {
-        let regex = /^assign\("([A-Za-z0-9\-]+)",(\d+),(\d+)\)$/;
+    for (var line of fileData) {
+        let regex = /^assign\("([\w-]+)",(\d+),(\d+)\)$/;
         let matcher = line.match(regex);
 
-        if(matcher != null) {
+        if (matcher != null) {
             let subjId = matcher[1];
             let dayOfWeek = Number(matcher[2]);
             let hourOfDay = Number(matcher[3]);
-            
+
             let subject = searchSubject(subjId);
             setSubject(dayOfWeek, hourOfDay, subject);
         }
