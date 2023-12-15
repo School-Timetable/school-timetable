@@ -1,63 +1,89 @@
-<script lang="ts">
-	import type { TabItem } from "$model/model-generics";
-	import Tabs from "$lib/components/Tabs.svelte";
-	import Subjects from "$lib/components/Subjects.svelte";
-	import Professors from "$lib/components/Professors.svelte";
-	import { slide } from "svelte/transition";
-	import { onMount } from "svelte";
-	import { backOut, cubicIn, cubicOut, linear, quadOut } from "svelte/easing";
-	import Classes from "$lib/components/Classes.svelte";
-	import { Col, Nav, NavLink, Row } from "sveltestrap";
-    import { editingId } from "$lib/stores/global_store";
+<script>
+    import {
+        allProfessors,
+        allClassrooms,
+        allSubjects,
+    } from "$lib/stores/global_store";
+    import Professors from "$lib/components/Professors.svelte";
+    import { Steps } from "svelte-steps";
+    import Classes from "$lib/components/Classes.svelte";
+    import Subjects from "$lib/components/Subjects.svelte";
+    import { Button } from "sveltestrap";
+    import ModalWithCloseOnly from "$lib/components/ModalWithCloseOnly.svelte";
 
-	onMount(async () => {
-		document
-			.getElementsByTagName("body")[0]
-			.setAttribute("data-load", "complete");
-	});
+    let steps = [
+        {
+            title: "Professors",
+            text: "Professors",
+        },
+        {
+            title: "Classes",
+            text: "Classes",
+        },
+        {
+            title: "Subjects",
+            text: "Subjects",
+        },
+    ];
 
-	export let tabItems: TabItem[] = [
-		{ name: "Professor", icon: "person-video2" },
-		{ name: "Class", icon: "door-closed" },
-		{ name: "Subject", icon: "file-earmark-ruled" },
-	];
-	export let activeTab: string = "Professor";
+    let current = 0;
+    $: showModal=false
 
-	const triggerTabChange = (event: { detail: string }) => {
-		activeTab = event.detail;
-		editingId.set(null);
-	};
+    let areProfessorsNotEmpty = false;
+    let areClassroomsNotEmpty = false;
+    let areSubjectsNotEmpty = false;
 
-	let options = { duration: 300, easing: quadOut };
+    $: areProfessorsNotEmpty = $allProfessors.length > 0;
+    $: areClassroomsNotEmpty = $allClassrooms.length > 0;
+    $: areSubjectsNotEmpty = $allSubjects.length > 0;
+
+    $: isClickable = areProfessorsNotEmpty && areClassroomsNotEmpty;
+
+    function nextStep() {
+        if (
+            current === 1 &&
+            (!areProfessorsNotEmpty || !areClassroomsNotEmpty)
+        ) {
+            current = current;
+            showModal=true
+        } else {
+            current = Math.min(current + 1, steps.length - 1);
+            showModal= false
+        }
+    }
+
+    function previousStep() {
+        current = Math.max(current - 1, 0);
+    }
 </script>
+<div>
+    <br>    
+<Steps {steps} bind:current clickable={isClickable}/>
+<hr />
 
-<Row>
-	<Tabs
-		{tabItems}
-		activeItem={activeTab}
-		on:tabChange={triggerTabChange}
-	/>
-</Row>
-
-{#if activeTab === "Professor"}
-	<div
-		in:slide|global={{ ...options, axis: "y", delay: 100 }}
-		out:slide|global={{ ...options, axis: "y" }}
-	>
-		<Professors />
-	</div>
-{:else if activeTab === "Class"}
-	<div
-		in:slide|global={{ ...options, axis: "y", delay: 100 }}
-		out:slide|global={{ ...options, axis: "y" }}
-	>
-		<Classes />
-	</div>
-{:else if activeTab === "Subject"}
-	<div
-		in:slide|global={{ ...options, axis: "y", delay: 100 }}
-		out:slide|global={{ ...options, axis: "y" }}
-	>
-		<Subjects />
-	</div>
+{#if current === 0}
+    <Professors />
 {/if}
+{#if current === 1}
+
+    <Classes />
+{/if}
+{#if current === 2}
+    <Subjects />
+{/if}
+<Button color="secondary" on:click={previousStep}
+    >Previous</Button>
+    <Button color="secondary"  on:click={nextStep}
+    >Next</Button>
+    <hr>
+
+    <ModalWithCloseOnly {showModal}>
+        <div slot="header">
+          <h2>Impossible to create Subjects</h2>
+        </div>
+        <div slot="body">
+          <!-- Contenuto per il corpo -->
+          <p>You have to fill the professors and the classes both before the subjects</p>
+        </div>
+    </ModalWithCloseOnly>
+</div>
