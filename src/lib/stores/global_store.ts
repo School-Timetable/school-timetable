@@ -9,7 +9,6 @@ import { DayOfWeek } from "$model/timetable/day-of-week";
 import { HourOfDay } from "$model/timetable/hour-of-day";
 
 
-
 // Read the whole file and store the lines in this list
 export const file_data = readCookieFile();
 
@@ -67,11 +66,18 @@ export function askSolverForTimetable() {
         unavailabilityFacts.push(...profTimetables.get(profId)!.getAspUnavailability(EntityType.Professor, profId));
     }
 
+    const existingAssignments = [];
+    for(var classTT of classTimetables.values()) {
+        existingAssignments.push(...classTT.getAspSubjectsAssignments());
+    }
+
     const hoursOfDayFact = `hours_per_day(${get(allHoursOfDay).length})`;
     const daysPerWeekFacts = `days_per_week(${get(allDaysOfWeek).length})`;
 
-    const factsArray = [hoursOfDayFact, daysPerWeekFacts, ...subjectsFacts, ...unavailabilityFacts];
+    const factsArray = [hoursOfDayFact, daysPerWeekFacts, ...subjectsFacts, ...unavailabilityFacts, ...existingAssignments];
     const factString = factsArray.join(".\n") + ".";
+
+    //console.log(factString);
 
     controller = new AbortController()
     signal = controller.signal

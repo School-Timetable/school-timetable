@@ -16,6 +16,7 @@
 	import ThemeSwitcher from "$lib/components/ThemeSwitcher.svelte";
 	import { Navbar, NavbarBrand } from "sveltestrap";
 	import ExportTimetableForm from "$lib/components/ExportTimetableForm.svelte";
+    import { get } from "svelte/store";
 
 	onMount(() => {
 		const generate_file = () =>
@@ -37,9 +38,11 @@
 		allHoursOfDay.subscribe(generate_file);
 
 		const generate_timetable_file = () => {
+			let file = generateCompleteTimetableFile($classTimeTableMap, $professorTimeTableMap, true);
+
 			localStorage.setItem(
 				"timetable.tdf",
-				generateCompleteTimetableFile($classTimeTableMap, $professorTimeTableMap, true)
+				file
 			)
 		}
 

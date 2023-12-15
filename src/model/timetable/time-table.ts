@@ -250,12 +250,17 @@ export class TimeTable {
     clearIfNotUnavailable(): void {
         for (let i = 0; i < this.daysPerWeek; i++) {
             for (let j = 0; j < this.hoursPerDay; j++) {
-                if(!(this.values[i][j] instanceof Unavailable))
+                if(!(this.values[i][j] instanceof Unavailable)) {
                     this.values[i][j] = null;
+                }
             }
         }
 
-        this._subjectMap.clear();
+        for(var key of this._subjectMap.keys()) {
+            if(key != Unavailable.static_id) {
+                this._subjectMap.set(key, []);
+            }
+        }
     }
 
 
@@ -300,6 +305,20 @@ export class TimeTable {
         return this.subjectMap.get(Unavailable.static_id)
             ?.map((e) => `unavailable_on("${entityType}", "${entityId}", ${e.dayOfWeek}, ${e.timeOfDay})`) 
             ?? []
+    }
+
+    getAspSubjectsAssignments() {
+        let assignments: string[] = []
+        for(var subjectId of this._subjectMap.keys()) {
+            if(subjectId === Unavailable.static_id)
+                continue;
+
+            for(var timeslot of this._subjectMap.get(subjectId)!) {
+                assignments.push(`assigned("${subjectId}", ${timeslot.dayOfWeek}, ${timeslot.timeOfDay})`)
+            }
+        }
+
+        return assignments;
     }
 
     /**

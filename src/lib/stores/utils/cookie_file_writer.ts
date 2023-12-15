@@ -49,7 +49,7 @@ export function generateCookieTimetableFile(classTimetableMap: Map<string, TimeT
     for (var classId of keys) {
         // Get the subjectsMap for each class
         let subjectsMap = classTimetableMap.get(classId)!.subjectMap;
-
+       
         // For each subject, write a line containing all the timeslots where it have been put
         for (var [subjectId, timeslots] of subjectsMap.entries()) {
             let line = `SM:${classId};${subjectId}`;

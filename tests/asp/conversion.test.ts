@@ -136,3 +136,44 @@ test("Asp mapping to object works", () => {
     expect(computedTimetables.classTimetables).toEqual(classTimetable);
 
 })
+
+test("Existing timetable to mapping works", () => {
+    let classTimetable: Map<string, TimeTable> = new Map();
+    let profTimetable: Map<string, TimeTable> = new Map();
+
+    // 2x2 matrix for each timetable
+    classTimetable.set("class-0", new TimeTable(2, 2));
+    classTimetable.set("class-1", new TimeTable(2, 2));
+
+    profTimetable.set("prof-0", new TimeTable(2, 2));
+    profTimetable.set("prof-1", new TimeTable(2, 2));
+
+    setSubject(0, 0, subjects[0], classTimetable.get("class-0")!, profTimetable.get("prof-0")!);
+    setSubject(0, 1, subjects[0], classTimetable.get("class-0")!, profTimetable.get("prof-0")!);
+    setSubject(1, 0, subjects[1], classTimetable.get("class-0")!, profTimetable.get("prof-1")!);
+    setSubject(1, 1, subjects[1], classTimetable.get("class-0")!, profTimetable.get("prof-1")!);
+
+    setSubject(0, 0, subjects[3], classTimetable.get("class-1")!, profTimetable.get("prof-1")!);
+    setSubject(0, 1, subjects[3], classTimetable.get("class-1")!, profTimetable.get("prof-1")!);
+    setSubject(1, 0, subjects[2], classTimetable.get("class-1")!, profTimetable.get("prof-0")!);
+    setSubject(1, 1, subjects[2], classTimetable.get("class-1")!, profTimetable.get("prof-0")!);
+
+    let expected = [
+        'assigned("subj-00", 0, 0)',
+        'assigned("subj-00", 0, 1)',
+        'assigned("subj-01", 1, 0)',
+        'assigned("subj-01", 1, 1)',
+
+        'assigned("subj-11", 0, 0)',
+        'assigned("subj-11", 0, 1)',
+        'assigned("subj-10", 1, 0)',
+        'assigned("subj-10", 1, 1)',
+    ]
+
+    let assignements = []
+    for(var classTT of classTimetable.values()) {
+        assignements.push(...classTT.getAspSubjectsAssignments());
+    }
+
+    expect(assignements).toEqual(expected);
+})

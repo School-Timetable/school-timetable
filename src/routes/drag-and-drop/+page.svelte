@@ -1,6 +1,6 @@
 <script lang="ts">
     import Timetable from '$lib/components/timetable.svelte';
-  import { allClassrooms, allProfessors, allSubjects } from '$lib/stores/global_store';
+  import { allClassrooms, allProfessors, allSubjects, askSolverForTimetable } from '$lib/stores/global_store';
   import { Professor } from '$model/professor/professor';
   import type { SchoolClass } from '$model/school-class/school-class';
   import type { Subject } from '$model/subject/subject';
