@@ -1,14 +1,15 @@
 <script lang="ts">
     import { stringToSubject, Subject } from "$model/subject/subject";
     import Hour from '$lib/components/hour.svelte';
-    import { removeSubject, type TimeTable } from '$model/timetable/time-table';
+    import { removeAllOf, removeSubject, type TimeTable } from '$model/timetable/time-table';
     import { Unavailable } from '$model/timetable/unavailable';
     import type { SchoolClass } from '$model/school-class/school-class';
     import type { Professor } from '$model/professor/professor';
     import Grid from './Grid.svelte';
-    import { theme } from '$lib/stores/global_store'; 
+    import { allProfessors, allSubjects, theme } from '$lib/stores/global_store'; 
     import { darkThemeColors, lightThemeColors } from '$lib/colors';
     import AspSolverButtons from "./AspSolverButtons.svelte";
+    import { get } from "svelte/store";
 
 
 	export let grid: TimeTable;
@@ -81,6 +82,14 @@
         sidebar = sidebar;
     }
 
+	function clearWorkspace() {
+		get(allSubjects).forEach((s) => {
+			removeAllOf(s);
+		});
+		grid = grid
+		refresh()
+	}
+
 </script>
 
 <div class="container-fluid">
@@ -134,7 +143,7 @@
                 <button type="button" class="btn btn-primary btn-lg w-100" on:click={event => validateTimetable()}>valida orario</button>
             </div> -->
             
-            <AspSolverButtons></AspSolverButtons>
+            <AspSolverButtons on:reload={() => grid = grid} on:clear={clearWorkspace}></AspSolverButtons>
         </div>
         
     </div>

@@ -19,7 +19,7 @@
         classTimeTableMap.subscribe(() => {
             setTimeout(() => {
                 generating = false
-            }, 2000);
+            }, 4000);
             console.log("call to subscribe")
             eventDispatcher("reload")
         })
