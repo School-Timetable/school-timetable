@@ -19,11 +19,6 @@
 
 	let currentSidebar: Subject[] = [];
 
-	allClassrooms.subscribe((c) => (classes = c));
-	allSubjects.subscribe((s) => {
-		subjects = s;
-	});
-
 	export let professorView: boolean = false;
 	export let selectedItem: Professor | SchoolClass | null = null;
 	export let currentTimeTable: TimeTable | null = null;
@@ -55,14 +50,6 @@
 	}
 </script>
 
-<input placeholder="days" bind:value={inputDays} />
-<input placeholder="hours" bind:value={inputHours} />
-<button
-	class="btn"
-	on:click={(_) => {
-		updateTimetable();
-	}}>Update Size</button
->
 <div class="m-3">
 	<!--toggle professor view-->
 	<div class="form-check form-switch">
