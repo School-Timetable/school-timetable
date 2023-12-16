@@ -9,6 +9,7 @@
     import {Button, Col, Icon, Input} from "sveltestrap";
     import MyModal from "./MyModal.svelte";
     import { createEventDispatcher } from "svelte";
+    import { TemporarySaving,confirmSaving,revertChanges,deleteTmp } from "$lib/utils/temporary_saving_during_generation";
 
     let generating: boolean = false
     let showClearModal: boolean = false
@@ -38,6 +39,7 @@
 	}>();
 
     function startCreation() {
+        TemporarySaving();
         generating = true
         askSolverForTimetable()
         classTimeTableMap.subscribe(() => {
@@ -62,6 +64,7 @@
     }
 
     let showConfirmSolutionModal = false;
+    let showRevertAreaModal=false;
 
 </script>
 
@@ -96,19 +99,26 @@
             {/each}
         </Input>
     </div>
-    <button class="btn btn-primary mt-2" on:click={() => showConfirmSolutionModal = true}>Confirm this solution</button>
-{/if}
+    <button class="btn btn-primary mt-2" on:click={() => { showConfirmSolutionModal = true;  }}>Confirm this solution</button>
+    <button class="btn btn-warning mt-2" on:click={() => { showRevertAreaModal=true}}>Revert to the initial state</button>
 
-<MyModal bind:showModal={showClearModal} on:confirm={clearAllTimetables}>
-	<h2 slot="header">Clear all the workspace</h2>
+    {/if}
+
+    <MyModal bind:showModal={showClearModal} on:confirm={() => { deleteTmp(); clearAllTimetables }}>
+        <h2 slot="header">Clear all the workspace</h2>
 	<p slot="body">
 		Are you sure you want to clear the workspace? The timetable will be saved in the history. 
 	</p>
 </MyModal>
 
-<MyModal bind:showModal={showConfirmSolutionModal} on:confirm={() => {localAnswersetList.length = 0}}>
+<MyModal bind:showModal={showConfirmSolutionModal} on:confirm={() => {localAnswersetList.length = 0; confirmSaving();}}>
     <h2 slot="header">Confirm this solution</h2>
     <p slot="body">
         By doing this operation you will accept the proposed solution. All the other solutions will be deleted.
     </p>
+</MyModal>
+<MyModal bind:showModal={showRevertAreaModal} on:confirm={() => {revertChanges();}}>
+    <h2 slot="header">Revert your changes</h2>
+    <p slot="body">
+        Doing this will return your workspace to the state before the automatic generation    </p>
 </MyModal>
