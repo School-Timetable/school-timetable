@@ -42,11 +42,8 @@ export const editingId = writable<string | null>(null);
 export let controller: any
 export let signal: any
 
-function parseSolverResponse(response: string) {
-    let resp = response.replaceAll(").", ")")
-    let lines = resp.split("\n");
-
-    let timetables = generateTimetablesFromAspFile(lines, get(allSubjects))
+function parseSolverResponse(response: string[]) {
+    let timetables = generateTimetablesFromAspFile(response, get(allSubjects))
  
     classTimeTableMap.set(timetables.classTimetables);
     professorTimeTableMap.set(timetables.profTimetables);
@@ -95,7 +92,11 @@ export function askSolverForTimetable() {
     //@ts-ignore
     fetch("http://localhost:8000/solve", options)
         .then((resp) => {
-            resp.text().then(content => parseSolverResponse(content))
+            resp.json().then(content => {
+                const answersetList: string[][] = content;
+                console.log(answersetList)
+                parseSolverResponse(answersetList[0])
+            })
         })
         .catch(error => {
             if (error.name === 'AbortError') {
