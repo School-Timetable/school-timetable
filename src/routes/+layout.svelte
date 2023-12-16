@@ -11,12 +11,13 @@
 	} from "$lib/stores/global_store";
 	import { generateCompleteTimetableFile, generateCookieFile } from "$lib/stores/utils/cookie_file_writer";
 	import { onMount } from "svelte";
-	import { Container, Styles } from "sveltestrap";
+	import { Container, Row, Styles } from "sveltestrap";
 	import { goto } from "$app/navigation";
 	import ThemeSwitcher from "$lib/components/ThemeSwitcher.svelte";
 	import { Navbar, NavbarBrand } from "sveltestrap";
 	import ExportTimetableForm from "$lib/components/ExportTimetableForm.svelte";
-    import { get } from "svelte/store";
+	import { page } from '$app/stores';
+    import { slide } from "svelte/transition";
 
 	onMount(() => {
 		const generate_file = () =>
@@ -48,6 +49,8 @@
 
 		classTimeTableMap.subscribe(generate_timetable_file);
 	});
+
+
 </script>
 
 <Styles theme={$theme} />
@@ -64,9 +67,19 @@
 				</svg>
 			</NavbarBrand>
 		</div>
-		<div class="zoom-hover mx-2">
-			<NavbarBrand href="/drag-and-drop">Timetable</NavbarBrand>
+		<div class="mx-2" style="display: flex;">
+			<NavbarBrand style="margin-left: 30px;" class="zoom-hover" href="/drag-and-drop">Timetable</NavbarBrand>
+			{#if $page.url.pathname == "/drag-and-drop"}
+				<div class="subitem" transition:slide={{axis: "x"}}>
+					<div class="vlmini mx-4"></div>
+					<div class="zoom-hover" style="margin-left: -10px;">
+						<ExportTimetableForm></ExportTimetableForm>
+					</div>
+				</div>
+			{/if}
 		</div>
+		<!--Show an item only if the link is /draw-and-drop -->
+		
 		<div class="vl mx-4"></div>
 		<div class="zoom-hover mx-2">
 			<NavbarBrand href="/data-input-form">Input Form</NavbarBrand>
@@ -75,24 +88,6 @@
 		<div class="zoom-hover mx-2">
 			<NavbarBrand href="/downloadUploadData">Download-Upload Data</NavbarBrand>
 		</div>
-		<div class="zoom-hover mx-2">
-			<ExportTimetableForm></ExportTimetableForm>
-		</div>
-		<!--<div class="zoom-hover">
-			<NavbarBrand on:click={createPDFProfView}>
-				PdfProf
-			</NavbarBrand>
-		</div>
-		<div class="zoom-hover">
-			<NavbarBrand on:click={createPDFClassView}>
-				PdfClass
-			</NavbarBrand>
-		</div>
-		<div class="zoom-hover">
-			<NavbarBrand on:click={() => createExcel("Professor")}>
-				Excel
-			</NavbarBrand>
-		</div>-->
 	</div>
 
 	<ThemeSwitcher />
@@ -118,6 +113,19 @@
 	.vl {
 		border-left: 1px solid;
 		height: 30px;
+		margin-left: 25px;
+	}
+
+	.vlmini {
+		border-left: 1px solid;
+		height: 20px;
 		margin-left: 20px;
+		margin-top: 10px;
+	}
+
+	.subitem {
+		display: flex;
+		align-items: start;
+		margin-left: -20px;
 	}
 </style>

@@ -68,26 +68,28 @@
 
 </script>
 
-<div class="btn-group mt-3">
-    <Button color="primary" on:click={startCreation}>
-        Auto generate
+<div style="display: flex;  width:50%;">
+    <div class="btn-group mt-3">
+        <Button color="primary" on:click={startCreation}>
+            Auto generate
+            {#if generating}
+            <span class="spinner-border spinner-border-sm mr-1"></span>
+            {/if}
+        </Button>
         {#if generating}
-        <span class="spinner-border spinner-border-sm mr-1"></span>
-        {/if}
-    </Button>
-    {#if generating}
         <Button color="danger" on:click={stopCreation}><Icon name="stop-circle" /> Stop</Button>
-    {/if}
-</div>
-
-<div class="mt-2">
-    <Button color="danger" on:click={() => showClearModal = true}>
-        <Icon name="trash-fill" /> Clear workspace
-    </Button>
+        {/if}
+    </div>
+    
+    <div class="mt-3" style="margin-left: 30px;">
+        <Button color="danger" on:click={() => showClearModal = true}>
+            <Icon name="trash-fill" /> Clear workspace
+        </Button>
+    </div>
 </div>
 
 {#if localAnswersetList.length > 0}
-    <div class="mt-2">
+    <div class="mt-2" style="width: 50%;">
         <Input
                 bind:value={selectedSolution}
                 type="select"
@@ -98,11 +100,10 @@
                 <option value={i}>Solution {i+1}</option>
             {/each}
         </Input>
+        <button class="btn btn-primary mt-2" on:click={() => { showConfirmSolutionModal = true;  }}>Confirm this solution</button>
+        <button class="btn btn-warning mt-2" on:click={() => { showRevertAreaModal=true}}>Revert to the initial state</button>
     </div>
-    <button class="btn btn-primary mt-2" on:click={() => { showConfirmSolutionModal = true;  }}>Confirm this solution</button>
-    <button class="btn btn-warning mt-2" on:click={() => { showRevertAreaModal=true}}>Revert to the initial state</button>
-
-    {/if}
+{/if}
 
     <MyModal bind:showModal={showClearModal} on:confirm={() => { deleteTmp(); clearAllTimetables }}>
         <h2 slot="header">Clear all the workspace</h2>

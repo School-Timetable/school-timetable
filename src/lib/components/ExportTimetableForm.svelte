@@ -32,8 +32,13 @@
 	}
 
 </script>
+<head>
+    <link rel="stylesheet" href="src/lib/components/styles.css" />
+</head>
 
-<Button color="primary" on:click={() => {showModal = true}}>Export</Button>
+<!--center item vertically-->
+<div style="display: flex; align-items: center; justify-content: center; height: 100%;"></div>
+<Button class="export" on:click={() => {showModal = true}}>Export</Button>
 
 <MyModal bind:showModal on:confirm={confirmExport}>
 	<h2 slot="header">Export timetable</h2>

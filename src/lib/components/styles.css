@@ -1,0 +1,11 @@
+.export {
+    background-color: transparent;
+    height: 30px;
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0px;
+    border: 0px;
+    color: var(--color-strongest);
+}
