@@ -1,10 +1,13 @@
-import { getExistingClassroomsFromFile, getExistingDaysOfWeekFromFile, getExistingHoursOfDayFromFile, getExistingProfessorFromFile, getExistingSubjectsFromFile } from "$lib/stores/utils/cookie_file_parser";
+import { getCompleteTimetableFromFile, getExistingClassroomsFromFile, getExistingDaysOfWeekFromFile, getExistingHoursOfDayFromFile, getExistingProfessorFromFile, getExistingSubjectsFromFile } from "$lib/stores/utils/cookie_file_parser";
 import { Professor } from "$model/professor/professor";
 import { SchoolClass } from "$model/school-class/school-class";
 import { Subject } from "$model/subject/subject";
 import { get, writable } from "svelte/store";
-import { readCookieFile } from "./utils/cookie_file_reader";
-import { removeAllOf, removeProfessor, removeSchoolClass } from "$model/timetable/time-table";
+import { readCookieFile, readCookieFileTimetable } from "./utils/cookie_file_reader";
+import { EntityType, generateTimetablesFromAspFile, removeAllOf, removeProfessor, removeSchoolClass, setUpdateClassroomsCallback, setUpdateProfessorsCallback, setupCloneDaysOfWeekHoursOfDay, updateTimetablesMatrix } from "$model/timetable/time-table";
+import { DayOfWeek } from "$model/timetable/day-of-week";
+import { HourOfDay } from "$model/timetable/hour-of-day";
+
 
 // Read the whole file and store the lines in this list
 export const file_data = readCookieFile();
@@ -18,10 +21,92 @@ export const allClassrooms = writable(class_data);
 export const allSubjects = writable(getExistingSubjectsFromFile(file_data, prof_data, class_data));
 export const allHoursOfDay = writable(getExistingHoursOfDayFromFile(file_data));
 export const allDaysOfWeek = writable(getExistingDaysOfWeekFromFile(file_data));
-allDaysOfWeek.set
+
+export const timetable_file_data = readCookieFileTimetable();
+let timetableData = getCompleteTimetableFromFile(timetable_file_data, get(allSubjects), get(allDaysOfWeek).length, get(allHoursOfDay).length);
+
+export const classTimeTableMap = writable(timetableData[0]);
+export const professorTimeTableMap = writable(timetableData[1]);
+
+updateTimetablesMatrix(get(classTimeTableMap), get(professorTimeTableMap));
+
+setUpdateClassroomsCallback((allTimetables) => classTimeTableMap.set(allTimetables))
+setUpdateProfessorsCallback((allTimetables) => professorTimeTableMap.set(allTimetables))
+
+setupCloneDaysOfWeekHoursOfDay(allDaysOfWeek, allHoursOfDay);
+
+
 export const theme = writable<"light" | "dark" | "auto">("auto");
 export const editingId = writable<string | null>(null);
 
+export let controller: any
+export let signal: any
+
+function parseSolverResponse(response: string) {
+    let resp = response.replaceAll(").", ")")
+    let lines = resp.split("\n");
+
+    let timetables = generateTimetablesFromAspFile(lines, get(allSubjects))
+ 
+    classTimeTableMap.set(timetables.classTimetables);
+    professorTimeTableMap.set(timetables.profTimetables);
+}
+
+export function askSolverForTimetable() {
+    const subjectsFacts = get(allSubjects).map((e) => e.toAspFact());
+    const unavailabilityFacts: string[] = [];
+
+    let classTimetables = get(classTimeTableMap);
+    for(var classId of classTimetables.keys()) {
+        unavailabilityFacts.push(...classTimetables.get(classId)!.getAspUnavailability(EntityType.Classroom, classId));
+    }
+
+    let profTimetables = get(professorTimeTableMap);
+    for(var profId of profTimetables.keys()) {
+        unavailabilityFacts.push(...profTimetables.get(profId)!.getAspUnavailability(EntityType.Professor, profId));
+    }
+
+    const existingAssignments = [];
+    for(var classTT of classTimetables.values()) {
+        existingAssignments.push(...classTT.getAspSubjectsAssignments());
+    }
+
+    const hoursOfDayFact = `hours_per_day(${get(allHoursOfDay).length})`;
+    const daysPerWeekFacts = `days_per_week(${get(allDaysOfWeek).length})`;
+
+    const factsArray = [hoursOfDayFact, daysPerWeekFacts, ...subjectsFacts, ...unavailabilityFacts, ...existingAssignments];
+    const factString = factsArray.join(".\n") + ".";
+
+    //console.log(factString);
+
+    controller = new AbortController()
+    signal = controller.signal
+    
+    const options = {
+        method: "POST",
+        headers: {
+            'Content-Type': 'text/plain'
+        },
+        signal,
+        body: factString
+    }
+    
+
+    //@ts-ignore
+    fetch("http://localhost:8000/solve", options)
+        .then((resp) => {
+            resp.text().then(content => parseSolverResponse(content))
+        })
+        .catch(error => {
+            if (error.name === 'AbortError') {
+            console.log('Fetch interrotta: ', error);
+            } else {
+            console.error('Si è verificato un errore durante il fetch:', error);
+            }
+        });
+    
+    
+}
 
 /* ----------------- THIS PART BELOW CONTAINS THE METHOD TO ACCESS THE STORAGE ------------------ */
 
@@ -54,14 +139,10 @@ export function saveObjectToStorage(item: AcceptedTypes, index?: number) {
 
     let generic_store = getCorrectList(item)!; 
     // @ts-ignore
-    console.log("saveObjectToStorage", generic_store);
-
     let generic_data = get(generic_store);
 
     if(index === undefined) {
         // @ts-ignore 
-        console.log("saveObjectToStorage", generic_data);
-        
         generic_store.set([...generic_data, item]);
     }
     else {
@@ -149,3 +230,34 @@ export function removeAllSubjectsFromStorage() {
     allSubjects.set([]);
 }
 
+
+export function getAllDaysOfWeek() {
+    try {
+        return get(allDaysOfWeek);
+    } catch {
+        return [
+            new DayOfWeek(0, "Monday"),
+            new DayOfWeek(1, "Tuesday"),
+            new DayOfWeek(2, "Wednesday"),
+            new DayOfWeek(3, "Thursday"),
+            new DayOfWeek(4, "Friday"),
+            new DayOfWeek(5, "Saturday"),
+        ]
+    }
+}
+
+export function getAllHoursOfDay() {
+    try {
+        return get(allHoursOfDay);
+    } catch {
+        return [
+            new HourOfDay(0, "08:00"),
+            new HourOfDay(1, "09:00"),
+            new HourOfDay(2, "10:00"),
+            new HourOfDay(3, "11:00"),
+            new HourOfDay(4, "12:00"),
+            new HourOfDay(5, "13:00"),
+            new HourOfDay(6, "14:00")
+        ]
+    }
+}

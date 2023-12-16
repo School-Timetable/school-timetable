@@ -49,7 +49,7 @@ export function generateCookieTimetableFile(classTimetableMap: Map<string, TimeT
     for (var classId of keys) {
         // Get the subjectsMap for each class
         let subjectsMap = classTimetableMap.get(classId)!.subjectMap;
-
+       
         // For each subject, write a line containing all the timeslots where it have been put
         for (var [subjectId, timeslots] of subjectsMap.entries()) {
             let line = `SM:${classId};${subjectId}`;
@@ -63,4 +63,28 @@ export function generateCookieTimetableFile(classTimetableMap: Map<string, TimeT
     }
 
     return base64 ? btoa(line_str.join("\n")) : line_str.join("\n");
+}
+
+export function generateCookieProfessorsConstraintFile(professorTimetableMap: Map<string, TimeTable>, base64: boolean = false): string {
+    let allProfIds = professorTimetableMap.keys();
+    let lineStr = []
+
+    for(var profId of allProfIds) {
+        let timeslots = professorTimetableMap.get(profId)!.getUnavailableTimeslots();
+        let line = `SC:${profId}`;
+
+        for(var timeslot of timeslots) {
+            line = line + `;${timeslot.dayOfWeek}:${timeslot.timeOfDay}`;
+        }
+
+        lineStr.push(line);
+    }
+
+    return base64 ? btoa(lineStr.join("\n")) : lineStr.join("\n");
+}
+
+export function generateCompleteTimetableFile(classTimetableMap: Map<string, TimeTable>, profTimetableFile: Map<string, TimeTable>, base64: boolean = false) {
+    let complete_str = generateCookieTimetableFile(classTimetableMap) + "\n"+ generateCookieProfessorsConstraintFile(profTimetableFile);
+
+    return base64 ? btoa(complete_str) : complete_str;
 }

@@ -5,15 +5,18 @@
 		allHoursOfDay,
 		allProfessors,
 		allSubjects,
+		classTimeTableMap,
+		professorTimeTableMap,
 		theme,
 	} from "$lib/stores/global_store";
-	import { generateCookieFile } from "$lib/stores/utils/cookie_file_writer";
+	import { generateCompleteTimetableFile, generateCookieFile } from "$lib/stores/utils/cookie_file_writer";
 	import { onMount } from "svelte";
 	import { Container, Styles } from "sveltestrap";
 	import { goto } from "$app/navigation";
 	import ThemeSwitcher from "$lib/components/ThemeSwitcher.svelte";
 	import { Navbar, NavbarBrand } from "sveltestrap";
 	import ExportTimetableForm from "$lib/components/ExportTimetableForm.svelte";
+    import { get } from "svelte/store";
 
 	onMount(() => {
 		const generate_file = () =>
@@ -33,6 +36,17 @@
 		allSubjects.subscribe(generate_file);
 		allDaysOfWeek.subscribe(generate_file);
 		allHoursOfDay.subscribe(generate_file);
+
+		const generate_timetable_file = () => {
+			let file = generateCompleteTimetableFile($classTimeTableMap, $professorTimeTableMap, true);
+
+			localStorage.setItem(
+				"timetable.tdf",
+				file
+			)
+		}
+
+		classTimeTableMap.subscribe(generate_timetable_file);
 	});
 </script>
 
@@ -47,7 +61,7 @@
 			id="title"
 			class="zoom-hover"
 			on:click={() => {
-				goto("/");
+				goto("/drag-and-drop");
 			}}
 		>
 			SCHOOL TIMETABLE

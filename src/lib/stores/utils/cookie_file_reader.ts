@@ -9,8 +9,12 @@ export function readCookieFile(): string[] {
         return [];
     }
 
-    let all_lines = (atob(localStorage.getItem("data.tdf") || "")).split("\n");
-    return all_lines;
+    try {
+        let all_lines = (atob(localStorage.getItem("data.tdf") || "")).split("\n");
+        return all_lines;
+    } catch {
+        return [];
+    }
 }
 
 /**
@@ -22,6 +26,10 @@ export function readCookieFileTimetable(): string[] {
         return [];
     }
 
-    let all_lines = (atob(localStorage.getItem("timetable.tdf") || "")).split("\n");
-    return all_lines;
+    try {
+        let all_lines = (atob(localStorage.getItem("timetable.tdf") || "")).split("\n");
+        return all_lines;
+    } catch {
+        return [];
+    }
 }

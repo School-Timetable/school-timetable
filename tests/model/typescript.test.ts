@@ -1,6 +1,7 @@
 import { Professor } from "$model/professor/professor";
 import { SchoolClass } from "$model/school-class/school-class";
 import { Subject } from "$model/subject/subject";
+import { Unavailable } from "$model/timetable/unavailable";
 
 describe("instanceof", () => {
 
@@ -23,5 +24,22 @@ describe("instanceof", () => {
         expect(subject instanceof Professor).toBe(false);
         expect(subject instanceof SchoolClass).toBe(false);
         expect(subject instanceof Subject).toBe(true);
+
+        let sub: Subject | Unavailable | null = null;
+
+        expect(sub instanceof Professor).toBe(false);
+        expect(sub instanceof SchoolClass).toBe(false);
+        expect(sub instanceof Subject).toBe(false);
+        expect(sub instanceof Unavailable).toBe(false);
+        expect(sub instanceof Object).toBe(false);
+        
+        sub = new Unavailable();
+        
+        expect(sub instanceof Professor).toBe(false);
+        expect(sub instanceof SchoolClass).toBe(false);
+        expect(sub instanceof Subject).toBe(false);
+        expect(sub instanceof Unavailable).toBe(true);
+        expect(sub instanceof Object).toBe(true);
+        
     });
 });

@@ -1,14 +1,24 @@
-import { allDaysOfWeek, allHoursOfDay } from "$lib/stores/global_store";
-import { get } from "svelte/store";
 import { Professor } from "../professor/professor";
 import { SchoolClass } from "../school-class/school-class";
 import type { Subject } from "../subject/subject";
 import { Unavailable } from "./unavailable";
+import type { HourOfDay } from "./hour-of-day";
+import { get, type Writable } from "svelte/store";
+import type { DayOfWeek } from "./day-of-week";
 
 
+let updateClassroomsCallback: (map: Map<string, TimeTable>) => void
+let updateProfessorsCallback: (map: Map<string, TimeTable>) => void
 
-const _classTimetableMap: Map<string, TimeTable> = new Map();
-const _professorTimetableMap: Map<string, TimeTable> = new Map();
+let _isTesting = false;
+
+let _allHoursOfDay: Writable<HourOfDay[]>;
+let _allDaysOfWeek: Writable<DayOfWeek[]>;
+
+let _classTimetableMap: Map<string, TimeTable> = new Map();
+let _professorTimetableMap: Map<string, TimeTable> = new Map();
+
+export enum EntityType { Classroom = "class", Professor = "prof" }
 
 /**
  * Maps the id of a {@link SchoolClass} to its {@link TimeTable}
@@ -134,7 +144,7 @@ export class TimeTable {
         for (let i = 0; i < this.daysPerWeek; i++) {
             for (let j = 0; j < this.hoursPerDay; j++) {
                 const subject = this.getSubjectOn(i, j);
-                if (subject == null || subject.constructor.name == Unavailable.name)
+                if (subject == null || subject instanceof Unavailable)
                     continue;
 
                 if (!tmpSubjectsMap.has(subject.id)) {
@@ -176,8 +186,9 @@ export class TimeTable {
      * @returns true if and only if the timeslot is not marked as unavailable
      */
     isAvailableOn(dayOfWeek: number, timeOfDay: number): boolean {
-        const className = this.getSubjectOn(dayOfWeek, timeOfDay)?.constructor.name ?? "";
-        return className != Unavailable.name;
+        const sub = this.getSubjectOn(dayOfWeek, timeOfDay);
+        return !(sub instanceof Unavailable)
+
     }
 
     /**
@@ -192,7 +203,7 @@ export class TimeTable {
      */
     isAssignedOn(dayOfWeek: number, timeOfDay: number): boolean {
         const sub = this.getSubjectOn(dayOfWeek, timeOfDay);
-        return sub != null && sub.constructor.name !== Unavailable.name;
+        return sub != null && !(sub instanceof Unavailable);
     }
 
 
@@ -231,6 +242,28 @@ export class TimeTable {
         this._subjectMap.clear();
     }
 
+    /**
+     * Removes all subjects from the timetable, except for unavailable timeslots
+     * 
+     * @see {@link removeAllOf}
+     */
+    clearIfNotUnavailable(): void {
+        for (let i = 0; i < this.daysPerWeek; i++) {
+            for (let j = 0; j < this.hoursPerDay; j++) {
+                if (!(this.values[i][j] instanceof Unavailable)) {
+                    this.values[i][j] = null;
+                }
+            }
+        }
+
+        for (var key of this._subjectMap.keys()) {
+            if (key != Unavailable.static_id) {
+                this._subjectMap.set(key, []);
+            }
+        }
+    }
+
+
 
 
     /**
@@ -261,6 +294,31 @@ export class TimeTable {
 
     getUnavailableTimeslots(): { dayOfWeek: number, timeOfDay: number }[] {
         return this.getTimeSlotsOf(new Unavailable());
+    }
+
+    /**
+     * Compute and returns the list of unavailabilities as a list of ASP facts
+     * 
+     * @returns a list of string of type unavailable_on(Type: "prof" | "class", EntityID, Day, Hour)
+     */
+    getAspUnavailability(entityType: EntityType, entityId: string): string[] {
+        return this.subjectMap.get(Unavailable.static_id)
+            ?.map((e) => `unavailable_on("${entityType}", "${entityId}", ${e.dayOfWeek}, ${e.timeOfDay})`)
+            ?? []
+    }
+
+    getAspSubjectsAssignments() {
+        let assignments: string[] = []
+        for (var subjectId of this._subjectMap.keys()) {
+            if (subjectId === Unavailable.static_id)
+                continue;
+
+            for (var timeslot of this._subjectMap.get(subjectId)!) {
+                assignments.push(`assigned("${subjectId}", ${timeslot.dayOfWeek}, ${timeslot.timeOfDay})`)
+            }
+        }
+
+        return assignments;
     }
 
     /**
@@ -333,28 +391,48 @@ export class TimeTable {
             this.values.pop();
         }
 
-        this._subjectMap = this.computeSubjectMap();
-
         this._daysPerWeek = daysPerWeek;
         this._hoursPerDay = hoursPerDay;
+
+        this._subjectMap = this.computeSubjectMap();
+
     }
 
+}
+
+
+export function _getNumberOfDaysOfWeek() {
+    return _isTesting ? 2 : get(_allDaysOfWeek).length;
+}
+
+export function _getNumberOfHoursOfDay() {
+    return _isTesting ? 2 : get(_allHoursOfDay).length;
 }
 
 
 /**
  * Sets the subject to the correct timetables, ensuring they are kept in sync
  * 
+ * The parameters [classTimetable] and [profTimetable] are used only for test purposes
+ * 
  * @see {@link setUnavailable} to mark a timeslot as unavailable
  * 
  */
-export function setSubject(dayOfWeek: number, timeOfDay: number, subject: Subject): void {
+export function setSubject(dayOfWeek: number, timeOfDay: number, subject: Subject,
+    classTimetable?: TimeTable, profTimetable?: TimeTable
+): void {
 
-    const classTimeTable = getClassTimetableOf(subject.schoolClass);
+    const classTimeTable = (classTimetable) ? classTimetable : getClassTimetableOf(subject.schoolClass);
     setSubjectOnTimeTable(dayOfWeek, timeOfDay, subject, classTimeTable);
 
-    const professorTimeTable = getProfessorTimetableOf(subject.professor);
+    const professorTimeTable = (profTimetable) ? profTimetable : getProfessorTimetableOf(subject.professor);
     setSubjectOnTimeTable(dayOfWeek, timeOfDay, subject, professorTimeTable);
+
+    // Since the local matrices have been updated, signal to the globalStore this update so as to write on the localStorage
+    if (updateClassroomsCallback) {
+        updateClassroomsCallback(_classTimetableMap)
+        updateProfessorsCallback(_professorTimetableMap)
+    }
 }
 
 /**
@@ -363,10 +441,11 @@ export function setSubject(dayOfWeek: number, timeOfDay: number, subject: Subjec
 function setSubjectOnTimeTable(dayOfWeek: number, timeOfDay: number, subject: Subject, timeTable: TimeTable) {
     const oldSubject = timeTable.getSubjectOn(dayOfWeek, timeOfDay);
 
-    if (oldSubject?.constructor.name == Unavailable.name) {
+    if (oldSubject instanceof Unavailable) {
         throw new Error("Trying to assign a subject on an unavailable timeslot");
     }
     else if (oldSubject != null) {
+        console.log(`Volevo inserire subject ${subject.id} allo slot ${dayOfWeek} ${timeOfDay}, ma c'è già ${subject.id}`)
         // we replace the old subject from all the timetables
         removeSubject(dayOfWeek, timeOfDay, oldSubject);
     }
@@ -376,22 +455,27 @@ function setSubjectOnTimeTable(dayOfWeek: number, timeOfDay: number, subject: Su
 
 
 export function removeSubject(dayOfWeek: number, timeOfDay: number, subject: Subject | Unavailable) {
-    if (subject.constructor.name == Unavailable.name) {
+    if (subject instanceof Unavailable) {
         throw new Error("Trying to remove an unavailable subject");
     }
 
-    // @ts-expect-error we know subject is of type Subject
+
     const ctt = getClassTimetableOf(subject.schoolClass);
-    // @ts-expect-error we know subject is of type Subject
     const ptt = getProfessorTimetableOf(subject.professor);
 
     if (ctt.getSubjectOn(dayOfWeek, timeOfDay)?.id != subject.id || ptt.getSubjectOn(dayOfWeek, timeOfDay)?.id != subject.id) {
         throw new Error("Trying to remove a subject from a timeslot that doesn't contain it");
     }
-    
+
 
     ctt.setSubjectOn(dayOfWeek, timeOfDay, null);
     ptt.setSubjectOn(dayOfWeek, timeOfDay, null);
+
+    // Since the local matrices have been updated, signal to the globalStore this update so as to write on the localStorage
+    if (updateClassroomsCallback) {
+        updateClassroomsCallback(_classTimetableMap)
+        updateProfessorsCallback(_professorTimetableMap)
+    }
 }
 
 
@@ -399,14 +483,13 @@ export function removeSubject(dayOfWeek: number, timeOfDay: number, subject: Sub
  * @param entity either a {@link SchoolClass} or {@link Professor} which is used to get the right timetable
  * @param available true for removing unavailable mark else false to mark as unavailable, by default it is false
  */
-export function setUnavailable(dayOfWeek: number, timeOfDay: number, entity: SchoolClass | Professor, available: boolean = false): void {
-    const timeTable = getTimetableOf(entity);
+export function setUnavailable(dayOfWeek: number, timeOfDay: number, entity?: SchoolClass | Professor, available: boolean = false, timetable?: TimeTable): void {
+    const timeTable = (timetable) ? timetable : getTimetableOf(entity!);
     const oldSubject = timeTable.getSubjectOn(dayOfWeek, timeOfDay);
 
 
     if (available) {
-        if (oldSubject?.constructor.name != Unavailable.name) {
-            // throw new Error("Trying to remove a subject from an available timeslot");
+        if (!(oldSubject instanceof Unavailable)) {
             return; // nothing to do
         }
     }
@@ -418,6 +501,11 @@ export function setUnavailable(dayOfWeek: number, timeOfDay: number, entity: Sch
 
     const newSubject = available ? null : new Unavailable();
     timeTable.setSubjectOn(dayOfWeek, timeOfDay, newSubject);
+
+    if (updateClassroomsCallback) {
+        updateClassroomsCallback(_classTimetableMap)
+        updateProfessorsCallback(_professorTimetableMap)
+    }
 }
 
 
@@ -436,7 +524,7 @@ export function setAvailable(dayOfWeek: number, timeOfDay: number, entity: Schoo
 export function getClassTimetableOf(schoolClass: SchoolClass): TimeTable {
     const classID = schoolClass.id;
     if (!_classTimetableMap.has(classID)) {
-        _classTimetableMap.set(classID, new TimeTable(get(allDaysOfWeek).length, get(allHoursOfDay).length));
+        _classTimetableMap.set(classID, new TimeTable(_getNumberOfDaysOfWeek(), _getNumberOfHoursOfDay()));
     }
 
     return _classTimetableMap.get(classID)!;
@@ -448,7 +536,7 @@ export function getClassTimetableOf(schoolClass: SchoolClass): TimeTable {
 export function getProfessorTimetableOf(professor: Professor): TimeTable {
     const professorID = professor.id;
     if (!_professorTimetableMap.has(professorID)) {
-        _professorTimetableMap.set(professorID, new TimeTable(get(allDaysOfWeek).length, get(allHoursOfDay).length));
+        _professorTimetableMap.set(professorID, new TimeTable(_getNumberOfDaysOfWeek(), _getNumberOfHoursOfDay()));
     }
 
     return _professorTimetableMap.get(professorID)!;
@@ -477,6 +565,11 @@ export function getTimetableOf(entity: SchoolClass | Professor): TimeTable {
 export function clearAll(): void {
     _classTimetableMap.clear();
     _professorTimetableMap.clear();
+
+    if (updateClassroomsCallback) {
+        updateClassroomsCallback(_classTimetableMap)
+        updateProfessorsCallback(_professorTimetableMap)
+    }
 }
 
 /** 
@@ -502,11 +595,80 @@ export function changeTimeTableSize(daysPerWeek: number, hoursPerDay: number) {
     if (daysPerWeek <= 0 || hoursPerDay <= 0)
         throw new Error("Invalid timetable size, daysPerWeek and hoursPerDay must be greater than 0");
 
-
     _classTimetableMap.forEach((timeTable) => {
         timeTable.setSize(daysPerWeek, hoursPerDay);
     });
     _professorTimetableMap.forEach((timeTable) => {
         timeTable.setSize(daysPerWeek, hoursPerDay);
     });
+
+    if (updateClassroomsCallback) {
+        updateClassroomsCallback(_classTimetableMap)
+        updateProfessorsCallback(_professorTimetableMap)
+    }
+
+    console.log("Changed timetable size to", daysPerWeek, hoursPerDay);
+
+}
+
+export function putClassTimetable(classId: string, allTimetables: Map<string, TimeTable>, daysOfWeek: number, hoursOfDay: number) {
+    allTimetables.set(classId, new TimeTable(daysOfWeek, hoursOfDay));
+}
+
+
+export function putProfTimetable(profId: string, allTimetables: Map<string, TimeTable>, daysOfWeek: number, hoursOfDay: number) {
+    allTimetables.set(profId, new TimeTable(daysOfWeek, hoursOfDay));
+}
+
+
+export function setUpdateClassroomsCallback(callback: (map: Map<string, TimeTable>) => void) {
+    updateClassroomsCallback = callback;
+}
+
+export function setUpdateProfessorsCallback(callback: (map: Map<string, TimeTable>) => void) {
+    updateProfessorsCallback = callback;
+}
+
+export function updateTimetablesMatrix(classTimeTable: Map<string, TimeTable>, profTimetable: Map<string, TimeTable>) {
+    _classTimetableMap = classTimeTable;
+    _professorTimetableMap = profTimetable;
+}
+
+export function setupCloneDaysOfWeekHoursOfDay(daysOfWeek: Writable<DayOfWeek[]>, hoursOfDay: Writable<HourOfDay[]>) {
+    _allDaysOfWeek = daysOfWeek;
+    _allHoursOfDay = hoursOfDay;
+}
+
+
+export function generateTimetablesFromAspFile(fileData: string[], allSubjects: Subject[], isTesting: boolean = false) {
+    for (var timetable of _classTimetableMap.values()) {
+        timetable.clearIfNotUnavailable();
+    }
+
+    for (var timetable of _professorTimetableMap.values()) {
+        timetable.clearIfNotUnavailable();
+    }
+
+    _isTesting = isTesting;
+
+    let searchSubject = (id: string) => allSubjects[allSubjects.findIndex((sub) => sub.id === id)];
+
+    for (var line of fileData) {
+        let regex = /^assign\("([\w-]+)",(\d+),(\d+)\)$/;
+        let matcher = line.match(regex);
+
+        if (matcher != null) {
+            let subjId = matcher[1];
+            let dayOfWeek = Number(matcher[2]);
+            let hourOfDay = Number(matcher[3]);
+
+            let subject = searchSubject(subjId);
+            setSubject(dayOfWeek, hourOfDay, subject);
+        }
+    }
+
+    return {
+        profTimetables: _professorTimetableMap,
+        classTimetables: _classTimetableMap
+    }
 }

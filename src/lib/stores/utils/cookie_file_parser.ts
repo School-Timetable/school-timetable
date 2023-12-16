@@ -3,7 +3,7 @@ import { SchoolClass } from "$model/school-class/school-class";
 import { Subject } from "$model/subject/subject";
 import { DayOfWeek } from "$model/timetable/day-of-week";
 import { HourOfDay } from "$model/timetable/hour-of-day";
-import { TimeTable } from "$model/timetable/time-table";
+import { TimeTable, getTimetableOf, putClassTimetable, putProfTimetable, setSubject, setUnavailable } from "$model/timetable/time-table";
 import { Unavailable } from "$model/timetable/unavailable";
 
 
@@ -45,6 +45,7 @@ export function getExistingHoursOfDayFromFile(file_data: string[]) {
     let hoursOfDay: HourOfDay[] = [];
     file_data.forEach(line => {
         if (line.substring(0, 2) === "H:") {
+            console.log(line);
             hoursOfDay.push(HourOfDay.ofCsv(line))
         }
     })
@@ -88,40 +89,72 @@ export function getExistingDaysOfWeekFromFile(file_data: string[]) {
     return daysOfWeek;
 }
 
-export function getClassroomTimetablesFromFile(
+export function getCompleteTimetableFromFile(
     file_data: string[], 
     allSubjects: Subject[], 
     daysOfWeek: number, 
     hoursOfDay: number
-): Map<string, TimeTable> {
+): Map<string, TimeTable>[] {
     let allClassesTimetable = new Map<string, TimeTable>();
+    let allProfessorTimetable = new Map<string, TimeTable>();
 
     file_data.forEach((line) => {
         let matcher = line.match(/^SM:([A-Za-z0-9\-]+);([A-Za-z0-9\-]+);([\d:;]+)$/);
+
         if(matcher != null) {
             let classId = matcher[1];
             let subjectId = matcher[2];
             let timeslotsSplitted = matcher[3].split(";");
 
             let subject: Subject | Unavailable;
+            let profId: string | undefined;
 
             if(subjectId === Unavailable.static_id) {
                 subject = new Unavailable();
             } else { 
                 subject = allSubjects.find((subject) => subject.id === subjectId)!;
+                profId = subject.professor.id;
             }
 
-            if(allClassesTimetable.get(classId) === undefined)
-                allClassesTimetable.set(classId, new TimeTable(daysOfWeek, hoursOfDay));
+            
+
+            if(allClassesTimetable.get(classId) === undefined) {
+                putClassTimetable(classId, allClassesTimetable, daysOfWeek, hoursOfDay);
+            }
+
+            if(profId !== undefined && allProfessorTimetable.get(profId) === undefined) {
+               putProfTimetable(profId, allProfessorTimetable, daysOfWeek, hoursOfDay);
+            }
 
             for(var timeslot of timeslotsSplitted) {
-                console.log(timeslot);
                 let timeslotData = timeslot.split(":");
-                allClassesTimetable.get(classId)!.setSubjectOn(Number(timeslotData[0]), Number(timeslotData[1]), subject);
+                
+                if(subject instanceof Unavailable) {
+                    setUnavailable(Number(timeslotData[0]), Number(timeslotData[1]), undefined, false, allClassesTimetable.get(classId)!)
+                } else {
+                    setSubject(Number(timeslotData[0]), Number(timeslotData[1]), subject as Subject, allClassesTimetable.get(classId), allProfessorTimetable.get(profId!))
+                }
 
+            }
+        } 
+        else {
+            let constraintMatcher = line.match(/^SC:([A-Za-z0-9\-]+);([\d:;]+)$/);
+
+            if(constraintMatcher != null) {
+                let profId = constraintMatcher[1];
+                let timeslotsSplitted = constraintMatcher[2].split(";");
+    
+                if(allProfessorTimetable.get(profId) === undefined)
+                    allProfessorTimetable.set(profId, new TimeTable(daysOfWeek, hoursOfDay));
+    
+                for(var timeslot of timeslotsSplitted) {
+                    let timeslotData = timeslot.split(":");
+                    allProfessorTimetable.get(profId)!.setSubjectOn(Number(timeslotData[0]), Number(timeslotData[1]), new Unavailable());
+    
+                }
             }
         }
     });
 
-    return allClassesTimetable;
+    return [allClassesTimetable, allProfessorTimetable];
 }
