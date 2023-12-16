@@ -641,28 +641,28 @@ export function setupCloneDaysOfWeekHoursOfDay(daysOfWeek: Writable<DayOfWeek[]>
 
 
 export function generateTimetablesFromAspFile(fileData: string[], allSubjects: Subject[], isTesting: boolean = false) {
-    for (var timetable of _classTimetableMap.values()) {
+    for (const timetable of _classTimetableMap.values()) {
         timetable.clearIfNotUnavailable();
     }
 
-    for (var timetable of _professorTimetableMap.values()) {
+    for (const timetable of _professorTimetableMap.values()) {
         timetable.clearIfNotUnavailable();
     }
 
     _isTesting = isTesting;
 
-    let searchSubject = (id: string) => allSubjects[allSubjects.findIndex((sub) => sub.id === id)];
+    const searchSubject = (id: string) => allSubjects[allSubjects.findIndex((sub) => sub.id === id)];
 
-    for (var line of fileData) {
-        let regex = /^assign\("([\w-]+)",(\d+),(\d+)\)$/;
-        let matcher = line.match(regex);
+    for (const line of fileData) {
+        const regex = /^assign\("([\w-]+)",(\d+),(\d+)\)\.$/;
+        const matcher = line.match(regex);
 
         if (matcher != null) {
-            let subjId = matcher[1];
-            let dayOfWeek = Number(matcher[2]);
-            let hourOfDay = Number(matcher[3]);
+            const subjId = matcher[1];
+            const dayOfWeek = Number(matcher[2]);
+            const hourOfDay = Number(matcher[3]);
 
-            let subject = searchSubject(subjId);
+            const subject = searchSubject(subjId);
             setSubject(dayOfWeek, hourOfDay, subject);
         }
     }

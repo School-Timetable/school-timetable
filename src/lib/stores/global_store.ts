@@ -11,6 +11,7 @@ import { HourOfDay } from "$model/timetable/hour-of-day";
 
 // Read the whole file and store the lines in this list
 export const file_data = readCookieFile();
+export let allAnswersets = writable<string[][]>([]);
 
 // Parse the prof and classes from the file readed above
 const prof_data = getExistingProfessorFromFile(file_data);
@@ -42,7 +43,7 @@ export const editingId = writable<string | null>(null);
 export let controller: any
 export let signal: any
 
-function parseSolverResponse(response: string[]) {
+export function parseSolverResponse(response: string[]) {
     let timetables = generateTimetablesFromAspFile(response, get(allSubjects))
  
     classTimeTableMap.set(timetables.classTimetables);
@@ -93,9 +94,8 @@ export function askSolverForTimetable() {
     fetch("http://localhost:8000/solve", options)
         .then((resp) => {
             resp.json().then(content => {
-                const answersetList: string[][] = content;
-                console.log(answersetList)
-                parseSolverResponse(answersetList[0])
+                // all but the first one, since it is written twice by the solver
+                allAnswersets.set(content.slice(1));
             })
         })
         .catch(error => {

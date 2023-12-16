@@ -1,17 +1,41 @@
 <script lang="ts">
-    import { askSolverForTimetable, classTimeTableMap, controller } from "$lib/stores/global_store";
-    import { Button, Col, Icon } from "sveltestrap";
+    import {
+        allAnswersets,
+        askSolverForTimetable,
+        classTimeTableMap,
+        controller,
+        parseSolverResponse
+    } from "$lib/stores/global_store";
+    import {Button, Col, Icon, Input} from "sveltestrap";
     import MyModal from "./MyModal.svelte";
     import { createEventDispatcher } from "svelte";
 
     let generating: boolean = false
     let showClearModal: boolean = false
 
+    let localAnswersetList: string[][] = []
+
+    let selectedSolution: number;
+
+    $: allAnswersets.subscribe((answersets) => {
+        localAnswersetList = answersets
+        if (answersets.length > 0){
+            parseSolverResponse(answersets[0])
+            selectedSolution = 0
+        }
+
+        console.log("answersets updated")
+    })
+
+    $: if (selectedSolution != undefined && localAnswersetList.length > 0) {
+        console.log("selectedSolution: " + selectedSolution)
+        parseSolverResponse(localAnswersetList[selectedSolution])
+    }
+
     const eventDispatcher = createEventDispatcher<{
 		reload: void;
         clear: void;
 	}>();
-
 
     function startCreation() {
         generating = true
@@ -20,7 +44,7 @@
             setTimeout(() => {
                 generating = false
             }, 4000);
-            console.log("call to subscribe")
+            //console.log("call to subscribe")
             eventDispatcher("reload")
         })
     }
@@ -36,6 +60,8 @@
         showClearModal = false
         eventDispatcher("clear")
     }
+
+    let showConfirmSolutionModal = false;
 
 </script>
 
@@ -57,10 +83,32 @@
     </Button>
 </div>
 
+{#if localAnswersetList.length > 0}
+    <div class="mt-2">
+        <Input
+                bind:value={selectedSolution}
+                type="select"
+                name="select-solution"
+                id="select-solution"
+                >
+            {#each localAnswersetList as answerset, i}
+                <option value={i}>Solution {i+1}</option>
+            {/each}
+        </Input>
+    </div>
+    <button class="btn btn-primary mt-2" on:click={() => showConfirmSolutionModal = true}>Confirm this solution</button>
+{/if}
 
 <MyModal bind:showModal={showClearModal} on:confirm={clearAllTimetables}>
 	<h2 slot="header">Clear all the workspace</h2>
 	<p slot="body">
 		Are you sure you want to clear the workspace? The timetable will be saved in the history. 
 	</p>
+</MyModal>
+
+<MyModal bind:showModal={showConfirmSolutionModal} on:confirm={() => {localAnswersetList.length = 0}}>
+    <h2 slot="header">Confirm this solution</h2>
+    <p slot="body">
+        By doing this operation you will accept the proposed solution. All the other solutions will be deleted.
+    </p>
 </MyModal>
