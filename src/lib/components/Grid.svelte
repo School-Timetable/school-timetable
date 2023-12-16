@@ -17,6 +17,7 @@
 	import { Subject } from "$model/subject/subject";
 	import { Unavailable } from "$model/timetable/unavailable";
 	import { theme } from "$lib/stores/global_store";
+    import MyModal from "./MyModal.svelte";
 
 	export let timeTable: TimeTable;
 	export let professorView: boolean;
@@ -25,6 +26,8 @@
 	export let callback: () => void;
 
 	let unavailableTimeTable: TimeTable | null = null;
+	let isAskingToRemoveDay = false;
+	let showRemoveHourOrDayModal = false;
 
 	theme.subscribe((value) => {
 		timeTable = timeTable;
@@ -153,7 +156,12 @@
 		});
 		changeTimeTableSize(timeTable.daysPerWeek - 1, timeTable.hoursPerDay);
 		callback();
+		showRemoveHourOrDayModal = false;
 		timeTable = timeTable;
+	}
+	function askToRemoveDay() {
+		isAskingToRemoveDay = true
+		showRemoveHourOrDayModal = true
 	}
 
 	function addHour() {
@@ -175,7 +183,12 @@
 		});
 		changeTimeTableSize(timeTable.daysPerWeek, timeTable.hoursPerDay - 1);
 		callback();
+		showRemoveHourOrDayModal = false;
 		timeTable = timeTable;
+	}
+	function askToRemoveHour() {
+		isAskingToRemoveDay = false
+		showRemoveHourOrDayModal = true
 	}
 
 	function throw_alert_on_inconsistency() {}
@@ -212,7 +225,7 @@
 									</button>
 									<button
 										class="btn btn-danger btn-sm px-2 py-1"
-										on:click={removeDay}
+										on:click={askToRemoveDay}
 									>
 										<i class="bi bi-trash-fill"></i>
 									</button>
@@ -249,7 +262,7 @@
 							</button>
 							<button
 								class="btn btn-danger btn-sm px-2 py-1"
-								on:click={removeHour}
+								on:click={askToRemoveHour}
 							>
 								<i class="bi bi-trash-fill"></i>
 							</button>
@@ -283,6 +296,17 @@
 			</tr>
 		{/each}
 	</table>
+
+	<MyModal 
+		bind:showModal={showRemoveHourOrDayModal}
+		on:confirm={isAskingToRemoveDay ? removeDay : removeHour}
+	>
+		<h2 slot="header">Remove {isAskingToRemoveDay ? 'day' : 'hour'}</h2>
+		<p slot="body">
+			Are you sure you want to remove a {isAskingToRemoveDay ? 'day' : 'hour'}? 
+			All the time slots you have assigned to that {isAskingToRemoveDay ? 'day' : 'hour'} will be lost.
+		</p>
+	</MyModal>
 </div>
 
 <style>
