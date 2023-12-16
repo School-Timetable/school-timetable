@@ -1,16 +1,25 @@
 <script lang="ts">
-    import { stringToSubject, Subject } from "$model/subject/subject";
-    import Hour from '$lib/components/hour.svelte';
-    import { removeAllOf, removeSubject, type TimeTable } from '$model/timetable/time-table';
-    import { Unavailable } from '$model/timetable/unavailable';
-    import type { SchoolClass } from '$model/school-class/school-class';
-    import type { Professor } from '$model/professor/professor';
-    import Grid from './Grid.svelte';
-    import { allProfessors, allSubjects, theme } from '$lib/stores/global_store'; 
-    import { darkThemeColors, lightThemeColors } from '$lib/colors';
-    import AspSolverButtons from "./AspSolverButtons.svelte";
-    import { get } from "svelte/store";
-
+	import { stringToSubject, Subject } from "$model/subject/subject";
+	import Hour from "$lib/components/hour.svelte";
+	import {
+		clearAll,
+		removeAllOf,
+		removeSubject,
+		TimeTable,
+	} from "$model/timetable/time-table";
+	import { Unavailable } from "$model/timetable/unavailable";
+	import type { SchoolClass } from "$model/school-class/school-class";
+	import type { Professor } from "$model/professor/professor";
+	import Grid from "./Grid.svelte";
+	import {
+		allProfessors,
+		allSubjects,
+		theme,
+	} from "$lib/stores/global_store";
+	import { darkThemeColors, lightThemeColors } from "$lib/colors";
+	import AspSolverButtons from "./AspSolverButtons.svelte";
+	import { get } from "svelte/store";
+	import WeakConstrainsWidget from "./WeakConstrainsWidget.svelte";
 
 	export let grid: TimeTable;
 	export let sidebar: Subject[];
@@ -78,18 +87,17 @@
 		return subject.hoursPerWeek.value - grid.getCountOf(subject);
 	}
 
-    export function refresh(){
-        sidebar = sidebar;
-    }
+	export function refresh() {
+		sidebar = sidebar;
+	}
 
 	function clearWorkspace() {
 		get(allSubjects).forEach((s) => {
 			removeAllOf(s);
 		});
-		grid = grid
-		refresh()
+		grid = grid;
+		refresh();
 	}
-
 </script>
 
 <div class="container-fluid">
@@ -126,12 +134,15 @@
 					</li>
 				{/each}
 			</ul>
+			<div style="overflow: scroll;">
+				<WeakConstrainsWidget />
+			</div>
 		</div>
 
 		<!--grid-->
 		<div class="col-10">
 			<Grid
-				timeTable={grid}
+				bind:timeTable={grid}
 				{professorView}
 				{selectedItem}
 				{subjectColors}
@@ -142,11 +153,13 @@
 			<!-- <div class="d-flex justify-content-center my-4">
                 <button type="button" class="btn btn-primary btn-lg w-100" on:click={event => validateTimetable()}>valida orario</button>
             </div> -->
-            
-            <AspSolverButtons on:reload={() => grid = grid} on:clear={clearWorkspace}></AspSolverButtons>
-        </div>
-        
-    </div>
+
+			<AspSolverButtons
+				on:reload={() => (grid = grid)}
+				on:clear={clearWorkspace}
+			></AspSolverButtons>
+		</div>
+	</div>
 </div>
 
 <style>

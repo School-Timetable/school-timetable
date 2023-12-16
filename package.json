@@ -41,6 +41,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"svelte-steps": "^2.4.1",
 		"exceljs": "^4.4.0",
 		"file-saver": "^2.0.5",
 		"papaparse": "^5.4.1",

@@ -17,7 +17,7 @@
 	import { Subject } from "$model/subject/subject";
 	import { Unavailable } from "$model/timetable/unavailable";
 	import { theme } from "$lib/stores/global_store";
-    import MyModal from "./MyModal.svelte";
+	import MyModal from "./MyModal.svelte";
 
 	export let timeTable: TimeTable;
 	export let professorView: boolean;
@@ -129,7 +129,7 @@
 			"hour_label_" + index,
 		) as HTMLInputElement;
 		let value: string = input.value;
-		if (value.match(/^[a-zA-Z0-9_\:/\s]*$/)) {
+		if (value.match(/^[a-zA-Z0-9_ \:/\s]*$/)) {
 			$allHoursOfDay[index] = HourOfDay.of(index, value);
 			allHoursOfDay.set; //updates subscribers
 			console.log($allHoursOfDay);
@@ -160,8 +160,8 @@
 		timeTable = timeTable;
 	}
 	function askToRemoveDay() {
-		isAskingToRemoveDay = true
-		showRemoveHourOrDayModal = true
+		isAskingToRemoveDay = true;
+		showRemoveHourOrDayModal = true;
 	}
 
 	function addHour() {
@@ -187,8 +187,8 @@
 		timeTable = timeTable;
 	}
 	function askToRemoveHour() {
-		isAskingToRemoveDay = false
-		showRemoveHourOrDayModal = true
+		isAskingToRemoveDay = false;
+		showRemoveHourOrDayModal = true;
 	}
 
 	function throw_alert_on_inconsistency() {}
@@ -297,14 +297,17 @@
 		{/each}
 	</table>
 
-	<MyModal 
+	<MyModal
 		bind:showModal={showRemoveHourOrDayModal}
 		on:confirm={isAskingToRemoveDay ? removeDay : removeHour}
 	>
-		<h2 slot="header">Remove {isAskingToRemoveDay ? 'day' : 'hour'}</h2>
+		<h2 slot="header">Remove {isAskingToRemoveDay ? "day" : "hour"}</h2>
 		<p slot="body">
-			Are you sure you want to remove a {isAskingToRemoveDay ? 'day' : 'hour'}? 
-			All the time slots you have assigned to that {isAskingToRemoveDay ? 'day' : 'hour'} will be lost.
+			Are you sure you want to remove a {isAskingToRemoveDay
+				? "day"
+				: "hour"}? All the time slots you have assigned to that {isAskingToRemoveDay
+				? "day"
+				: "hour"} will be lost.
 		</p>
 	</MyModal>
 </div>
