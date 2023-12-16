@@ -10,7 +10,7 @@
 		setSubject,
 		setUnavailable,
 	} from "$model/timetable/time-table";
-	import { allHoursOfDay, allDaysOfWeek } from "$lib/stores/global_store"; //TODO utilizzare i dati reali
+	import { allHoursOfDay, allDaysOfWeek } from "$lib/stores/global_store";
 	import { DayOfWeek } from "$model/timetable/day-of-week";
 	import { HourOfDay, hourOfDaySchema } from "$model/timetable/hour-of-day";
 	import Hour from "$lib/components/hour.svelte";
@@ -28,6 +28,10 @@
 	let unavailableTimeTable: TimeTable | null = null;
 	let isAskingToRemoveDay = false;
 	let showRemoveHourOrDayModal = false;
+	let showSwapModal = false;
+	let swapHour:number;
+	let swapDay:number;
+	let swapInfo:any;
 
 	theme.subscribe((value) => {
 		timeTable = timeTable;
@@ -57,6 +61,22 @@
 			setUnavailable(day, hour, selectedItem, false);
 
 		timeTable = timeTable;
+	}
+
+	function onDropValue(hour: number, day: number, info: any) {
+		const oldValue = timeTable.getSubjectOn(day, hour);
+		if (oldValue instanceof Subject) {
+			showSwapModal = true;
+			swapHour = hour;
+			swapDay = day;
+			swapInfo = info;
+		} else {
+			dropValue(hour,day,info);
+		}
+	}
+
+	function swap() {
+		dropValue(swapHour,swapDay,swapInfo);
 	}
 
 	function dropValue(hour: number, day: number, info: any) {
@@ -279,7 +299,7 @@
 							on:dragend={onSubjectDragEnd}
 							on:click={() => onHourClick(dayIndex, hourIndex)}
 							on:hourDrop={(event) =>
-								dropValue(hourIndex, dayIndex, event.detail)}
+								onDropValue(hourIndex, dayIndex, event.detail)}
 							unavailable={unavailableTimeTable !== null &&
 								unavailableTimeTable.values[dayIndex][
 									hourIndex
@@ -308,6 +328,15 @@
 				: "hour"}? All the time slots you have assigned to that {isAskingToRemoveDay
 				? "day"
 				: "hour"} will be lost.
+		</p>
+	</MyModal>
+	<MyModal
+		bind:showModal={showSwapModal}
+		on:confirm={swap}
+	>
+		<h2 slot="header">Item swap</h2>
+		<p slot="body">
+			Are you sure you want to swap the selected item with the one already present in the table? 
 		</p>
 	</MyModal>
 </div>
