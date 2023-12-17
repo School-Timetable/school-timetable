@@ -29,9 +29,9 @@
 	let isAskingToRemoveDay = false;
 	let showRemoveHourOrDayModal = false;
 	let showSwapModal = false;
-	let swapHour:number;
-	let swapDay:number;
-	let swapInfo:any;
+	let swapHour: number;
+	let swapDay: number;
+	let swapInfo: any;
 
 	theme.subscribe((value) => {
 		timeTable = timeTable;
@@ -71,12 +71,12 @@
 			swapDay = day;
 			swapInfo = info;
 		} else {
-			dropValue(hour,day,info);
+			dropValue(hour, day, info);
 		}
 	}
 
 	function swap() {
-		dropValue(swapHour,swapDay,swapInfo);
+		dropValue(swapHour, swapDay, swapInfo);
 	}
 
 	function dropValue(hour: number, day: number, info: any) {
@@ -258,63 +258,70 @@
 			</tr>
 		</thead>
 
-		<!--cells-->
-		{#each { length: timeTable.hoursPerDay } as _, hourIndex}
-			<tr>
-				<td class="bg-body-tertiary align-items-top">
-					<input
-						id="hour_label_{hourIndex}"
-						type="text"
-						class="input_text col"
-						value={$allHoursOfDay[hourIndex]
-							? $allHoursOfDay[hourIndex].label
-							: assignDefaultHour(hourIndex)}
-						on:input={() => onHourLabelChange(hourIndex)}
-					/>
+		<tbody>
+			<!--cells-->
+			{#each { length: timeTable.hoursPerDay } as _, hourIndex}
+				<tr>
+					<td class="bg-body-tertiary align-items-top">
+						<input
+							id="hour_label_{hourIndex}"
+							type="text"
+							class="input_text col"
+							value={$allHoursOfDay[hourIndex]
+								? $allHoursOfDay[hourIndex].label
+								: assignDefaultHour(hourIndex)}
+							on:input={() => onHourLabelChange(hourIndex)}
+						/>
 
-					{#if hourIndex == $allHoursOfDay.length - 1}
-						<div>
-							<button
-								class="btn btn-primary btn-sm px-2 py-1"
-								on:click={addHour}
-							>
-								<i class="bi bi-plus-lg"></i>
-							</button>
-							<button
-								class="btn btn-danger btn-sm px-2 py-1"
-								on:click={askToRemoveHour}
-							>
-								<i class="bi bi-trash-fill"></i>
-							</button>
-						</div>
-					{/if}
-				</td>
-				{#each { length: timeTable.daysPerWeek } as _, dayIndex}
-					<td>
-						<Hour
-							on:hourDrag={() =>
-								onSubjectDrag(
-									timeTable.values[dayIndex][hourIndex],
-								)}
-							on:dragend={onSubjectDragEnd}
-							on:click={() => onHourClick(dayIndex, hourIndex)}
-							on:hourDrop={(event) =>
-								onDropValue(hourIndex, dayIndex, event.detail)}
-							unavailable={unavailableTimeTable !== null &&
-								unavailableTimeTable.values[dayIndex][
-									hourIndex
-								] instanceof Unavailable}
-							isProfessorView={professorView}
-							color={getSubjectColor(
-								timeTable.getSubjectOn(dayIndex, hourIndex),
-							)}
-							id={`${hourIndex},${dayIndex}`}
-							subject={timeTable.values[dayIndex][hourIndex]}
-						></Hour>
+						{#if hourIndex == $allHoursOfDay.length - 1}
+							<div>
+								<button
+									class="btn btn-primary btn-sm px-2 py-1"
+									on:click={addHour}
+								>
+									<i class="bi bi-plus-lg"></i>
+								</button>
+								<button
+									class="btn btn-danger btn-sm px-2 py-1"
+									on:click={askToRemoveHour}
+								>
+									<i class="bi bi-trash-fill"></i>
+								</button>
+							</div>
+						{/if}
 					</td>
-				{/each}
-			</tr>
-		{/each}
+					{#each { length: timeTable.daysPerWeek } as _, dayIndex}
+						<td>
+							<Hour
+								on:hourDrag={() =>
+									onSubjectDrag(
+										timeTable.values[dayIndex][hourIndex],
+									)}
+								on:dragend={onSubjectDragEnd}
+								on:click={() =>
+									onHourClick(dayIndex, hourIndex)}
+								on:hourDrop={(event) =>
+									onDropValue(
+										hourIndex,
+										dayIndex,
+										event.detail,
+									)}
+								unavailable={unavailableTimeTable !== null &&
+									unavailableTimeTable.values[dayIndex][
+										hourIndex
+									] instanceof Unavailable}
+								isProfessorView={professorView}
+								color={getSubjectColor(
+									timeTable.getSubjectOn(dayIndex, hourIndex),
+								)}
+								id={`${hourIndex},${dayIndex}`}
+								subject={timeTable.values[dayIndex][hourIndex]}
+							></Hour>
+						</td>
+					{/each}
+				</tr>
+			{/each}
+		</tbody>
 	</table>
 
 	<MyModal
@@ -330,13 +337,11 @@
 				: "hour"} will be lost.
 		</p>
 	</MyModal>
-	<MyModal
-		bind:showModal={showSwapModal}
-		on:confirm={swap}
-	>
+	<MyModal bind:showModal={showSwapModal} on:confirm={swap}>
 		<h2 slot="header">Item swap</h2>
 		<p slot="body">
-			Are you sure you want to swap the selected item with the one already present in the table? 
+			Are you sure you want to swap the selected item with the one already
+			present in the table?
 		</p>
 	</MyModal>
 </div>

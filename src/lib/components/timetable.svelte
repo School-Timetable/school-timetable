@@ -140,7 +140,7 @@
 		</div>
 
 		<!--grid-->
-		<div class="col">
+		<div class="col ps-2">
 			<Grid
 				bind:timeTable={grid}
 				{professorView}
