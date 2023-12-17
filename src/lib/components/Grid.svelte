@@ -216,11 +216,11 @@
 	onMount(throw_alert_on_inconsistency);
 </script>
 
-<div class="w-100" style="overflow: auto">
-	<table>
+<div style="min-width: {($allDaysOfWeek.length + 1) * 120}px;">
+	<table style="width: 100%; table-layout: fixed;">
 		<thead>
 			<tr>
-				<th></th>
+				<th class="bg-body-tertiary"></th>
 				<!-- {length: columns_number} -->
 				{#each { length: timeTable.daysPerWeek } as _, dayIndex}
 					<th class="bg-body-tertiary">

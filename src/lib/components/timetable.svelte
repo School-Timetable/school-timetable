@@ -101,7 +101,7 @@
 </script>
 
 <div class="container-fluid">
-	<div class="row">
+	<div class="row flex-nowrap">
 		<!--sidebar-->
 		<!-- svelte-ignore a11y-no-static-element-interactions -->
 		<div class="col-3 col-lg-2">
@@ -140,7 +140,7 @@
 		</div>
 
 		<!--grid-->
-		<div class="col ps-2">
+		<div class="col ps-2" style="overflow-x: auto;">
 			<Grid
 				bind:timeTable={grid}
 				{professorView}
@@ -150,14 +150,11 @@
 				callback={refresh}
 			></Grid>
 
-			<!-- <div class="d-flex justify-content-center my-4">
-                <button type="button" class="btn btn-primary btn-lg w-100" on:click={event => validateTimetable()}>valida orario</button>
-            </div> -->
-
 			<AspSolverButtons
 				on:reload={() => grid = grid}
 				on:clear={clearWorkspace}
 			></AspSolverButtons>
+
 		</div>
 	</div>
 </div>
