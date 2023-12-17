@@ -104,7 +104,9 @@
 	<div class="row flex-nowrap">
 		<!--sidebar-->
 		<!-- svelte-ignore a11y-no-static-element-interactions -->
-		<div class="col-3 col-lg-2">
+		<div class="col-3 col-lg-2 pt-2">
+
+			<h5>Subjects</h5>
 			<ul
 				class="list-group my-2"
 				on:dragover={(event) => event.preventDefault()}
