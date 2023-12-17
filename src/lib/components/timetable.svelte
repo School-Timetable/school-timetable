@@ -155,7 +155,7 @@
             </div> -->
 
 			<AspSolverButtons
-				on:reload={() => (grid = grid)}
+				on:reload={() => grid = grid}
 				on:clear={clearWorkspace}
 			></AspSolverButtons>
 		</div>

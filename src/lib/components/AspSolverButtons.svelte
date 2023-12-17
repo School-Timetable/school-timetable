@@ -100,12 +100,12 @@
                 <option value={i}>Solution {i+1}</option>
             {/each}
         </Input>
-        <button class="btn btn-primary mt-2" on:click={() => { showConfirmSolutionModal = true;  }}>Confirm this solution</button>
-        <button class="btn btn-warning mt-2" on:click={() => { showRevertAreaModal=true}}>Revert to the initial state</button>
+        <button class="btn btn-primary mt-2" on:click={() => { showConfirmSolutionModal = true }}>Confirm this solution</button>
+        <button class="btn btn-warning mt-2" on:click={() => { showRevertAreaModal=true }}>Revert to the initial state</button>
     </div>
 {/if}
 
-    <MyModal bind:showModal={showClearModal} on:confirm={() => { deleteTmp(); clearAllTimetables }}>
+    <MyModal bind:showModal={showClearModal} on:confirm={() => { deleteTmp(); clearAllTimetables() }}>
         <h2 slot="header">Clear all the workspace</h2>
 	<p slot="body">
 		Are you sure you want to clear the workspace? The timetable will be saved in the history. 
@@ -121,5 +121,6 @@
 <MyModal bind:showModal={showRevertAreaModal} on:confirm={() => {revertChanges();}}>
     <h2 slot="header">Revert your changes</h2>
     <p slot="body">
-        Doing this will return your workspace to the state before the automatic generation    </p>
+        Doing this will return your workspace to the state before the automatic generation.
+    </p>
 </MyModal>
