@@ -1,12 +1,9 @@
 <script lang="ts">
-  
-  
   import { writeToStorage,checkBase64} from '$lib/utils/get_storage_to_download'; 
-  
+    import { Col, Input } from 'sveltestrap';
 
   let selectedFile: File | null = null;
   let txtContent: string[] = [];
-
   
 
   function handleFileChange(event: Event) {
@@ -50,16 +47,22 @@
   }
 </script>
 
-<div>
-  <label for="txtFile">Upload del tuo ambiente di lavoro:</label>
-  <input
-    type="file"
-    id="txtFile"
-    accept=".txt"
-    on:change={handleFileChange}
-  />
-
-  {#if selectedFile}
-    <p>File selezionato: {selectedFile.name}</p>
-  {/if}
+<div class="row mt-3">
+  <Col sm="5">
+    <label class="form-label mt-1" for="txtFile">Upload your workspace data file: </label>
+  </Col>
+  <Col>
+    <Input
+      class="mb-3"
+      type="file"
+      id="txtFile"
+      accept=".txt"
+      on:change={handleFileChange}
+    />
+    {#if selectedFile}
+    <div class="mt-3">
+      <p>Loaded file: <strong>{selectedFile.name}</strong></p>
+    </div>
+{/if}
+  </Col>
 </div>

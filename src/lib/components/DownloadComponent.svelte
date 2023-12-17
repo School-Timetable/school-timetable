@@ -1,5 +1,6 @@
 <script lang="ts">
   import { readStoragetoDownload } from '$lib/utils/get_storage_to_download'; 
+  import { Button, Col } from 'sveltestrap';
 
   function handleDownloadTXT() {
     const arrayData = readStoragetoDownload();
@@ -16,7 +17,11 @@
   }
 </script>
 
-<style>
-</style>
-
-<button on:click={handleDownloadTXT}>Premi per il download</button>
+<div class="row mt-3">
+  <Col sm="7">
+    <label class="form-label mt-1" for="txtFile">Download the current workspace data: </label>
+  </Col>
+  <Col>
+    <Button color="primary" class="ml-3" on:click={handleDownloadTXT}>Download</Button>
+  </Col>
+</div>

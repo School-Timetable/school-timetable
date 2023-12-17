@@ -18,6 +18,8 @@
 	import ExportTimetableForm from "$lib/components/ExportTimetableForm.svelte";
 	import { page } from '$app/stores';
     import { slide } from "svelte/transition";
+    import DownloadUploadWorkspace from "$lib/components/SaveLoadWorkspace.svelte";
+    import SaveLoadWorkspace from "$lib/components/SaveLoadWorkspace.svelte";
 
 	onMount(() => {
 		const generate_file = () =>
@@ -53,6 +55,10 @@
 
 </script>
 
+<head>
+    <link rel="stylesheet" href="src/lib/components/styles.css" />
+</head>
+
 <Styles theme={$theme} />
 
 <Navbar expand="md">
@@ -68,10 +74,10 @@
 			</NavbarBrand>
 		</div>
 		<div class="mx-2" style="display: flex;">
-			<NavbarBrand style="margin-left: 30px;" class="zoom-hover" href="/drag-and-drop">Timetable</NavbarBrand>
+			<NavbarBrand style="margin-left: 30px; font-size: medium;" class="zoom-hover" href="/drag-and-drop">Timetable</NavbarBrand>
 			{#if $page.url.pathname == "/drag-and-drop"}
 				<div class="subitem" transition:slide={{axis: "x"}}>
-					<div class="vlmini mx-4"></div>
+					<div class="vl mx-4 mt-1"></div>
 					<div class="zoom-hover" style="margin-left: -10px;">
 						<ExportTimetableForm></ExportTimetableForm>
 					</div>
@@ -80,13 +86,13 @@
 		</div>
 		<!--Show an item only if the link is /draw-and-drop -->
 		
-		<div class="vl mx-4"></div>
+		<div class="vl mx-4 mt-1"></div>
 		<div class="zoom-hover mx-2">
-			<NavbarBrand href="/data-input-form">Input Form</NavbarBrand>
+			<NavbarBrand style="font-size: medium;" href="/data-input-form">Input Form</NavbarBrand>
 		</div>
 		<div class="vl mx-4"></div>
-		<div class="zoom-hover mx-2">
-			<NavbarBrand href="/downloadUploadData">Download-Upload Data</NavbarBrand>
+		<div class="zoom-hover">
+			<SaveLoadWorkspace></SaveLoadWorkspace>
 		</div>
 	</div>
 
@@ -128,4 +134,5 @@
 		align-items: start;
 		margin-left: -20px;
 	}
+	
 </style>
