@@ -19,7 +19,7 @@
 	import { darkThemeColors, lightThemeColors } from "$lib/colors";
 	import AspSolverButtons from "./AspSolverButtons.svelte";
 	import { get } from "svelte/store";
-	import WeakConstrainsWidget from "./WeakConstrainsWidget.svelte";
+	import WeakConstraintsWidget from "./WeakConstraintsWidget.svelte";
 
 	export let grid: TimeTable;
 	export let sidebar: Subject[];
@@ -101,10 +101,10 @@
 </script>
 
 <div class="container-fluid">
-	<div class="d-flex">
+	<div class="row">
 		<!--sidebar-->
 		<!-- svelte-ignore a11y-no-static-element-interactions -->
-		<div class="overflow-auto vh-100 row col-2">
+		<div class="col-3 col-lg-2">
 			<ul
 				class="list-group me-1"
 				on:dragover={(event) => event.preventDefault()}
@@ -134,13 +134,13 @@
 					</li>
 				{/each}
 			</ul>
-			<div style="overflow: scroll;">
-				<WeakConstrainsWidget />
+			<div>
+				<WeakConstraintsWidget />
 			</div>
 		</div>
 
 		<!--grid-->
-		<div class="col-10">
+		<div class="col">
 			<Grid
 				bind:timeTable={grid}
 				{professorView}

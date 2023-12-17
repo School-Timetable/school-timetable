@@ -29,7 +29,6 @@
 				? getProfessorTimetableOf(item)
 				: getClassTimetableOf(item);
 		currentTimeTable = timetable;
-		console.log("PORCO", currentTimeTable.values.length);
 		selectedItem = item;
 
 		if (item instanceof Professor)
