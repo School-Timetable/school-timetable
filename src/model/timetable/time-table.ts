@@ -578,6 +578,11 @@ export function clearAll(): void {
 export function removeAllOf(subject: Subject): void {
     getClassTimetableOf(subject.schoolClass).removeAllOf(subject);
     getProfessorTimetableOf(subject.professor).removeAllOf(subject);
+
+    if (updateClassroomsCallback) {
+        updateClassroomsCallback(_classTimetableMap)
+        updateProfessorsCallback(_professorTimetableMap)
+    }
 }
 
 
