@@ -81,6 +81,8 @@
 	<hr class="my-2" />
 	<h5>Weak constraints</h5>
 
+	<p>1 = Minimum priority<br/>4 = Maximum priority</p>
+
 	<!-- Add your table rows and data here -->
 	{#each weak_constraints as [priority, value] (value.name)}
 		<div
