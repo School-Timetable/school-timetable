@@ -65,7 +65,7 @@
 
 	function onDropValue(hour: number, day: number, info: any) {
 		const oldValue = timeTable.getSubjectOn(day, hour);
-		if (oldValue instanceof Subject) {
+		if (oldValue instanceof Subject && oldValue.id != info.subject.id) {
 			showSwapModal = true;
 			swapHour = hour;
 			swapDay = day;
