@@ -43,6 +43,8 @@
         </p>
     </div>
     <p>We as the development team hope that you will find this editor useful. Enjoy!</p>
+    <a href="https://www.youtube.com/watch?v=AZhWW6URrns" style="text-decoration:none">&nbsp</a>
+    <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" style="text-decoration:none">&nbsp</a>
 </div>
 
 <style>
