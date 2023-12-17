@@ -11,14 +11,12 @@
 	} from "$lib/stores/global_store";
 	import { generateCompleteTimetableFile, generateCookieFile } from "$lib/stores/utils/cookie_file_writer";
 	import { onMount } from "svelte";
-	import { Container, Row, Styles } from "sveltestrap";
-	import { goto } from "$app/navigation";
+	import { Container, Styles } from "sveltestrap";
 	import ThemeSwitcher from "$lib/components/ThemeSwitcher.svelte";
 	import { Navbar, NavbarBrand } from "sveltestrap";
 	import ExportTimetableForm from "$lib/components/ExportTimetableForm.svelte";
 	import { page } from '$app/stores';
     import { slide } from "svelte/transition";
-    import DownloadUploadWorkspace from "$lib/components/SaveLoadWorkspace.svelte";
     import SaveLoadWorkspace from "$lib/components/SaveLoadWorkspace.svelte";
 
 	onMount(() => {
@@ -78,7 +76,7 @@
 			{#if $page.url.pathname == "/drag-and-drop"}
 				<div class="subitem" transition:slide={{axis: "x"}}>
 					<div class="vl mx-4 mt-1"></div>
-					<div class="zoom-hover" style="margin-left: -10px;">
+					<div class="zoom-hover">
 						<ExportTimetableForm></ExportTimetableForm>
 					</div>
 				</div>

@@ -15,7 +15,7 @@
                 <b>School Timetable</b>
             </li>
             <li>
-                <b>Download-Upload Data</b>
+                <b>Save-Load Data</b>
             </li>
         </ul>
     </div>
@@ -35,7 +35,7 @@
             <li>by making the AI <em>automatically</em> generate the timetable from a set of given constraint<br></li>
         </ol>
         <p>
-            In the '<a href="/downloadUploadData"><b>Download-Upload Data</b></a>' section you can choose to store the current
+            In the '<b>Save-Load Data</b>' section you can choose to store the current
             session in your filesystem or to upload an existing one to start your work from where you left!
         </p>
         <p>
