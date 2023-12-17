@@ -1,35 +1,37 @@
 <script lang="ts">
+    import { weakConstraintsMap } from "$lib/stores/global_store";
+    import { WeakConstraint } from "$model/asp/weak_contraint";
 	import { flip } from "svelte/animate";
 	import { cubicOut } from "svelte/easing";
 
-	export let weak_constraints: Map<
-		number,
-		{ name: string; active: boolean; displayName: string }
-	> = new Map();
+	export let weak_constraints: Map<number, WeakConstraint> = new Map();
 
 	if (weak_constraints.size == 0) {
-		weak_constraints.set(1, {
+		weak_constraints.set(1, new WeakConstraint({
 			name: "contiguous_subject_hours",
 			active: true,
-			displayName: "Contiguous subject hours",
-		});
-		weak_constraints.set(2, {
+			displayName: "Prefer contiguous subject hours",
+		}));
+
+		weak_constraints.set(2, new WeakConstraint({
 			name: "least_subjects_batches",
 			active: true,
-			displayName: "Least subjects batches",
-		});
+			displayName: "Prefer less subjects batches",
+		}));
 
-		weak_constraints.set(3, {
+		weak_constraints.set(3,  new WeakConstraint({
 			name: "least_subjects_swaps",
 			active: true,
-			displayName: "Least subjects swaps",
-		});
+			displayName: "Prefer least subjects swaps",
+		}));
 
-		weak_constraints.set(4, {
+		weak_constraints.set(4,  new WeakConstraint({
 			name: "minimize_days_weight_difference",
 			active: true,
 			displayName: "Minimize days weight difference",
-		});
+		}));
+
+		weakConstraintsMap.set(weak_constraints);
 	}
 
 	function swap_up(priority: number) {
@@ -37,6 +39,7 @@
 		weak_constraints.set(priority - 1, weak_constraints.get(priority)!);
 		weak_constraints.set(priority, upper_label);
 		weak_constraints = weak_constraints;
+		weakConstraintsMap.set(weak_constraints);
 	}
 
 	function swap_down(priority: number) {
@@ -44,6 +47,7 @@
 		weak_constraints.set(priority + 1, weak_constraints.get(priority)!);
 		weak_constraints.set(priority, lower_label);
 		weak_constraints = weak_constraints;
+		weakConstraintsMap.set(weak_constraints);
 	}
 
 	function toggle_active(priority: number) {
@@ -51,6 +55,7 @@
 		label.active = !label.active;
 		weak_constraints.set(priority, label);
 		weak_constraints = weak_constraints;
+		weakConstraintsMap.set(weak_constraints);
 	}
 
 	function bring_weak_up(priority: number) {
@@ -63,16 +68,6 @@
 		if (priority < weak_constraints.size) {
 			swap_down(priority);
 		}
-	}
-
-	export function to_string(): string[] {
-		const weak_constrains_strings: string[] = [];
-		Object.entries(weak_constraints).forEach(([priority, value]) => {
-			const weak =
-				'weak_constraint("' + value.name + '", ' + priority + ").";
-			weak_constrains_strings.push(weak);
-		});
-		return weak_constrains_strings;
 	}
 </script>
 

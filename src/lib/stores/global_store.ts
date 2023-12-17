@@ -7,6 +7,7 @@ import { readCookieFile, readCookieFileTimetable } from "./utils/cookie_file_rea
 import { EntityType, generateTimetablesFromAspFile, removeAllOf, removeProfessor, removeSchoolClass, setUpdateClassroomsCallback, setUpdateProfessorsCallback, setupCloneDaysOfWeekHoursOfDay, updateTimetablesMatrix } from "$model/timetable/time-table";
 import { DayOfWeek } from "$model/timetable/day-of-week";
 import { HourOfDay } from "$model/timetable/hour-of-day";
+import type { WeakConstraint } from "$model/asp/weak_contraint";
 
 
 // Read the whole file and store the lines in this list
@@ -29,11 +30,16 @@ let timetableData = getCompleteTimetableFromFile(timetable_file_data, get(allSub
 export const classTimeTableMap = writable(timetableData[0]);
 export const professorTimeTableMap = writable(timetableData[1]);
 
+export const weakConstraintsMap = writable<Map<number, WeakConstraint>>(new Map());
+
+// Syncronize the timetable file matrix with the ones contained in this file
 updateTimetablesMatrix(get(classTimeTableMap), get(professorTimeTableMap));
 
+// Setup the callback that must be called whenever there is an update on the timetable
 setUpdateClassroomsCallback((allTimetables) => classTimeTableMap.set(allTimetables))
 setUpdateProfessorsCallback((allTimetables) => professorTimeTableMap.set(allTimetables))
 
+// Syncronize the timetable allDaysOfWeek, allHoursOfDay with the ones contained in this file
 setupCloneDaysOfWeekHoursOfDay(allDaysOfWeek, allHoursOfDay);
 
 
@@ -69,13 +75,21 @@ export function askSolverForTimetable() {
         existingAssignments.push(...classTT.getAspSubjectsAssignments());
     }
 
+    const weakConstraints: string[] = [];
+    for(var priority of get(weakConstraintsMap).keys()) {
+        let constraint = get(weakConstraintsMap).get(priority);
+        if(constraint?.active) {
+            weakConstraints.push(constraint!.toAsp(priority));
+        }
+    }
+
     const hoursOfDayFact = `hours_per_day(${get(allHoursOfDay).length})`;
     const daysPerWeekFacts = `days_per_week(${get(allDaysOfWeek).length})`;
 
-    const factsArray = [hoursOfDayFact, daysPerWeekFacts, ...subjectsFacts, ...unavailabilityFacts, ...existingAssignments];
+    const factsArray = [...weakConstraints, hoursOfDayFact, daysPerWeekFacts, ...subjectsFacts, ...unavailabilityFacts, ...existingAssignments];
     const factString = factsArray.join(".\n") + ".";
 
-    //console.log(factString);
+    console.log(factString);
 
     controller = new AbortController()
     signal = controller.signal
@@ -100,9 +114,9 @@ export function askSolverForTimetable() {
         })
         .catch(error => {
             if (error.name === 'AbortError') {
-            console.log('Fetch interrotta: ', error);
+                console.log('Fetch interrotta: ', error);
             } else {
-            console.error('Si è verificato un errore durante il fetch:', error);
+                console.error('Si è verificato un errore durante il fetch:', error);
             }
         });
     
