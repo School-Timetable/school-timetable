@@ -55,7 +55,7 @@
 	});
 </script>
 
-<div class="m-3">
+<div class="pt-3">
 	<!--toggle professor view-->
 	<div class="form-check form-switch">
 		<input

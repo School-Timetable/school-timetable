@@ -101,14 +101,13 @@
 </script>
 
 <div class="container-fluid">
-	<div class="row flex-nowrap">
+	<div class="row flex-nowrap g-0">
 		<!--sidebar-->
 		<!-- svelte-ignore a11y-no-static-element-interactions -->
-		<div class="col-3 col-lg-2 pt-2">
-
+		<div class="col-5 col-sm-4 col-md-3 col-xl-2 pt-2">
 			<h5>Subjects</h5>
 			<ul
-				class="list-group my-2"
+				class="list-group my-2 shadow"
 				on:dragover={(event) => event.preventDefault()}
 				on:drop={(event) => sideBarDrop(event)}
 			>
@@ -129,7 +128,9 @@
 								on:hourDrop={(event) => {}}
 							></Hour>
 						</div>
-						<span class="badge bg-primary rounded-pill position-absolute translate-middle shadow border border-light">
+						<span
+							class="badge bg-primary rounded-pill position-absolute translate-middle shadow border border-light"
+						>
 							{item.hoursPerWeek.value - grid.getCountOf(item)}
 						</span>
 					</li>
@@ -141,7 +142,7 @@
 		</div>
 
 		<!--grid-->
-		<div class="col ps-2 pt-2" style="overflow-x: auto;">
+		<div class="col ps-3 pt-2" style="overflow-x: auto;">
 			<Grid
 				bind:timeTable={grid}
 				{professorView}
@@ -152,10 +153,9 @@
 			></Grid>
 
 			<AspSolverButtons
-				on:reload={() => grid = grid}
+				on:reload={() => (grid = grid)}
 				on:clear={clearWorkspace}
 			></AspSolverButtons>
-
 		</div>
 	</div>
 </div>

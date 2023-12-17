@@ -217,13 +217,13 @@
 </script>
 
 <div style="min-width: {($allDaysOfWeek.length + 1) * 120}px;">
-	<table style="width: 100%; table-layout: fixed;">
+	<table style="table-layout: fixed;" class="w-100 border shadow border-2">
 		<thead>
 			<tr>
-				<th class="bg-body-tertiary"></th>
+				<th class="bg-body-tertiary border"></th>
 				<!-- {length: columns_number} -->
 				{#each { length: timeTable.daysPerWeek } as _, dayIndex}
-					<th class="bg-body-tertiary">
+					<th class="bg-body-tertiary border">
 						<!-- label with input for days -->
 						<div class="row g-0 align-items-center">
 							<input
@@ -262,7 +262,7 @@
 			<!--cells-->
 			{#each { length: timeTable.hoursPerDay } as _, hourIndex}
 				<tr>
-					<td class="bg-body-tertiary align-items-top">
+					<td class="bg-body-tertiary align-items-top border">
 						<input
 							id="hour_label_{hourIndex}"
 							type="text"
@@ -291,7 +291,7 @@
 						{/if}
 					</td>
 					{#each { length: timeTable.daysPerWeek } as _, dayIndex}
-						<td>
+						<td class="border">
 							<Hour
 								on:hourDrag={() =>
 									onSubjectDrag(
@@ -350,7 +350,6 @@
 	td,
 	tr,
 	th {
-		border: 1px solid #e3e0e0;
 		text-align: center;
 	}
 
