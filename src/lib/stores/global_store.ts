@@ -111,7 +111,10 @@ export function askSolverForTimetable(onFinishCallback: () => void | undefined) 
                 if(onFinishCallback) onFinishCallback();
 
                 // all but the first one, since it is written twice by the solver
-                allAnswersets.set(content.slice(1));
+                if (content.length > 1)
+                    allAnswersets.set(content.slice(1))
+                else
+                    allAnswersets.set(content)
             })
         })
         .catch(error => {
