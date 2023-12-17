@@ -9,7 +9,7 @@
 
 	if (weak_constraints.size == 0) {
 		weak_constraints.set(
-			4,
+			3,
 			new WeakConstraint({
 				name: "contiguous_subject_hours",
 				active: true,
@@ -19,16 +19,16 @@
 			}),
 		);
 
-		weak_constraints.set(
-			3,
-			new WeakConstraint({
-				name: "least_subjects_swaps",
-				active: true,
-				displayName: "Prefer least subjects swaps",
-				tooltip:
-					"Tries to satisfy other constraints with the least number of changes from the current timetable\n",
-			}),
-		);
+		// weak_constraints.set(
+		// 	3,
+		// 	new WeakConstraint({
+		// 		name: "least_subjects_swaps",
+		// 		active: true,
+		// 		displayName: "Prefer least subjects swaps",
+		// 		tooltip:
+		// 			"Tries to satisfy other constraints with the least number of changes from the current timetable\n",
+		// 	}),
+		// );
 
 		weak_constraints.set(
 			2,
