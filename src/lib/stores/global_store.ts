@@ -56,7 +56,7 @@ export function parseSolverResponse(response: string[]) {
     professorTimeTableMap.set(timetables.profTimetables);
 }
 
-export function askSolverForTimetable() {
+export function askSolverForTimetable(onFinishCallback: () => void | undefined) {
     const subjectsFacts = get(allSubjects).map((e) => e.toAspFact());
     const unavailabilityFacts: string[] = [];
 
@@ -89,7 +89,7 @@ export function askSolverForTimetable() {
     const factsArray = [...weakConstraints, hoursOfDayFact, daysPerWeekFacts, ...subjectsFacts, ...unavailabilityFacts, ...existingAssignments];
     const factString = factsArray.join(".\n") + ".";
 
-    console.log(factString);
+    //console.log(factString);
 
     controller = new AbortController()
     signal = controller.signal
@@ -108,11 +108,15 @@ export function askSolverForTimetable() {
     fetch("http://localhost:8000/solve", options)
         .then((resp) => {
             resp.json().then(content => {
+                if(onFinishCallback) onFinishCallback();
+
                 // all but the first one, since it is written twice by the solver
                 allAnswersets.set(content.slice(1));
             })
         })
         .catch(error => {
+            if(onFinishCallback) onFinishCallback();
+
             if (error.name === 'AbortError') {
                 console.log('Fetch interrotta: ', error);
             } else {

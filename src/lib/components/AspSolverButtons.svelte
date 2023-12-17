@@ -40,12 +40,10 @@
 
     function startCreation() {
         TemporarySaving();
-        generating = true
-        askSolverForTimetable()
+        generating = true;
+        askSolverForTimetable(() => { generating = false; });
+
         classTimeTableMap.subscribe(() => {
-            setTimeout(() => {
-                generating = false
-            }, 4000);
             //console.log("call to subscribe")
             eventDispatcher("reload")
         })
