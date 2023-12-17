@@ -57,6 +57,8 @@
         dispatch("dragend")
     }
 
+    let tooltip: string | undefined;
+
 </script>
 
 
@@ -81,7 +83,6 @@
 
     .hour {
         border: transparent;
-        min-width: 120px;
         height: 60px;
         overflow: hidden;
         text-overflow: ellipsis;

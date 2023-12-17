@@ -13,6 +13,7 @@
 		getClassTimetableOf,
 		getProfessorTimetableOf,
 	} from "$model/timetable/time-table";
+	import { onMount } from "svelte";
 	import { get } from "svelte/store";
 
 	// prova
@@ -47,6 +48,11 @@
 		if (professorView) setCurrentView(get(allProfessors)[0]);
 		else setCurrentView(get(allClassrooms)[0]);
 	}
+
+	onMount(() => {
+		if (professorView) setCurrentView(get(allProfessors)[0]);
+		else setCurrentView(get(allClassrooms)[0]);
+	});
 </script>
 
 <div class="m-3">

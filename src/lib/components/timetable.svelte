@@ -101,18 +101,20 @@
 </script>
 
 <div class="container-fluid">
-	<div class="row">
+	<div class="row flex-nowrap">
 		<!--sidebar-->
 		<!-- svelte-ignore a11y-no-static-element-interactions -->
-		<div class="col-3 col-lg-2">
+		<div class="col-3 col-lg-2 pt-2">
+
+			<h5>Subjects</h5>
 			<ul
-				class="list-group me-1"
+				class="list-group my-2"
 				on:dragover={(event) => event.preventDefault()}
 				on:drop={(event) => sideBarDrop(event)}
 			>
 				{#each sidebar as item, itemIndex}
 					<li
-						class="list-group-item d-flex justify-content-between align-items-center"
+						class="list-group-item d-flex justify-content-between align-items-center p-1"
 					>
 						<div class="w-100">
 							<Hour
@@ -127,10 +129,9 @@
 								on:hourDrop={(event) => {}}
 							></Hour>
 						</div>
-						<span class="badge bg-primary rounded-pill ms-2"
-							>{item.hoursPerWeek.value -
-								grid.getCountOf(item)}</span
-						>
+						<span class="badge bg-primary rounded-pill position-absolute translate-middle shadow border border-light">
+							{item.hoursPerWeek.value - grid.getCountOf(item)}
+						</span>
 					</li>
 				{/each}
 			</ul>
@@ -140,7 +141,7 @@
 		</div>
 
 		<!--grid-->
-		<div class="col ps-2">
+		<div class="col ps-2 pt-2" style="overflow-x: auto;">
 			<Grid
 				bind:timeTable={grid}
 				{professorView}
@@ -150,14 +151,11 @@
 				callback={refresh}
 			></Grid>
 
-			<!-- <div class="d-flex justify-content-center my-4">
-                <button type="button" class="btn btn-primary btn-lg w-100" on:click={event => validateTimetable()}>valida orario</button>
-            </div> -->
-
 			<AspSolverButtons
 				on:reload={() => grid = grid}
 				on:clear={clearWorkspace}
 			></AspSolverButtons>
+
 		</div>
 	</div>
 </div>
