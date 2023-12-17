@@ -134,6 +134,13 @@
 							{item.hoursPerWeek.value - grid.getCountOf(item)}
 						</span>
 					</li>
+				{:else}
+					<span
+						><i class="bi bi-exclamation-circle"></i>
+						No subjects for this {professorView
+							? "professor"
+							: "class"}</span
+					>
 				{/each}
 			</ul>
 			<div>

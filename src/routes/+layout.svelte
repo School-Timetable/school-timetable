@@ -56,10 +56,6 @@
 	});
 </script>
 
-<head>
-	<link rel="stylesheet" href="src/lib/components/styles.css" />
-</head>
-
 <Styles theme={$theme} />
 
 <Navbar expand="shadow bg-success text-light">

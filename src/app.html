@@ -12,7 +12,7 @@
 	%sveltekit.head%
 </head>
 
-<body data-sveltekit-preload-data="hover">
+<body data-sveltekit-preload-data="hover" class="bg-dark-subtle">
 	<div style="display: contents">%sveltekit.body%</div>
 </body>
 
@@ -25,5 +25,14 @@
 	.zoom-hover:hover {
 		transform: scale(1.1);
 		transition: all 0.2s ease;
+	}
+
+	.cursor-pointer {
+		cursor: pointer;
+	}
+
+
+	.cursor-drag {
+		cursor: grab;
 	}
 </style>
