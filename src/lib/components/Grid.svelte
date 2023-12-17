@@ -44,12 +44,10 @@
 		unavailableTimeTable = getTimetableOf(
 			professorView ? subject.schoolClass : subject.professor,
 		);
-		console.log("POG", unavailableTimeTable.values);
 	}
 
 	export function onSubjectDragEnd() {
 		unavailableTimeTable = null;
-		console.log("UNPOG");
 	}
 
 	function onHourClick(day: number, hour: number) {

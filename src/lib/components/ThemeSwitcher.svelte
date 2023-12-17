@@ -26,10 +26,7 @@
 </script>
 
 <ButtonDropdown class="text-primary">
-	<DropdownToggle
-		caret
-		color={currentOption.theme != "auto" ? currentOption.theme : "dark"}
-	>
+	<DropdownToggle caret color="light" outline>
 		{currentOption.displayName}
 		<Icon name={currentOption.icon} />
 	</DropdownToggle>
