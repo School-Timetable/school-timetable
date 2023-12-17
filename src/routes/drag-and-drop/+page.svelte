@@ -50,8 +50,15 @@
 	}
 
 	onMount(() => {
-		if (professorView) setCurrentView(get(allProfessors)[0]);
-		else setCurrentView(get(allClassrooms)[0]);
+		let toShow;
+		if (professorView) {
+			toShow = get(allProfessors)[0];
+		} else {
+			toShow = get(allClassrooms)[0];
+		}
+		if (toShow) {
+			setCurrentView(toShow);
+		}
 	});
 </script>
 
