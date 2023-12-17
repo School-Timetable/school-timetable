@@ -58,7 +58,7 @@
 
 <Styles theme={$theme} />
 
-<Navbar expand="shadow bg-success text-light">
+<Navbar expand="shadow text-light" style="background-color: #6A009F;">
 	<div class="d-flex align-items-center container-xxl">
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
