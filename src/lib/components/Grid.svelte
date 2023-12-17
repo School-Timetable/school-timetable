@@ -18,6 +18,7 @@
 	import { Unavailable } from "$model/timetable/unavailable";
 	import { theme } from "$lib/stores/global_store";
 	import MyModal from "./MyModal.svelte";
+	import Subjects from "./Subjects.svelte";
 
 	export let timeTable: TimeTable;
 	export let professorView: boolean;
@@ -28,10 +29,11 @@
 	let unavailableTimeTable: TimeTable | null = null;
 	let isAskingToRemoveDay = false;
 	let showRemoveHourOrDayModal = false;
-	let showSwapModal = false;
-	let swapHour: number;
-	let swapDay: number;
-	let swapInfo: any;
+	let showConflictModal = false;
+	let conflictHour: number;
+	let conflictDay: number;
+	let conflictInfo: any;
+	let conflictMessage = "";
 
 	theme.subscribe((value) => {
 		timeTable = timeTable;
@@ -64,19 +66,30 @@
 	}
 
 	function onDropValue(hour: number, day: number, info: any) {
-		const oldValue = timeTable.getSubjectOn(day, hour);
-		if (oldValue instanceof Subject) {
-			showSwapModal = true;
-			swapHour = hour;
-			swapDay = day;
-			swapInfo = info;
+		// if we are on professor view, we make sure
+		// that the subject is not already assigned to another class on the same time slot
+		// and vice versa for class view
+		let otherTimeTable = getTimetableOf(
+			professorView ? info.subject.schoolClass : info.subject.professor,
+		);
+		const otherOldValue = otherTimeTable.getSubjectOn(day, hour);
+
+		if (
+			otherOldValue instanceof Subject &&
+			otherOldValue.id != info.subject.id
+		) {
+			showConflictModal = true;
+			conflictHour = hour;
+			conflictDay = day;
+			conflictInfo = info;
+			UpdateConflictMessage();
 		} else {
 			dropValue(hour, day, info);
 		}
 	}
 
-	function swap() {
-		dropValue(swapHour, swapDay, swapInfo);
+	function handleConflict() {
+		dropValue(conflictHour, conflictDay, conflictInfo);
 	}
 
 	function dropValue(hour: number, day: number, info: any) {
@@ -211,19 +224,43 @@
 		showRemoveHourOrDayModal = true;
 	}
 
+	function UpdateConflictMessage() {
+		if (conflictInfo == null) return "";
+
+		let otherTimeTable = getTimetableOf(
+			professorView
+				? conflictInfo.subject.schoolClass
+				: conflictInfo.subject.professor,
+		);
+		const otherSubject = otherTimeTable.getSubjectOn(
+			conflictDay,
+			conflictHour,
+		);
+
+		if (otherSubject instanceof Subject) {
+			let profName = otherSubject.professor;
+			let className = otherSubject.schoolClass;
+
+			conflictMessage =
+				"There already exists a subject assigned to the same time slot in ";
+			conflictMessage += `class <b>${className}</b> by professor <b>${profName}</b>. `;
+			conflictMessage += "<br/>Do you want to replace it?";
+		}
+	}
+
 	function throw_alert_on_inconsistency() {}
 
 	onMount(throw_alert_on_inconsistency);
 </script>
 
 <div style="min-width: {($allDaysOfWeek.length + 1) * 120}px;">
-	<table style="width: 100%; table-layout: fixed;">
+	<table style="table-layout: fixed;" class="w-100 border shadow border-2">
 		<thead>
 			<tr>
-				<th class="bg-body-tertiary"></th>
+				<th class="bg-body-tertiary border"></th>
 				<!-- {length: columns_number} -->
 				{#each { length: timeTable.daysPerWeek } as _, dayIndex}
-					<th class="bg-body-tertiary">
+					<th class="bg-body-tertiary border">
 						<!-- label with input for days -->
 						<div class="row g-0 align-items-center">
 							<input
@@ -262,7 +299,7 @@
 			<!--cells-->
 			{#each { length: timeTable.hoursPerDay } as _, hourIndex}
 				<tr>
-					<td class="bg-body-tertiary align-items-top">
+					<td class="bg-body-tertiary align-items-top border">
 						<input
 							id="hour_label_{hourIndex}"
 							type="text"
@@ -291,7 +328,7 @@
 						{/if}
 					</td>
 					{#each { length: timeTable.daysPerWeek } as _, dayIndex}
-						<td>
+						<td class="border">
 							<Hour
 								on:hourDrag={() =>
 									onSubjectDrag(
@@ -337,11 +374,10 @@
 				: "hour"} will be lost.
 		</p>
 	</MyModal>
-	<MyModal bind:showModal={showSwapModal} on:confirm={swap}>
-		<h2 slot="header">Item swap</h2>
+	<MyModal bind:showModal={showConflictModal} on:confirm={handleConflict}>
+		<h2 slot="header">Subject conflict</h2>
 		<p slot="body">
-			Are you sure you want to swap the selected item with the one already
-			present in the table?
+			{@html conflictMessage}
 		</p>
 	</MyModal>
 </div>
@@ -350,7 +386,6 @@
 	td,
 	tr,
 	th {
-		border: 1px solid #e3e0e0;
 		text-align: center;
 	}
 
