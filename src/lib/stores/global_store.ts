@@ -13,6 +13,8 @@ import type { WeakConstraint } from "$model/asp/weak_contraint";
 // Read the whole file and store the lines in this list
 export const file_data = readCookieFile();
 export let allAnswersets = writable<string[][]>([]);
+export let isIncoherent = writable(false);
+export let hasTimeout = writable(false);
 
 // Parse the prof and classes from the file readed above
 const prof_data = getExistingProfessorFromFile(file_data);
@@ -102,7 +104,11 @@ export function askSolverForTimetable(onFinishCallback: () => void | undefined) 
         signal,
         body: factString
     }
-    
+
+
+    // Reset the isIncoherent and Timeout flags
+    isIncoherent.set(false);
+    hasTimeout.set(false);
 
     //@ts-ignore
     fetch("http://localhost:8000/solve", options)
@@ -110,11 +116,21 @@ export function askSolverForTimetable(onFinishCallback: () => void | undefined) 
             resp.json().then(content => {
                 if(onFinishCallback) onFinishCallback();
 
-                // all but the first one, since it is written twice by the solver
-                if (content.length > 1)
-                    allAnswersets.set(content.slice(1))
-                else
-                    allAnswersets.set(content)
+                // if INCOHERENT is in flags
+                if (content.flags?.includes("INCOHERENT"))
+                    isIncoherent.set(true);
+                // if TIMEOUT is in flags
+                if (content.flags?.includes("TIMEOUT"))
+                    hasTimeout.set(true);
+
+                if (!get(isIncoherent))
+                    if (!get(hasTimeout))
+                        // all but the first one, since it is written twice by the solver
+                        allAnswersets.set(content.answer_sets.slice(1))
+                    else
+                        // in this case it will only be written once
+                        allAnswersets.set(content.answer_sets)
+
             })
         })
         .catch(error => {

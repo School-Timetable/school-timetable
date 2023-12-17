@@ -3,10 +3,10 @@
         allAnswersets,
         askSolverForTimetable,
         classTimeTableMap,
-        controller,
+        controller, hasTimeout, isIncoherent,
         parseSolverResponse
     } from "$lib/stores/global_store";
-    import {Button, Col, Icon, Input} from "sveltestrap";
+    import {Alert, Button, Col, Icon, Input} from "sveltestrap";
     import MyModal from "./MyModal.svelte";
     import { createEventDispatcher } from "svelte";
     import { TemporarySaving,confirmSaving,revertChanges,deleteTmp } from "$lib/utils/temporary_saving_during_generation";
@@ -17,6 +17,41 @@
     let localAnswersetList: string[][] = []
 
     let selectedSolution: number;
+
+    let showIncoherentAlert: boolean = false;
+    let showTimeoutAlert: boolean = false;
+
+    function toggleIncoherentAlert() {
+        showIncoherentAlert = !showIncoherentAlert;
+    }
+
+    function toggleTimeoutAlert() {
+        showTimeoutAlert = !showTimeoutAlert;
+    }
+
+    $: isIncoherent.subscribe((value) => {
+        if (value) {
+            toggleIncoherentAlert();
+        }
+    })
+
+    $: hasTimeout.subscribe((value) => {
+        if (value) {
+            toggleTimeoutAlert();
+        }
+    })
+
+    $: if (showTimeoutAlert) {
+        setTimeout(() => {
+            showTimeoutAlert = false;
+        }, 5000)
+    }
+
+    $: if (showIncoherentAlert) {
+        setTimeout(() => {
+            showIncoherentAlert = false;
+        }, 5000)
+    }
 
     $: allAnswersets.subscribe((answersets) => {
         localAnswersetList = answersets
@@ -103,7 +138,7 @@
     </div>
 {/if}
 
-    <MyModal bind:showModal={showClearModal} on:confirm={() => { deleteTmp(); clearAllTimetables() }}>
+    <MyModal bind:showModal={showClearModal} on:confirm={() => { localAnswersetList.length = 0; deleteTmp(); clearAllTimetables() }}>
         <h2 slot="header">Clear all the workspace</h2>
 	<p slot="body">
 		Are you sure you want to clear the workspace? The timetable will be saved in the history. 
@@ -122,3 +157,9 @@
         Doing this will return your workspace to the state before the automatic generation.
     </p>
 </MyModal>
+<Alert color="warning" isOpen={showIncoherentAlert} toggle="{toggleIncoherentAlert}" style="white-space: pre-line">
+    No solution exists. Please check the availability constraints and try again.
+</Alert>
+<Alert color="warning" isOpen={showTimeoutAlert} toggle="{toggleTimeoutAlert}" style="white-space: pre-line">
+    Timeout reached. Therefore if a solution exists, it may not be optimal.
+</Alert>
