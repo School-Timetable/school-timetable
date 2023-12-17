@@ -124,7 +124,7 @@ export function askSolverForTimetable(onFinishCallback: () => void | undefined) 
                     hasTimeout.set(true);
 
                 if (!get(isIncoherent))
-                    if (!get(hasTimeout) && content.answer_sets.length > 0)
+                    if (!get(hasTimeout) && content.answer_sets.length > 1)
                         // all but the first one, since it is written twice by the solver
                         allAnswersets.set(content.answer_sets.slice(1))
                     else
