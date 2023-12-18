@@ -160,7 +160,10 @@
 			></Grid>
 
 			<AspSolverButtons
-				on:reload={() => (grid = grid)}
+				on:reload={() => {
+					grid = grid;
+					sidebar = sidebar;
+				}}
 				on:clear={clearWorkspace}
 			></AspSolverButtons>
 		</div>
