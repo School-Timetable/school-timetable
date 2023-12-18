@@ -162,4 +162,5 @@
 </Alert>
 <Alert color="warning" isOpen={showTimeoutAlert} toggle="{toggleTimeoutAlert}" style="white-space: pre-line">
     Timeout reached. Therefore if a solution exists, it may not be optimal.
+    Try to use <a href="https://imgur.com/a/oKbCLNJ">DLV3</a>
 </Alert>
