@@ -64,17 +64,20 @@
 
 <div class="pt-3">
 	<!--toggle professor view-->
-	<div class="form-check form-switch">
-		<input
-			class="form-check-input"
-			type="checkbox"
-			id="flexSwitchCheckChecked"
-			on:click={onViewSwitchClick}
-			checked={professorView}
-		/>
-		<label class="form-check-label" for="flexSwitchCheckChecked"
-			>Professor View</label
-		>
+	<div style="display: flex; flex-direction: row">
+		<p>Classroom View &nbsp;</p>
+		<div class="form-check form-switch">
+			<input
+				class="form-check-input"
+				type="checkbox"
+				id="flexSwitchCheckChecked"
+				on:click={onViewSwitchClick}
+				checked={professorView}
+			/>
+			<label class="form-check-label" for="flexSwitchCheckChecked"
+				>Professor View</label
+			>
+		</div>
 	</div>
 
 	<ul class="nav nav-tabs">
