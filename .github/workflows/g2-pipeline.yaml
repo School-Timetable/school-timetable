@@ -24,6 +24,15 @@ jobs:
         cache: 'npm'
     - run: npm install
     - run: npm test
+  dawload_clinglo: 
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Installing Clingo
+        run: python3 -m pip install --user --upgrade clingo
+        
 
   build:
     runs-on: ubuntu-latest
@@ -50,3 +59,4 @@ jobs:
         with:
           name: svelte-artifacts
           path: build
+  
