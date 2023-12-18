@@ -12,6 +12,8 @@ let updateProfessorsCallback: (map: Map<string, TimeTable>) => void
 
 let _isTesting = false;
 
+export function setTestingMode() { _isTesting = true; }
+
 let _allHoursOfDay: Writable<HourOfDay[]>;
 let _allDaysOfWeek: Writable<DayOfWeek[]>;
 
@@ -646,6 +648,8 @@ export function setupCloneDaysOfWeekHoursOfDay(daysOfWeek: Writable<DayOfWeek[]>
 
 
 export function generateTimetablesFromAspFile(fileData: string[], allSubjects: Subject[], isTesting: boolean = false) {
+    _isTesting = isTesting;
+
     for (const timetable of _classTimetableMap.values()) {
         timetable.clearIfNotUnavailable();
     }
@@ -654,10 +658,9 @@ export function generateTimetablesFromAspFile(fileData: string[], allSubjects: S
         timetable.clearIfNotUnavailable();
     }
 
-    _isTesting = isTesting;
-
     const searchSubject = (id: string) => allSubjects[allSubjects.findIndex((sub) => sub.id === id)];
 
+    
     for (const line of fileData) {
         const regex = /^assign\("([\w-]+)",(\d+),(\d+)\)\.$/;
         const matcher = line.match(regex);
