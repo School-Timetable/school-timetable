@@ -99,7 +99,7 @@
 			on:dragstart={(event) => drag(event)}
 			on:dragover={(event) => allowDrop(event)}
 			class:highlight
-			class:disabled={!draggable}
+			class:bg-dark-subtle={!draggable}
 			style:background-color={color}
 		>
 			{set_cell_content(subject) || ""}
