@@ -1,3 +1,6 @@
+import type { ThemeType } from "./stores/global_store";
+
+
 export const lightThemeColors: readonly string[] = [
     "#fa968e",  // red
     "#79c9f7",  // blue
@@ -16,3 +19,16 @@ export const darkThemeColors: readonly string[] = [
     "#8f461d",  // orange
     "#451c5e",  // purple
 ]
+
+
+export function getCurrentColorScheme(theme: ThemeType): readonly string[]
+{
+    if (theme == "light") {
+        return lightThemeColors;
+    } else if (theme == "dark") {
+        return darkThemeColors;
+    } else {
+        const windowDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        return windowDarkMode ? darkThemeColors : lightThemeColors; 
+    }
+}

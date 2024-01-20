@@ -12,11 +12,12 @@
 	import type { Professor } from "$model/professor/professor";
 	import Grid from "./Grid.svelte";
 	import {
+		profVincol,
 		allProfessors,
 		allSubjects,
 		theme,
 	} from "$lib/stores/global_store";
-	import { darkThemeColors, lightThemeColors } from "$lib/colors";
+	import { darkThemeColors, getCurrentColorScheme, lightThemeColors } from "$lib/colors";
 	import AspSolverButtons from "./AspSolverButtons.svelte";
 	import { get } from "svelte/store";
 	import WeakConstraintsWidget from "./WeakConstraintsWidget.svelte";
@@ -26,6 +27,10 @@
 	export let professorView: boolean;
 	export let selectedItem: Professor | SchoolClass;
 	let realGrid: Grid;
+
+
+
+	let profValue: boolean = false
 
 	let currentColors: readonly string[] = lightThemeColors;
 
@@ -46,13 +51,7 @@
 	};
 
 	theme.subscribe((value) => {
-		if (value == "light") {
-			currentColors = lightThemeColors;
-		} else if (value == "dark") {
-			currentColors = darkThemeColors;
-		} else {
-			currentColors = darkThemeColors; // todo: detect auto theme and set colors consequently
-		}
+		currentColors = getCurrentColorScheme(value)
 		let index = 0;
 		subjectColors.clear();
 		sidebar.forEach((subject) =>
@@ -63,6 +62,8 @@
 		);
 		refresh();
 	});
+
+	
 
 	function sideBarDrop(event: any) {
 		const subject = stringToSubject(event.dataTransfer.getData("subject"));
@@ -146,6 +147,19 @@
 			<div>
 				<WeakConstraintsWidget />
 			</div>
+
+			
+			<input
+			class="form-check-input"
+			type="checkbox"
+			id="flexSwitchCheckChecked"
+			on:click={(ev) => {
+				profValue = !profValue
+				console.log($profVincol)
+				profVincol.set(profValue)
+			}}
+			checked={profValue}>
+			<label>No professor next</label>
 		</div>
 
 		<!--grid-->

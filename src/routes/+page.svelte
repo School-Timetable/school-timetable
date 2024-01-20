@@ -1,3 +1,8 @@
+<svelte:head>
+    <title>Welcome</title> 
+</svelte:head>
+
+
 <div class="container">
     <div class="title">
         <h2>Welcome to SCHOOL TIMETABLE!</h2>

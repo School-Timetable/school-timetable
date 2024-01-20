@@ -45,8 +45,13 @@ setUpdateProfessorsCallback((allTimetables) => professorTimeTableMap.set(allTime
 setupCloneDaysOfWeekHoursOfDay(allDaysOfWeek, allHoursOfDay);
 
 
-export const theme = writable<"light" | "dark" | "auto">("auto");
+export type ThemeType =  "light" | "dark" | "auto"
+export const theme = writable<ThemeType>("auto");
 export const editingId = writable<string | null>(null);
+
+export const profVincol = writable<boolean>(false);
+
+
 
 export let controller: any
 export let signal: any
@@ -88,8 +93,11 @@ export function askSolverForTimetable(onFinishCallback: () => void | undefined) 
     const hoursOfDayFact = `hours_per_day(${get(allHoursOfDay).length})`;
     const daysPerWeekFacts = `days_per_week(${get(allDaysOfWeek).length})`;
 
-    const factsArray = [...weakConstraints, hoursOfDayFact, daysPerWeekFacts, ...subjectsFacts, ...unavailabilityFacts, ...existingAssignments];
+    let factsArray = ["profVincol()",...weakConstraints, hoursOfDayFact, daysPerWeekFacts, ...subjectsFacts, ...unavailabilityFacts, ...existingAssignments];
     const factString = factsArray.join(".\n") + ".";
+
+
+ 
 
     //console.log(factString);
 
