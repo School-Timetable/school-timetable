@@ -36,6 +36,13 @@ test('Subject is created', () => {
     expect(subject.hoursPerWeek).toBe(hoursPerWeek);
 });
 
+test('subject Match', () => {
+    expect(subject.match(name.value.toUpperCase().substring(0,2))).toBe(true)
+    expect(subject.match(abbreviation.value.toUpperCase().substring(0,2))).toBe(true)
+    expect(subject.match(getProfessor().name.value.toUpperCase().substring(0,2))).toBe(true)
+    expect(subject.match(getSchoolClass().year.value.toString().substring(0,2))).toBe(true)
+})
+
 test('Subject is created with of', () => {
     expect(subject.schoolClass).toStrictEqual(getSchoolClass());
     expect(subject.professor).toStrictEqual(getProfessor());

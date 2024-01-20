@@ -21,13 +21,15 @@
 	import AspSolverButtons from "./AspSolverButtons.svelte";
 	import { get } from "svelte/store";
 	import WeakConstraintsWidget from "./WeakConstraintsWidget.svelte";
+  import { Input } from "sveltestrap";
 
 	export let grid: TimeTable;
 	export let sidebar: Subject[];
 	export let professorView: boolean;
 	export let selectedItem: Professor | SchoolClass;
 	let realGrid: Grid;
-
+	let searchText: string = ""
+	$: filteredSidebar = sidebar.filter(sub => {return sub.match(searchText)});
 
 
 	let profValue: boolean = false
@@ -76,7 +78,7 @@
 			subject,
 		);
 		grid = grid;
-		sidebar = sidebar;
+		refresh()
 	}
 
 	function getSubjectColor(item: Subject | null | Unavailable) {
@@ -89,7 +91,7 @@
 	}
 
 	export function refresh() {
-		sidebar = sidebar;
+		sidebar = sidebar
 	}
 
 	function clearWorkspace() {
@@ -106,13 +108,22 @@
 		<!--sidebar-->
 		<!-- svelte-ignore a11y-no-static-element-interactions -->
 		<div class="col-5 col-sm-4 col-md-3 col-xl-2 pt-2">
-			<h5>Subjects</h5>
+			<div>
+				<h5>Subjects</h5>
+				<Input
+					type="text"
+					label="search"
+					placeholder="Subject name, abbr, etc..."
+					bind:value={searchText}
+					on:input={(ev) => refresh()}
+				/>
+			</div>
 			<ul
 				class="list-group my-2 shadow"
 				on:dragover={(event) => event.preventDefault()}
 				on:drop={(event) => sideBarDrop(event)}
 			>
-				{#each sidebar as item, itemIndex}
+				{#each filteredSidebar as item, itemIndex}
 					<li
 						class="list-group-item d-flex justify-content-between align-items-center p-1"
 					>
@@ -176,7 +187,7 @@
 			<AspSolverButtons
 				on:reload={() => {
 					grid = grid;
-					sidebar = sidebar;
+					refresh()
 				}}
 				on:clear={clearWorkspace}
 			></AspSolverButtons>

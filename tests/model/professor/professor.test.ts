@@ -19,6 +19,14 @@ test('Professor fixture object created', () => {
     expect(professor.email.value).toBe(mail.value);
 });
 
+test('Professor Match', () => {
+    expect(professor.match("joh")).toBe(true)
+    expect(professor.match("trter")).toBe(false)
+    expect(professor.match("cl")).toBe(true)
+    expect(professor.match("4567")).toBe(true)
+    expect(professor.match("gmail")).toBe(true)
+})
+
 test('Name changes', () => {
     professor.name = new Name("Johnny");
     expect(professor.name.valueUppercase).toBe("JOHNNY");
@@ -38,3 +46,4 @@ test('Mail changes', () => {
     professor.email = new Mail("asdfg@hotmail.com");
     expect(professor.email.value).toBe("asdfg@hotmail.com");
 });
+

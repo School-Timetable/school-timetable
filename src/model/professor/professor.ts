@@ -113,4 +113,17 @@ export class Professor {
         return `P:${this._id};${this._name.value};${this._surname.value};${this._email.value};${this._cellPhone.value}`;
     }
 
+    public match(filter: string): boolean {
+        filter = filter.toLowerCase()
+        if(this.email.value.toLowerCase().match(filter))
+            return true
+        if(this.name.value.toLowerCase().match(filter))
+            return true
+        if(this.surname.value.toLowerCase().match(filter))
+            return true
+        if(this.cellPhone.value.toLowerCase().match(filter))
+            return true
+        return false
+    }
+
 }

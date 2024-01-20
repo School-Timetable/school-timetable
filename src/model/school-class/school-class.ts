@@ -103,4 +103,15 @@ export class SchoolClass {
     public toFullString(): string {
         return this.toString();
     }
+
+    public match(filter: string): boolean {
+        filter = filter.toLowerCase()
+        if(this.track?.value.toLowerCase().match(filter))
+            return true
+        if(this.year.value.toString().match(filter))
+            return true
+        if(this.section.value.toLowerCase().match(filter))
+            return true
+        return false
+    }
 }

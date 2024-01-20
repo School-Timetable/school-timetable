@@ -101,6 +101,20 @@ export class Subject {
     public toAspFact() {
         return `subject("${this.id}", "${this.schoolClass.id}", "${this.professor.id}", ${this.weight}, ${this.hoursPerWeek})`;
     }
+    
+
+    public match(filter: string): boolean {
+        filter = filter.toLowerCase()
+        if(this.name.value.toLowerCase().match(filter))
+            return true
+        if(this.abbreviation.value.toLowerCase().match(filter))
+            return true
+        if(this.professor.match(filter))
+            return true
+        if(this.schoolClass.match(filter))
+            return true
+        return false
+    }
 
     get id() { return this._id; }
     get schoolClass() { return this._schoolClass; }

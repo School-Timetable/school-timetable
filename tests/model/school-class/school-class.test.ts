@@ -16,6 +16,13 @@ test('School class fixture object with track created', () => {
     expect(schoolClassWithTrack.track?.value).toStrictEqual(track)
 })
 
+test('School Class Match', () => {
+    expect(schoolClassWithTrack.match("3455")).toBe(false)
+    expect(schoolClassWithTrack.match(year.toString())).toBe(true)
+    expect(schoolClassWithTrack.match(section.toString())).toBe(true)
+    expect(schoolClassWithTrack.match("Info")).toBe(true)
+})
+
 test('School class fixture object without track created', () => {
     expect(schoolClassWithoutTrack.year.value).toStrictEqual(year)
     expect(schoolClassWithoutTrack.section.value).toStrictEqual(section)
